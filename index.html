@@ -1,1098 +1,230 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     🌾 किसान मंडी भाव वेबसाइट
-     ═══════════════════════════════════════════════════════════════════
-
-     📖 यह क्या है?
-     एक वेबसाइट जो किसानों को मंडी भाव दिखाती है। हिंदी में।
-
-     🚀 कैसे चलाएँ?
-     1. इस फ़ाइल को "index.html" नाम से सेव करें
-     2. ब्राउज़र में डबल-क्लिक करके खोलें — बस!
-     3. ऑनलाइन डालना हो तो netlify.com पर फ़ाइल ड्रैग-ड्रॉप करें
-
-     ✏️ क्या बदल सकते हैं? (कोड में नीचे देखें)
-     • भाव (rates)          → CROPS वाला हिस्सा
-     • दुकान की जानकारी     → SHOP वाला हिस्सा
-     • एडमिन पिन            → SHOP.pin में
-     • लाइव API             → LIVE वाला हिस्सा
-
-     ⚠️ ज़रूरी बात:
-     कोड में कुछ भी बदलने पर ऊपर DATA_VERSION को बढ़ाएँ (1 → 2)
-     फिर पेज को refresh करें। नया डेटा लागू हो जाएगा।
-     ═══════════════════════════════════════════════════════════════════ -->
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#15803d">
-<meta name="description" content="नवीन मंडी खागा फतेहपुर — आज के ताज़ा अनाज, मोटे अनाज और दालों के भाव">
 <title>किसान मंडी भाव | Kisan Mandi Bhav</title>
-
 <style>
-/* ═══════════════════════════════════════════════════════════════════
-   🎨 CSS — वेबसाइट की सुंदरता और लेआउट
-   ═══════════════════════════════════════════════════════════════════
-   अगर रंग बदलने हैं तो नीचे :root वाले हिस्से में बदलें।
-   बाक़ी सब कुछ वैसा ही रहने दें।                                       */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#15803d;--green-dark:#14532d;--green-mid:#16a34a;--green-soft:#dcfce7;--amber:#d97706;--red:#dc2626;--blue:#1d4ed8;--bg:#f4f7f2;--card:#fff;--text:#12261a;--muted:#5f6f64;--border:#e0e8dc;--radius:18px;--fs:17px;--shadow:0 1px 3px rgba(16,40,24,.07);--shadow-lg:0 12px 34px rgba(16,40,24,.14)}
+body.hc{--bg:#fff;--card:#fff;--text:#000;--muted:#1a1a1a;--border:#333;--green:#0a5c26;--green-dark:#063d18;--green-soft:#c8f0d4}
+html{font-size:var(--fs);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding-bottom:78px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px}
+.hidden{display:none!important}
+h2.sec{font-size:1.35rem;font-weight:800;color:var(--green-dark);margin-bottom:6px}
+p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 
-/* ----- रंग और बुनियादी सेटिंग ----- */
-:root {
-  --green:        #15803d;   /* मुख्य हरा रंग */
-  --green-dark:   #14532d;   /* गहरा हरा */
-  --green-mid:    #16a34a;   /* बीच का हरा */
-  --green-soft:   #dcfce7;   /* हल्का हरा */
-  --amber:        #d97706;   /* नारंगी */
-  --red:          #dc2626;   /* लाल */
-  --blue:         #1d4ed8;   /* नीला */
-  --bg:           #f4f7f2;   /* पेज का बैकग्राउंड */
-  --card:         #ffffff;   /* कार्ड का रंग */
-  --text:         #12261a;   /* टेक्स्ट का रंग */
-  --muted:        #5f6f64;   /* हल्का टेक्स्ट */
-  --border:       #e0e8dc;   /* बॉर्डर का रंग */
-  --radius:       18px;      /* गोल कोने */
-  --fs:           17px;      /* मुख्य फ़ॉन्ट साइज़ */
-  --shadow:       0 1px 3px rgba(16,40,24,.07);
-  --shadow-lg:    0 12px 34px rgba(16,40,24,.14);
-}
+.admin-ribbon{background:linear-gradient(90deg,#78350f,#92400e);color:#fff;padding:9px 16px;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.admin-ribbon .left{display:flex;align-items:center;gap:9px}
+.admin-ribbon .dot{width:9px;height:9px;border-radius:50%;background:#fbbf24;animation:pulse 1.8s infinite}
+.admin-ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:9px;padding:6px 14px;font-weight:800;font-size:.8rem}
 
-/* ----- हाई कॉन्ट्रास्ट मोड (कम नज़र वालों के लिए) ----- */
-body.hc {
-  --bg: #ffffff;
-  --card: #ffffff;
-  --text: #000000;
-  --muted: #1a1a1a;
-  --border: #333333;
-  --green: #0a5c26;
-  --green-dark: #063d18;
-  --green-soft: #c8f0d4;
-}
-body.hc .crop-card { border-width: 2px; }
-body.hc .chip, body.hc .btn { border-width: 2px; }
+.stale-banner{background:#fef3c7;border-bottom:2px solid #fcd34d;color:#92400e;padding:11px 16px;font-size:.88rem;font-weight:800;text-align:center}
+.stale-banner button{margin-left:10px;background:#92400e;color:#fff;border-radius:9px;padding:5px 14px;font-weight:800;font-size:.78rem}
 
-/* ----- बुनियादी रीसेट ----- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+.site-header{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#15803d 0%,#166534 100%);color:#fff;box-shadow:0 2px 12px rgba(20,83,45,.25)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:52px;height:52px;flex:0 0 52px;border-radius:14px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:1.7rem;border:1px solid rgba(255,255,255,.22)}
+.brand h1{font-size:1.28rem;font-weight:800;line-height:1.25}
+.tagline{font-size:.82rem;opacity:.9;font-weight:500}
+.header-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lang-wrap{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 12px}
+.lang-wrap select{background:transparent;border:none;outline:none;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
+.lang-wrap select option{color:#12261a;background:#fff}
+.tool-btn{width:42px;height:42px;border-radius:12px;font-weight:800;font-size:1rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;display:grid;place-items:center}
+.tool-btn.on{background:#fff;color:var(--green-dark);border-color:#fff}
 
-html {
-  font-size: var(--fs);
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
+.hero{background:var(--card);border-bottom:1px solid var(--border);padding:20px 0}
+.hero-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.hero h2{font-size:1.5rem;font-weight:800;color:var(--green-dark)}
+.hero .date{color:var(--muted);font-size:.95rem;margin-top:2px;font-weight:600}
+.hero .updated{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:var(--green-soft);color:#166534;border-radius:999px;padding:5px 14px;font-size:.83rem;font-weight:700}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.live-pill{display:inline-flex;align-items:center;gap:7px;margin-left:8px;background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:800}
+.live-pill.demo{background:#fef3c7;color:#92400e}
+.live-pill.api{background:#dbeafe;color:#1e40af}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#16a34a;animation:pulse 1.8s infinite}
+.live-pill.demo .live-dot{background:#d97706}
+.live-pill.api .live-dot{background:#1d4ed8}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+.spin{display:inline-block;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto,
-               "Noto Sans", "Noto Sans Devanagari", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.55;
-  padding-bottom: 78px; /* नीचे की मोबाइल बार के लिए जगह */
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:11px 18px;font-weight:700;font-size:.94rem;transition:.15s;border:2px solid transparent;white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 3px 10px rgba(21,128,61,.28)}
+.btn-ghost{background:var(--card);color:var(--green-dark);border-color:var(--border)}
+.btn-danger{background:#fee2e2;color:#b91c1c}
+.btn-amber{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.btn-blue{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.btn-sm{padding:8px 13px;font-size:.82rem;border-radius:11px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.6;cursor:wait}
+.btn.speaking{animation:speakPulse 1.2s ease-in-out infinite}
+@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
 
-button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
+.toolbar{padding:20px 0 6px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:8px 12px 8px 16px}
+.search-box:focus-within{border-color:var(--green-mid);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+.search-box input{border:none;outline:none;width:100%;background:transparent;font-size:1rem;padding:6px 0}
+.mic-btn{width:40px;height:40px;flex:0 0 40px;border-radius:11px;background:var(--bg);display:grid;place-items:center;font-size:1.05rem;border:1px solid var(--border)}
+.mic-btn.listening{background:#fee2e2;border-color:#fca5a5;animation:pulse 1.2s infinite}
+.chips{display:flex;gap:9px;overflow-x:auto;padding:14px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{background:var(--card);border:2px solid var(--border);border-radius:999px;padding:9px 18px;font-weight:700;font-size:.9rem;color:var(--muted);white-space:nowrap}
+.chip.active{background:var(--green);border-color:var(--green);color:#fff}
 
-.wrap { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
-.hidden { display: none !important; }
+.grid-section{padding:10px 0 34px}
+.rates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:15px}
+.crop-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:17px 18px 14px;box-shadow:var(--shadow);transition:.18s;position:relative;overflow:hidden}
+.crop-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--green-soft)}
+.crop-card.up::before{background:#22c55e}
+.crop-card.down::before{background:#f87171}
+.crop-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.crop-emoji{font-size:1.75rem;line-height:1}
+.crop-name{font-size:1.08rem;font-weight:800}
+.crop-sub{font-size:.76rem;color:var(--muted);font-weight:600;margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:5px 11px;font-size:.78rem;font-weight:800}
+.badge.up{background:#dcfce7;color:#15803d}
+.badge.down{background:#fee2e2;color:#b91c1c}
+.badge.same{background:#f1f5f9;color:#64748b}
+.price-row{display:flex;align-items:baseline;gap:6px}
+.price{font-size:1.85rem;font-weight:800;color:var(--green-dark)}
+.unit{font-size:.85rem;color:var(--muted);font-weight:700}
+.change-line{margin-top:8px;font-size:.82rem;font-weight:700;color:var(--muted)}
+.change-line.up{color:#15803d}
+.change-line.down{color:#b91c1c}
+.card-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:8px}
+.spark{color:var(--green-mid);opacity:.85}
+.crop-card.down .spark{color:#f87171}
+.hist-lbl{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase}
+.empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--muted);background:var(--card);border-radius:var(--radius);border:2px dashed var(--border)}
+.empty .big{font-size:2.6rem;display:block;margin-bottom:10px}
 
-h2.sec {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--green-dark);
-  margin-bottom: 6px;
-}
-p.secSub {
-  font-size: .9rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 18px;
-}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+section.band{padding:28px 0}
+section.band.alt{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 
-/* ═══════════════════════════════════════════════════════════════════
-   🟠 एडमिन रिबन (सिर्फ़ दुकानदार को दिखता है)
-   ═══════════════════════════════════════════════════════════════════ */
-.admin-ribbon {
-  background: linear-gradient(90deg, #78350f, #92400e);
-  color: #fff;
-  padding: 9px 16px;
-  font-size: .85rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.admin-ribbon .left { display: flex; align-items: center; gap: 9px; }
-.admin-ribbon .dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: #fbbf24;
-  animation: pulse 1.8s infinite;
-}
-.admin-ribbon button {
-  background: rgba(255,255,255,.18);
-  border: 1px solid rgba(255,255,255,.32);
-  color: #fff;
-  border-radius: 9px;
-  padding: 6px 14px;
-  font-weight: 800;
-  font-size: .8rem;
-  transition: .15s;
-}
-.admin-ribbon button:hover { background: rgba(255,255,255,.32); }
+.calc-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;align-items:end}
+.calc-field label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.calc-field input,.calc-field select{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:13px;outline:none;background:var(--card);font-size:1rem;font-weight:700}
+.calc-result{margin-top:16px;background:linear-gradient(135deg,#15803d,#166534);color:#fff;border-radius:16px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.calc-result .lbl{font-size:.8rem;opacity:.9;font-weight:700;text-transform:uppercase}
+.calc-result .val{font-size:2rem;font-weight:800}
+.calc-result .brk{font-size:.85rem;opacity:.92;font-weight:600}
 
-/* ═══════════════════════════════════════════════════════════════════
-   🟡 "भाव पुराने हैं" वाली चेतावनी
-   ═══════════════════════════════════════════════════════════════════ */
-.stale-banner {
-  background: #fef3c7;
-  border-bottom: 2px solid #fcd34d;
-  color: #92400e;
-  padding: 11px 16px;
-  font-size: .88rem;
-  font-weight: 800;
-  text-align: center;
-}
-.stale-banner button {
-  margin-left: 10px;
-  background: #92400e;
-  color: #fff;
-  border-radius: 9px;
-  padding: 5px 14px;
-  font-weight: 800;
-  font-size: .78rem;
-}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+.fld label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.fld input,.fld select,.fld textarea{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:13px;outline:none;background:var(--card);font-size:.97rem;font-weight:600;font-family:inherit;resize:vertical}
+.fld textarea{min-height:78px}
+.form-note{font-size:.8rem;color:var(--muted);font-weight:600;margin-top:12px;line-height:1.5}
 
-/* ═══════════════════════════════════════════════════════════════════
-   🟢 हेडर (ऊपर का हरा बार)
-   ═══════════════════════════════════════════════════════════════════ */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(20,83,45,.25);
-}
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px 16px;
-  flex-wrap: wrap;
-}
-.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.logo {
-  width: 52px; height: 52px;
-  flex: 0 0 52px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.16);
-  display: grid; place-items: center;
-  font-size: 1.7rem;
-  border: 1px solid rgba(255,255,255,.22);
-}
-.brand h1 { font-size: 1.28rem; font-weight: 800; line-height: 1.25; }
-.tagline { font-size: .82rem; opacity: .9; font-weight: 500; }
+.contact{background:var(--card);border-top:1px solid var(--border);padding:34px 0}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.contact-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:13px;align-items:flex-start}
+.contact-card .ico{font-size:1.5rem}
+.contact-card .lbl{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase}
+.contact-card .val{font-size:.98rem;font-weight:700;margin-top:3px;word-break:break-word}
+.contact-card a{color:var(--green-dark);text-decoration:none}
+.contact-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 
-.header-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.lang-wrap {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.28);
-  border-radius: 999px;
-  padding: 6px 12px;
-}
-.lang-wrap select {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-weight: 700;
-  font-size: .95rem;
-  cursor: pointer;
-}
-.lang-wrap select option { color: #12261a; background: #fff; }
+.site-footer{background:var(--green-dark);color:#cbe8d4;padding:26px 0;text-align:center;font-size:.86rem}
+.disclaimer{max-width:760px;margin:0 auto 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:13px;padding:12px 16px;font-size:.8rem;line-height:1.6;color:#e5f3ea;font-weight:600}
+.site-footer .owner-link{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.85rem}
 
-.tool-btn {
-  width: 42px; height: 42px;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 1rem;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.28);
-  color: #fff;
-  display: grid; place-items: center;
-  transition: .15s;
-}
-.tool-btn:hover { background: rgba(255,255,255,.32); }
-.tool-btn.on { background: #fff; color: var(--green-dark); border-color: #fff; }
+.mobile-bar{position:fixed;bottom:0;left:0;right:0;z-index:55;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--border);backdrop-filter:blur(10px)}
+.mobile-bar .btn{flex:1}
 
-/* ═══════════════════════════════════════════════════════════════════
-   📅 हीरो सेक्शन (आज के भाव वाला)
-   ═══════════════════════════════════════════════════════════════════ */
-.hero {
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-  padding: 20px 0;
-}
-.hero-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-.hero h2 { font-size: 1.5rem; font-weight: 800; color: var(--green-dark); }
-.hero .date { color: var(--muted); font-size: .95rem; margin-top: 2px; font-weight: 600; }
-.hero .updated {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 10px;
-  background: var(--green-soft);
-  color: #166534;
-  border-radius: 999px;
-  padding: 5px 14px;
-  font-size: .83rem;
-  font-weight: 700;
-}
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.backdrop{position:fixed;inset:0;z-index:100;background:rgba(10,30,18,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.modal{background:var(--card);border-radius:22px;width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:pop .22s ease}
+.modal.small{max-width:420px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-size:1.15rem;font-weight:800;color:var(--green-dark)}
+.close-x{width:38px;height:38px;border-radius:11px;background:var(--bg);font-size:1.1rem;font-weight:700;color:var(--muted);display:grid;place-items:center}
+.modal-body{padding:20px 22px;overflow-y:auto;flex:1}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:13px;outline:none;background:var(--card);font-size:.97rem;font-weight:600}
+.pin-input{letter-spacing:9px;text-align:center;font-size:1.5rem!important;font-weight:800!important}
+.err{color:var(--red);font-size:.85rem;font-weight:700;margin-top:8px}
+.lock-hero{text-align:center;padding:6px 0 14px}
+.lock-hero .big-lock{font-size:2.6rem;width:74px;height:74px;margin:0 auto 12px;display:grid;place-items:center;background:var(--green-soft);border-radius:50%}
+.lock-hero h4{font-size:1.02rem;font-weight:800;color:var(--green-dark)}
+.lock-hero p{font-size:.85rem;color:var(--muted);margin-top:4px}
 
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: 8px;
-  background: #dcfce7;
-  color: #15803d;
-  border-radius: 999px;
-  padding: 5px 13px;
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: .3px;
-}
-.live-pill.demo { background: #fef3c7; color: #92400e; }
-.live-pill.api  { background: #dbeafe; color: #1e40af; }
-.live-dot {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: #16a34a;
-  animation: pulse 1.8s infinite;
-}
-.live-pill.demo .live-dot { background: #d97706; }
-.live-pill.api  .live-dot { background: #1d4ed8; }
+.tabs{display:flex;gap:6px;padding:14px 18px 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 15px;border-radius:12px 12px 0 0;font-weight:800;font-size:.87rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab.active{color:var(--green-dark);border-bottom-color:var(--green);background:#f3faf5}
 
-@keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(22,163,74,.6); }
-  70%  { box-shadow: 0 0 0 9px rgba(22,163,74,0); }
-  100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
-}
-.spin { display: inline-block; animation: spin .9s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.edit-row{display:grid;grid-template-columns:34px 1fr 112px 100px 42px;align-items:center;gap:9px;padding:10px;border-radius:13px;background:var(--bg);margin-bottom:9px}
+.edit-emoji{font-size:1.3rem;text-align:center}
+.edit-name{font-weight:700;font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-price{display:flex;align-items:center;gap:4px;background:var(--card);border:2px solid var(--border);border-radius:11px;padding:0 9px}
+.edit-price span{color:var(--muted);font-weight:800;font-size:.9rem}
+.edit-price input{width:100%;border:none;outline:none;padding:9px 0;font-weight:800;font-size:.95rem;background:transparent}
+.edit-row select{border:2px solid var(--border);border-radius:11px;padding:9px 7px;font-size:.82rem;font-weight:700;background:var(--card);outline:none;width:100%}
+.del-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:2px solid var(--border);font-size:1rem;display:grid;place-items:center}
 
-/* ═══════════════════════════════════════════════════════════════════
-   🔘 बटन
-   ═══════════════════════════════════════════════════════════════════ */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 14px;
-  padding: 11px 18px;
-  font-weight: 700;
-  font-size: .94rem;
-  transition: .15s;
-  border: 2px solid transparent;
-  white-space: nowrap;
-  text-decoration: none;
-}
-.btn-primary { background: var(--green); color: #fff; box-shadow: 0 3px 10px rgba(21,128,61,.28); }
-.btn-primary:hover { background: var(--green-dark); }
-.btn-ghost { background: var(--card); color: var(--green-dark); border-color: var(--border); }
-.btn-ghost:hover { border-color: var(--green-mid); background: #f7fdf9; }
-.btn-danger { background: #fee2e2; color: #b91c1c; }
-.btn-danger:hover { background: #fecaca; }
-.btn-amber { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
-.btn-amber:hover { background: #fde68a; }
-.btn-blue { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
-.btn-blue:hover { background: #bfdbfe; }
-.btn-sm { padding: 8px 13px; font-size: .82rem; border-radius: 11px; }
-.btn-block { width: 100%; }
-.btn[disabled] { opacity: .6; cursor: wait; }
-.btn.speaking { animation: speakPulse 1.2s ease-in-out infinite; }
-@keyframes speakPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.5); }
-  50%     { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
-}
+.add-box{background:#f3faf5;border:2px dashed #b9dfc4;border-radius:16px;padding:16px;margin-top:16px}
+.add-box h4{font-size:.95rem;font-weight:800;color:var(--green-dark);margin-bottom:12px}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.add-grid .full{grid-column:1/-1}
+.section-title{font-size:.95rem;font-weight:800;color:var(--green-dark);margin:6px 0 12px}
+.hint{font-size:.82rem;color:var(--muted);font-weight:600;margin-bottom:12px;line-height:1.55}
+.bulk-area{width:100%;min-height:170px;padding:13px;border:2px solid var(--border);border-radius:13px;font-family:monospace;font-size:.88rem;font-weight:600;background:var(--bg);outline:none;resize:vertical;line-height:1.7}
+.lead-item{background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:12px 14px;margin-bottom:9px;font-size:.88rem}
+.lead-item .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.lead-item .nm{font-weight:800;color:var(--green-dark)}
+.lead-item .tm{font-size:.75rem;color:var(--muted);font-weight:700}
+.lead-item .mt{color:var(--muted);font-weight:600;line-height:1.5}
+.lead-item .acts{display:flex;gap:8px;margin-top:9px}
 
-/* ═══════════════════════════════════════════════════════════════════
-   🔍 सर्च बॉक्स + कैटेगरी चिप्स
-   ═══════════════════════════════════════════════════════════════════ */
-.toolbar { padding: 20px 0 6px; }
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:#14532d;color:#fff;padding:13px 26px;border-radius:14px;font-weight:700;font-size:.92rem;z-index:200;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 12px 8px 16px;
-  transition: .15s;
-}
-.search-box:focus-within {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 4px rgba(22,163,74,.12);
-}
-.search-box input {
-  border: none;
-  outline: none;
-  width: 100%;
-  background: transparent;
-  font-size: 1rem;
-  padding: 6px 0;
-}
-.mic-btn {
-  width: 40px; height: 40px;
-  flex: 0 0 40px;
-  border-radius: 11px;
-  background: var(--bg);
-  display: grid; place-items: center;
-  font-size: 1.05rem;
-  transition: .15s;
-  border: 1px solid var(--border);
-}
-.mic-btn:hover { background: var(--green-soft); border-color: var(--green-mid); }
-.mic-btn.listening {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  animation: pulse 1.2s infinite;
-}
+.qr-box{text-align:center;padding:8px 0}
+.qr-box img{width:230px;height:230px;border-radius:16px;border:6px solid var(--card);background:#fff}
+.qr-box .lnk{margin-top:14px;font-size:.82rem;word-break:break-all;font-weight:700;background:var(--bg);padding:11px 14px;border-radius:12px;color:var(--green-dark)}
 
-.chips {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  padding: 14px 0 6px;
-  scrollbar-width: none;
-}
-.chips::-webkit-scrollbar { display: none; }
-.chip {
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 999px;
-  padding: 9px 18px;
-  font-weight: 700;
-  font-size: .9rem;
-  color: var(--muted);
-  white-space: nowrap;
-  transition: .15s;
-}
-.chip:hover { border-color: var(--green-mid); color: var(--green-dark); }
-.chip.active {
-  background: var(--green);
-  border-color: var(--green);
-  color: #fff;
-  box-shadow: 0 3px 10px rgba(21,128,61,.25);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🌾 फसल कार्ड्स (भाव दिखाने वाले बॉक्स)
-   ═══════════════════════════════════════════════════════════════════ */
-.grid-section { padding: 10px 0 34px; }
-.rates-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
-  gap: 15px;
-}
-.crop-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 17px 18px 14px;
-  box-shadow: var(--shadow);
-  transition: .18s;
-  position: relative;
-  overflow: hidden;
-}
-.crop-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 5px;
-  background: var(--green-soft);
-}
-.crop-card.up::before   { background: #22c55e; }
-.crop-card.down::before { background: #f87171; }
-.crop-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: #cfe3d3;
-}
-
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.crop-emoji { font-size: 1.75rem; line-height: 1; }
-.crop-name  { font-size: 1.08rem; font-weight: 800; color: var(--text); }
-.crop-sub   { font-size: .76rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-radius: 999px;
-  padding: 5px 11px;
-  font-size: .78rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-.badge.up   { background: #dcfce7; color: #15803d; }
-.badge.down { background: #fee2e2; color: #b91c1c; }
-.badge.same { background: #f1f5f9; color: #64748b; }
-
-.price-row { display: flex; align-items: baseline; gap: 6px; }
-.price { font-size: 1.85rem; font-weight: 800; color: var(--green-dark); }
-.unit  { font-size: .85rem; color: var(--muted); font-weight: 700; }
-.change-line { margin-top: 8px; font-size: .82rem; font-weight: 700; color: var(--muted); }
-.change-line.up   { color: #15803d; }
-.change-line.down { color: #b91c1c; }
-
-.card-bottom {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-}
-.spark { color: var(--green-mid); opacity: .85; }
-.crop-card.down .spark { color: #f87171; }
-.hist-lbl {
-  font-size: .68rem;
-  color: var(--muted);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-/* खाली संदेश */
-.empty {
-  grid-column: 1/-1;
-  text-align: center;
-  padding: 56px 20px;
-  color: var(--muted);
-  background: var(--card);
-  border-radius: var(--radius);
-  border: 2px dashed var(--border);
-}
-.empty .big { font-size: 2.6rem; display: block; margin-bottom: 10px; }
-
-/* ═══════════════════════════════════════════════════════════════════
-   📦 सेक्शन कार्ड (कैलकुलेटर, फ़ॉर्म आदि के लिए)
-   ═══════════════════════════════════════════════════════════════════ */
-.sec-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px;
-  margin-bottom: 18px;
-}
-section.band { padding: 28px 0; }
-section.band.alt {
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   🧮 फसल मूल्य कैलकुलेटर
-   ═══════════════════════════════════════════════════════════════════ */
-.calc-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 12px;
-  align-items: end;
-}
-.calc-field label {
-  display: block;
-  font-size: .78rem;
-  font-weight: 800;
-  color: var(--muted);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-.calc-field input,
-.calc-field select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid var(--border);
-  border-radius: 13px;
-  outline: none;
-  background: var(--card);
-  font-size: 1rem;
-  font-weight: 700;
-  transition: .15s;
-}
-.calc-field input:focus,
-.calc-field select:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 4px rgba(22,163,74,.12);
-}
-.calc-result {
-  margin-top: 16px;
-  background: linear-gradient(135deg, #15803d, #166534);
-  color: #fff;
-  border-radius: 16px;
-  padding: 18px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.calc-result .lbl { font-size: .8rem; opacity: .9; font-weight: 700; text-transform: uppercase; }
-.calc-result .val { font-size: 2rem; font-weight: 800; }
-.calc-result .brk { font-size: .85rem; opacity: .92; font-weight: 600; }
-
-/* ═══════════════════════════════════════════════════════════════════
-   🏬 आसपास की मंडियाँ
-   ═══════════════════════════════════════════════════════════════════ */
-.nearby-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-  gap: 12px;
-}
-.nearby-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-}
-.nearby-card .mkt {
-  font-weight: 800;
-  font-size: .95rem;
-  color: var(--green-dark);
-  margin-bottom: 9px;
-}
-.nearby-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: .87rem;
-  padding: 3px 0;
-  font-weight: 600;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   📝 पूछताछ फ़ॉर्म
-   ═══════════════════════════════════════════════════════════════════ */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.form-grid .full { grid-column: 1/-1; }
-.fld label {
-  display: block;
-  font-size: .78rem;
-  font-weight: 800;
-  color: var(--muted);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-.fld input,
-.fld select,
-.fld textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid var(--border);
-  border-radius: 13px;
-  outline: none;
-  background: var(--card);
-  font-size: .97rem;
-  font-weight: 600;
-  font-family: inherit;
-  resize: vertical;
-  transition: .15s;
-}
-.fld input:focus,
-.fld select:focus,
-.fld textarea:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 4px rgba(22,163,74,.12);
-}
-.fld textarea { min-height: 78px; }
-.form-note {
-  font-size: .8rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-top: 12px;
-  line-height: 1.5;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   📞 संपर्क सेक्शन
-   ═══════════════════════════════════════════════════════════════════ */
-.contact {
-  background: var(--card);
-  border-top: 1px solid var(--border);
-  padding: 34px 0;
-}
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 14px;
-}
-.contact-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  display: flex;
-  gap: 13px;
-  align-items: flex-start;
-}
-.contact-card .ico { font-size: 1.5rem; }
-.contact-card .lbl {
-  font-size: .78rem;
-  color: var(--muted);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-.contact-card .val {
-  font-size: .98rem;
-  font-weight: 700;
-  margin-top: 3px;
-  word-break: break-word;
-}
-.contact-card a { color: var(--green-dark); text-decoration: none; }
-.contact-card a:hover { text-decoration: underline; }
-.contact-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ⬛ फुटर
-   ═══════════════════════════════════════════════════════════════════ */
-.site-footer {
-  background: var(--green-dark);
-  color: #cbe8d4;
-  padding: 26px 0;
-  text-align: center;
-  font-size: .86rem;
-}
-.disclaimer {
-  max-width: 760px;
-  margin: 0 auto 16px;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 13px;
-  padding: 12px 16px;
-  font-size: .8rem;
-  line-height: 1.6;
-  color: #e5f3ea;
-  font-weight: 600;
-}
-.site-footer .owner-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.22);
-  color: #fff;
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-weight: 700;
-  font-size: .85rem;
-  transition: .15s;
-}
-.site-footer .owner-link:hover { background: rgba(255,255,255,.22); }
-
-/* ═══════════════════════════════════════════════════════════════════
-   📱 मोबाइल की नीचे वाली बार
-   ═══════════════════════════════════════════════════════════════════ */
-.mobile-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 55;
-  display: none;
-  gap: 10px;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(255,255,255,.97);
-  border-top: 1px solid var(--border);
-  backdrop-filter: blur(10px);
-}
-.mobile-bar .btn { flex: 1; }
-body.hc .mobile-bar { background: #fff; }
-
-/* ═══════════════════════════════════════════════════════════════════
-   🪟 मोडल (पॉपअप विंडो)
-   ═══════════════════════════════════════════════════════════════════ */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(10,30,18,.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-@keyframes pop {
-  from { opacity: 0; transform: translateY(16px) scale(.97); }
-  to   { opacity: 1; transform: none; }
-}
-.modal {
-  background: var(--card);
-  border-radius: 22px;
-  width: 100%;
-  max-width: 680px;
-  max-height: 92vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-lg);
-  animation: pop .22s ease;
-}
-.modal.small { max-width: 420px; }
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-}
-.modal-head h3 { font-size: 1.15rem; font-weight: 800; color: var(--green-dark); }
-.close-x {
-  width: 38px; height: 38px;
-  border-radius: 11px;
-  background: var(--bg);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--muted);
-  display: grid; place-items: center;
-  transition: .15s;
-}
-.close-x:hover { background: #fee2e2; color: #b91c1c; }
-.modal-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
-.modal-foot {
-  padding: 16px 22px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.field { margin-bottom: 15px; }
-.field label {
-  display: block;
-  font-size: .82rem;
-  font-weight: 800;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.field input,
-.field select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid var(--border);
-  border-radius: 13px;
-  outline: none;
-  background: var(--card);
-  font-size: .97rem;
-  font-weight: 600;
-  transition: .15s;
-}
-.field input:focus,
-.field select:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 4px rgba(22,163,74,.12);
-}
-.pin-input {
-  letter-spacing: 9px;
-  text-align: center;
-  font-size: 1.5rem !important;
-  font-weight: 800 !important;
-}
-.err { color: var(--red); font-size: .85rem; font-weight: 700; margin-top: 8px; }
-.lock-hero { text-align: center; padding: 6px 0 14px; }
-.lock-hero .big-lock {
-  font-size: 2.6rem;
-  width: 74px; height: 74px;
-  margin: 0 auto 12px;
-  display: grid; place-items: center;
-  background: var(--green-soft);
-  border-radius: 50%;
-}
-.lock-hero h4 { font-size: 1.02rem; font-weight: 800; color: var(--green-dark); }
-.lock-hero p { font-size: .85rem; color: var(--muted); margin-top: 4px; }
-
-/* टैब */
-.tabs {
-  display: flex;
-  gap: 6px;
-  padding: 14px 18px 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.tabs::-webkit-scrollbar { display: none; }
-.tab {
-  padding: 10px 15px;
-  border-radius: 12px 12px 0 0;
-  font-weight: 800;
-  font-size: .87rem;
-  color: var(--muted);
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-  transition: .15s;
-}
-.tab.active {
-  color: var(--green-dark);
-  border-bottom-color: var(--green);
-  background: #f3faf5;
-}
-
-/* एडमिन की भाव लाइन */
-.edit-row {
-  display: grid;
-  grid-template-columns: 34px 1fr 112px 100px 42px;
-  align-items: center;
-  gap: 9px;
-  padding: 10px;
-  border-radius: 13px;
-  background: var(--bg);
-  margin-bottom: 9px;
-}
-.edit-emoji { font-size: 1.3rem; text-align: center; }
-.edit-name {
-  font-weight: 700;
-  font-size: .92rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.edit-price {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 11px;
-  padding: 0 9px;
-}
-.edit-price span { color: var(--muted); font-weight: 800; font-size: .9rem; }
-.edit-price input {
-  width: 100%;
-  border: none;
-  outline: none;
-  padding: 9px 0;
-  font-weight: 800;
-  font-size: .95rem;
-  background: transparent;
-}
-.edit-row select {
-  border: 2px solid var(--border);
-  border-radius: 11px;
-  padding: 9px 7px;
-  font-size: .82rem;
-  font-weight: 700;
-  background: var(--card);
-  outline: none;
-  width: 100%;
-}
-.del-btn {
-  width: 38px; height: 38px;
-  border-radius: 11px;
-  background: var(--card);
-  border: 2px solid var(--border);
-  font-size: 1rem;
-  display: grid; place-items: center;
-  transition: .15s;
-}
-.del-btn:hover { background: #fee2e2; border-color: #fecaca; }
-
-.add-box {
-  background: #f3faf5;
-  border: 2px dashed #b9dfc4;
-  border-radius: 16px;
-  padding: 16px;
-  margin-top: 16px;
-}
-.add-box h4 {
-  font-size: .95rem;
-  font-weight: 800;
-  color: var(--green-dark);
-  margin-bottom: 12px;
-}
-.add-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.add-grid .full { grid-column: 1/-1; }
-
-.section-title {
-  font-size: .95rem;
-  font-weight: 800;
-  color: var(--green-dark);
-  margin: 6px 0 12px;
-}
-.hint {
-  font-size: .82rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 12px;
-  line-height: 1.55;
-}
-
-.bulk-area {
-  width: 100%;
-  min-height: 170px;
-  padding: 13px;
-  border: 2px solid var(--border);
-  border-radius: 13px;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
-  font-size: .88rem;
-  font-weight: 600;
-  background: var(--bg);
-  outline: none;
-  resize: vertical;
-  line-height: 1.7;
-}
-.bulk-area:focus {
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 4px rgba(22,163,74,.12);
-}
-
-.lead-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  padding: 12px 14px;
-  margin-bottom: 9px;
-  font-size: .88rem;
-}
-.lead-item .top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 5px;
-}
-.lead-item .nm { font-weight: 800; color: var(--green-dark); }
-.lead-item .tm { font-size: .75rem; color: var(--muted); font-weight: 700; }
-.lead-item .mt { color: var(--muted); font-weight: 600; line-height: 1.5; }
-.lead-item .acts { display: flex; gap: 8px; margin-top: 9px; }
-
-/* टोस्ट (छोटा संदेश) */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 100px;
-  transform: translateX(-50%) translateY(20px);
-  background: #14532d;
-  color: #fff;
-  padding: 13px 26px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: .92rem;
-  z-index: 200;
-  opacity: 0;
-  pointer-events: none;
-  transition: .25s;
-  max-width: 90vw;
-  text-align: center;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* QR कोड */
-.qr-box { text-align: center; padding: 8px 0; }
-.qr-box img {
-  width: 230px; height: 230px;
-  border-radius: 16px;
-  border: 6px solid var(--card);
-  background: #fff;
-}
-.qr-box .lnk {
-  margin-top: 14px;
-  font-size: .82rem;
-  word-break: break-all;
-  font-weight: 700;
-  background: var(--bg);
-  padding: 11px 14px;
-  border-radius: 12px;
-  color: var(--green-dark);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   📱 मोबाइल के लिए अलग डिज़ाइन
-   ═══════════════════════════════════════════════════════════════════ */
-@media (max-width: 760px) {
-  .brand h1 { font-size: 1.02rem; }
-  .logo { width: 44px; height: 44px; flex-basis: 44px; font-size: 1.4rem; }
-  .hero-actions { width: 100%; }
-  .hero-actions .btn { flex: 1; padding: 11px 12px; font-size: .82rem; }
-  .rates-grid { grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 11px; }
-  .crop-card { padding: 14px 13px 12px; }
-  .price { font-size: 1.5rem; }
-  .crop-name { font-size: .96rem; }
-  .mobile-bar { display: flex; }
-  .edit-row { grid-template-columns: 26px 1fr 96px 40px; gap: 7px; }
-  .edit-row select { display: none; }
-  .add-grid, .form-grid, .calc-grid { grid-template-columns: 1fr; }
-  .calc-result .val { font-size: 1.6rem; }
-  .tool-btn, .mic-btn { width: 38px; height: 38px; }
-}
-
-/* प्रिंट करते समय */
-@media print {
-  .site-header, .hero-actions, .toolbar, .mobile-bar, .site-footer,
-  .contact-actions, .badge, .admin-ribbon, .stale-banner,
-  .calc-sec, .enquiry-sec, .nearby-sec, .mic-btn, .tool-btn,
-  .hero .live-pill { display: none !important; }
-  body { background: #fff; padding: 0; }
-  .crop-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
-  .contact { border-top: 2px solid #000; }
+@media (max-width:760px){
+  .brand h1{font-size:1.02rem}
+  .logo{width:44px;height:44px;flex-basis:44px;font-size:1.4rem}
+  .hero-actions{width:100%}
+  .hero-actions .btn{flex:1;padding:11px 12px;font-size:.82rem}
+  .rates-grid{grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:11px}
+  .crop-card{padding:14px 13px 12px}
+  .price{font-size:1.5rem}
+  .crop-name{font-size:.96rem}
+  .mobile-bar{display:flex}
+  .edit-row{grid-template-columns:26px 1fr 96px 40px;gap:7px}
+  .edit-row select{display:none}
+  .add-grid,.form-grid,.calc-grid{grid-template-columns:1fr}
+  .calc-result .val{font-size:1.6rem}
+  .tool-btn,.mic-btn{width:38px;height:38px}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     📄 HTML शरीर — वेबसाइट का ढाँचा (यहाँ टेक्स्ट और लेआउट है)
-     ═══════════════════════════════════════════════════════════════════ -->
-
-<!-- 🟠 एडमिन रिबन — सिर्फ़ दुकानदार को दिखेगा -->
 <div class="admin-ribbon hidden" id="adminRibbon">
-  <span class="left">
-    <span class="dot"></span>
-    <span data-i18n="adminModeOn">एडमिन मोड चालू — आपके पास पूरा कंट्रोल है</span>
-  </span>
+  <span class="left"><span class="dot"></span><span data-i18n="adminModeOn">एडमिन मोड चालू</span></span>
   <button id="openAdminFromRibbon">⚙️ <span data-i18n="openPanel">पैनल खोलें</span></button>
 </div>
 
-<!-- 🟡 "भाव पुराने हैं" चेतावनी -->
 <div class="stale-banner hidden" id="staleBanner">
-  <span>⚠️ <span data-i18n="staleWarning">भाव 24 घंटे से पुराने हैं — कृपया नए भाव लेकर आएँ</span></span>
+  <span>⚠️ <span data-i18n="staleWarning">भाव 24 घंटे से पुराने हैं</span></span>
   <button id="staleRefresh" data-i18n="refreshNow">अभी अपडेट करें</button>
 </div>
 
-<!-- 🟢 हेडर -->
 <header class="site-header">
   <div class="wrap header-inner">
     <div class="brand">
@@ -1103,68 +235,50 @@ body.hc .mobile-bar { background: #fff; }
       </div>
     </div>
     <div class="header-tools">
-      <label class="lang-wrap">
-        <span aria-hidden="true">🌐</span>
-        <select id="langSelect" aria-label="भाषा"></select>
-      </label>
-      <button class="tool-btn" id="hcBtn" title="हाई कॉन्ट्रास्ट" aria-label="High contrast">🌓</button>
-      <button class="tool-btn" id="fontDown" title="छोटा अक्षर">A−</button>
-      <button class="tool-btn" id="fontUp" title="बड़ा अक्षर">A+</button>
+      <label class="lang-wrap"><span>🌐</span><select id="langSelect"></select></label>
+      <button class="tool-btn" id="hcBtn" title="High contrast">🌓</button>
+      <button class="tool-btn" id="fontDown" title="छोटा">A−</button>
+      <button class="tool-btn" id="fontUp" title="बड़ा">A+</button>
     </div>
   </div>
 </header>
 
-<!-- 📅 हीरो सेक्शन -->
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
       <h2 data-i18n="todayRates">आज के भाव</h2>
       <p class="date" id="dateLine">—</p>
-      <span class="updated">
-        🕒 <span data-i18n="updatedAt">अंतिम अपडेट</span>: <span id="updatedAt">—</span>
-      </span>
-      <span class="live-pill" id="livePill">
-        <span class="live-dot"></span><span id="livePillText">LIVE</span>
-      </span>
+      <span class="updated">🕒 <span data-i18n="updatedAt">अंतिम अपडेट</span>: <span id="updatedAt">—</span></span>
+      <span class="live-pill" id="livePill"><span class="live-dot"></span><span>LIVE</span></span>
       <div class="hint" id="liveNote" style="margin-top:8px"></div>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-amber hidden" id="syncBtn">
-        🔄 <span data-i18n="syncNow">लाइव भाव लाएँ</span>
-      </button>
-      <button class="btn btn-ghost" id="speakBtn">
-        🔊 <span id="speakBtnLabel" data-i18n="listen">सुनें</span>
-      </button>
+      <button class="btn btn-amber hidden" id="syncBtn">🔄 <span data-i18n="syncNow">लाइव भाव लाएँ</span></button>
+      <button class="btn btn-ghost" id="speakBtn">🔊 <span id="speakBtnLabel" data-i18n="listen">सुनें</span></button>
       <button class="btn btn-ghost" id="shareBtn">📤 WhatsApp</button>
-      <button class="btn btn-ghost" id="printBtn">
-        🖨️ <span data-i18n="print">प्रिंट</span>
-      </button>
+      <button class="btn btn-ghost" id="printBtn">🖨️ <span data-i18n="print">प्रिंट</span></button>
     </div>
   </div>
 </section>
 
-<!-- 🔍 सर्च + फ़िल्टर -->
 <div class="wrap toolbar">
   <div class="search-box">
-    <span aria-hidden="true">🔍</span>
-    <input type="search" id="searchInput" data-i18n-ph="search"
-           placeholder="फसल खोजें…" autocomplete="off">
-    <button class="mic-btn" id="micBtn" title="बोलकर खोजें">🎤</button>
+    <span>🔍</span>
+    <input type="search" id="searchInput" data-i18n-ph="search" placeholder="फसल खोजें…" autocomplete="off">
+    <button class="mic-btn" id="micBtn">🎤</button>
   </div>
   <div class="chips" id="categoryChips"></div>
 </div>
 
-<!-- 🌾 भाव कार्ड्स -->
 <main class="wrap grid-section">
   <div class="rates-grid" id="ratesGrid"></div>
 </main>
 
-<!-- 🧮 फसल मूल्य कैलकुलेटर -->
 <section class="band alt calc-sec">
   <div class="wrap">
     <div class="sec-card">
       <h2 class="sec" data-i18n="calcTitle">🧮 मेरी फसल का अनुमानित मूल्य</h2>
-      <p class="secSub" data-i18n="calcSub">अपनी फसल और मात्रा चुनें — कुल अनुमानित राशि तुरंत देखें।</p>
+      <p class="secSub" data-i18n="calcSub">अपनी फसल और मात्रा चुनें।</p>
       <div class="calc-grid">
         <div class="calc-field">
           <label data-i18n="calcCrop">फसल चुनें</label>
@@ -1172,8 +286,7 @@ body.hc .mobile-bar { background: #fff; }
         </div>
         <div class="calc-field">
           <label data-i18n="calcQty">मात्रा</label>
-          <input type="number" id="calcQty" min="0" step="0.01"
-                 inputmode="decimal" placeholder="100">
+          <input type="number" id="calcQty" min="0" step="0.01" inputmode="decimal" placeholder="100">
         </div>
         <div class="calc-field">
           <label data-i18n="calcUnit">इकाई</label>
@@ -1190,150 +303,72 @@ body.hc .mobile-bar { background: #fff; }
         </div>
         <div class="brk" id="calcBreakdown"></div>
       </div>
-      <p class="form-note" data-i18n="calcHint">
-        ' यह अनुमानित राशि है। अंतिम भाव दुकान पर तौल और गुणवत्ता के अनुसार तय होगा और इसमें कोई मंडी और पल्लेदारी  शुल्क शामिल नहीं है ।'
-      </p>
+      <p class="form-note" data-i18n="calcHint">* अनुमानित राशि है। अंतिम भाव दुकान पर तय होगा।</p>
     </div>
   </div>
 </section>
 
-<!-- 🏬 आसपास की मंडियाँ (NEARBY में भरें) -->
 <section class="band nearby-sec hidden" id="nearbySec">
   <div class="wrap">
     <h2 class="sec" data-i18n="nearbyTitle">📍 आसपास की मंडियों के भाव</h2>
-    <p class="secSub" data-i18n="nearbySub">तुलना करें और सही मंडी चुनें।</p>
+    <p class="secSub" data-i18n="nearbySub">तुलना करें।</p>
     <div class="nearby-grid" id="nearbyGrid"></div>
   </div>
 </section>
 
-<!-- 📝 पूछताछ फ़ॉर्म -->
 <section class="band alt enquiry-sec">
   <div class="wrap">
     <div class="sec-card">
       <h2 class="sec" data-i18n="enquiryTitle">📝 बेचना है? पूछताछ भेजें</h2>
-      <p class="secSub" data-i18n="enquirySub">
-        अपनी फसल की जानकारी भरें — दुकानदार से सीधे व्हाट्सएप पर बात करें।
-      </p>
+      <p class="secSub" data-i18n="enquirySub">अपनी फसल की जानकारी भरें।</p>
       <div class="form-grid">
-        <div class="fld">
-          <label data-i18n="yourName">आपका नाम</label>
-          <input type="text" id="enqName" placeholder="जैसे: रामलाल" autocomplete="name">
-        </div>
-        <div class="fld">
-          <label data-i18n="yourPhone">मोबाइल नंबर</label>
-          <input type="tel" id="enqPhone" inputmode="numeric" maxlength="10"
-                 placeholder="10 अंकों का नंबर" autocomplete="tel">
-        </div>
-        <div class="fld">
-          <label data-i18n="yourCrop">फसल</label>
-          <select id="enqCrop"></select>
-        </div>
-        <div class="fld">
-          <label data-i18n="yourQty">मात्रा (क्विंटल)</label>
-          <input type="number" id="enqQty" min="0" step="0.1"
-                 inputmode="decimal" placeholder="50">
-        </div>
-        <div class="fld full">
-          <label data-i18n="yourMsg">अतिरिक्त जानकारी (वैकल्पिक)</label>
-          <textarea id="enqMsg" placeholder="जैसे: गेहूं सूखा और साफ है, कल ला सकता हूँ…"></textarea>
-        </div>
-        <div class="full">
-          <button class="btn btn-primary btn-block" id="enqSubmit">
-            💬 <span data-i18n="sendWhatsApp">व्हाट्सएप पर भेजें</span>
-          </button>
-        </div>
+        <div class="fld"><label data-i18n="yourName">आपका नाम</label><input type="text" id="enqName" placeholder="जैसे: रामलाल"></div>
+        <div class="fld"><label data-i18n="yourPhone">मोबाइल नंबर</label><input type="tel" id="enqPhone" inputmode="numeric" maxlength="10" placeholder="10 अंक"></div>
+        <div class="fld"><label data-i18n="yourCrop">फसल</label><select id="enqCrop"></select></div>
+        <div class="fld"><label data-i18n="yourQty">मात्रा (क्विंटल)</label><input type="number" id="enqQty" min="0" step="0.1" inputmode="decimal" placeholder="50"></div>
+        <div class="fld full"><label data-i18n="yourMsg">अतिरिक्त जानकारी (वैकल्पिक)</label><textarea id="enqMsg" placeholder="जैसे: गेहूं सूखा और साफ है"></textarea></div>
+        <div class="full"><button class="btn btn-primary btn-block" id="enqSubmit">💬 <span data-i18n="sendWhatsApp">व्हाट्सएप पर भेजें</span></button></div>
       </div>
-      <p class="form-note" data-i18n="enquiryNote">
-        आपकी जानकारी सुरक्षित रहेगी और सिर्फ़ दुकानदार को भेजी जाएगी।
-      </p>
     </div>
   </div>
 </section>
 
-<!-- 📞 संपर्क -->
 <section class="contact">
   <div class="wrap">
     <h2 class="sec" data-i18n="contactTitle">हमसे संपर्क करें</h2>
     <div class="contact-grid">
-      <div class="contact-card">
-        <span class="ico">👤</span>
-        <div>
-          <div class="lbl" data-i18n="ownerName">मालिक का नाम</div>
-          <div class="val" id="cOwner">—</div>
-        </div>
-      </div>
-      <div class="contact-card">
-        <span class="ico">📞</span>
-        <div>
-          <div class="lbl" data-i18n="phone">मोबाइल नंबर</div>
-          <div class="val"><a id="cPhone" href="#">—</a></div>
-        </div>
-      </div>
-      <div class="contact-card">
-        <span class="ico">📍</span>
-        <div>
-          <div class="lbl" data-i18n="address">पता</div>
-          <div class="val" id="cAddress">—</div>
-        </div>
-      </div>
+      <div class="contact-card"><span class="ico">👤</span><div><div class="lbl" data-i18n="ownerName">मालिक का नाम</div><div class="val" id="cOwner">—</div></div></div>
+      <div class="contact-card"><span class="ico">📞</span><div><div class="lbl" data-i18n="phone">मोबाइल नंबर</div><div class="val"><a id="cPhone" href="#">—</a></div></div></div>
+      <div class="contact-card"><span class="ico">📍</span><div><div class="lbl" data-i18n="address">पता</div><div class="val" id="cAddress">—</div></div></div>
     </div>
     <div class="contact-actions">
       <a class="btn btn-primary" id="callBtn" href="tel:">📞 <span data-i18n="callNow">कॉल करें</span></a>
-      <a class="btn btn-ghost" id="waBtn" href="#" target="_blank" rel="noopener">
-        💬 <span data-i18n="whatsapp">व्हाट्सएप</span>
-      </a>
+      <a class="btn btn-ghost" id="waBtn" href="#" target="_blank" rel="noopener">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
       <button class="btn btn-ghost" id="qrBtn">📱 <span data-i18n="qrShow">QR कोड</span></button>
     </div>
   </div>
 </section>
 
-<!-- ⬛ फुटर -->
 <footer class="site-footer">
   <div class="wrap">
-    <div class="disclaimer" data-i18n="disclaimer">
-      भाव केवल जानकारी के लिए हैं। अंतिम भाव दुकान पर तौल, नमी और गुणवत्ता के अनुसार तय होगा।
-    </div>
-    <p>
-      © <span id="yearEl"></span> <span id="footShopName">नवीन मंडी खागा फतेहपुर</span>
-      — <span data-i18n="footerNote">किसानों के लिए समर्पित</span>
-    </p>
-    <button class="owner-link" id="ownerLoginBtn">
-      🔐 <span data-i18n="adminLogin">दुकानदार लॉगिन</span>
-    </button>
-    <button class="owner-link hidden" id="ownerLogoutBtn">
-      🚪 <span data-i18n="logout">लॉगआउट</span>
-    </button>
+    <div class="disclaimer" data-i18n="disclaimer">भाव केवल जानकारी के लिए हैं।</div>
+    <p>© <span id="yearEl"></span> <span id="footShopName">नवीन मंडी खागा फतेहपुर</span> — <span data-i18n="footerNote">किसानों के लिए समर्पित</span></p>
+    <button class="owner-link" id="ownerLoginBtn">🔐 <span data-i18n="adminLogin">दुकानदार लॉगिन</span></button>
+    <button class="owner-link hidden" id="ownerLogoutBtn">🚪 <span data-i18n="logout">लॉगआउट</span></button>
   </div>
 </footer>
 
-<!-- 📱 मोबाइल की बार -->
 <div class="mobile-bar">
-  <a class="btn btn-primary" id="callBtnM" href="tel:">
-    📞 <span data-i18n="callNow">कॉल करें</span>
-  </a>
-  <a class="btn btn-ghost" id="waBtnM" href="#" target="_blank" rel="noopener">
-    💬 <span data-i18n="whatsapp">व्हाट्सएप</span>
-  </a>
+  <a class="btn btn-primary" id="callBtnM" href="tel:">📞 <span data-i18n="callNow">कॉल करें</span></a>
+  <a class="btn btn-ghost" id="waBtnM" href="#" target="_blank" rel="noopener">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
 </div>
 
-<!-- 🪟 PIN मोडल -->
 <div class="backdrop hidden" id="pinModal">
   <div class="modal small">
-    <div class="modal-head">
-      <h3 data-i18n="adminLogin">दुकानदार लॉगिन</h3>
-      <button class="close-x" data-close="pinModal">✕</button>
-    </div>
+    <div class="modal-head"><h3 data-i18n="adminLogin">दुकानदार लॉगिन</h3><button class="close-x" data-close="pinModal">✕</button></div>
     <div class="modal-body">
-      <div class="lock-hero">
-        <div class="big-lock">🔒</div>
-        <h4 data-i18n="loginTitle">सिर्फ़ दुकानदार के लिए</h4>
-        <p data-i18n="loginSub">किसानों को लॉगिन की ज़रूरत नहीं है।</p>
-      </div>
-      <div class="field">
-        <label data-i18n="enterPin">पिन दर्ज करें</label>
-        <input type="password" id="pinInput" class="pin-input"
-               inputmode="numeric" maxlength="6" placeholder="••••">
-      </div>
+      <div class="lock-hero"><div class="big-lock">🔒</div><h4 data-i18n="loginTitle">सिर्फ़ दुकानदार के लिए</h4><p data-i18n="loginSub">किसानों को लॉगिन की ज़रूरत नहीं।</p></div>
+      <div class="field"><label data-i18n="enterPin">पिन दर्ज करें</label><input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="6" placeholder="••••"></div>
       <p class="err" id="pinErr"></p>
     </div>
     <div class="modal-foot">
@@ -1343,73 +378,40 @@ body.hc .mobile-bar { background: #fff; }
   </div>
 </div>
 
-<!-- 🪟 एडमिन पैनल -->
 <div class="backdrop hidden" id="adminModal">
   <div class="modal">
-    <div class="modal-head">
-      <h3 data-i18n="adminPanel">दुकानदार पैनल</h3>
-      <button class="close-x" data-close="adminModal">✕</button>
-    </div>
-
+    <div class="modal-head"><h3 data-i18n="adminPanel">दुकानदार पैनल</h3><button class="close-x" data-close="adminModal">✕</button></div>
     <div class="tabs">
       <button class="tab active" data-tab="rates" data-i18n="editRates">भाव बदलें</button>
       <button class="tab" data-tab="bulk" data-i18n="bulkTab">बल्क अपडेट</button>
       <button class="tab" data-tab="leads" data-i18n="leadsTab">पूछताछ</button>
       <button class="tab" data-tab="shop" data-i18n="shopSettings">दुकान</button>
     </div>
-
     <div class="modal-body">
-
-      <!-- भाव टैब -->
       <div id="tab-rates">
-        <p class="section-title" data-i18n="editRatesHint">
-          नीचे भाव बदलें और सेव दबाएँ। पुराना भाव अपने आप याद रहेगा।
-        </p>
+        <p class="section-title" data-i18n="editRatesHint">नीचे भाव बदलें और सेव दबाएँ।</p>
         <div id="rateEditList"></div>
-
         <div class="add-box">
           <h4 data-i18n="addCrop">➕ नई फसल जोड़ें</h4>
           <div class="add-grid">
-            <div class="full">
-              <input id="newCropName" data-i18n-ph="cropName" placeholder="फसल का नाम">
-            </div>
-            <div>
-              <input id="newCropPrice" type="number" min="0" step="0.01"
-                     data-i18n-ph="price" placeholder="भाव (₹/किलो)">
-            </div>
-            <div>
-              <select id="newCropUnit"></select>
-            </div>
-            <div class="full">
-              <select id="newCropCat"></select>
-            </div>
-            <div class="full">
-              <button class="btn btn-primary btn-block" id="addCropBtn"
-                      data-i18n="addCrop">नई फसल जोड़ें</button>
-            </div>
+            <div class="full"><input id="newCropName" data-i18n-ph="cropName" placeholder="फसल का नाम"></div>
+            <div><input id="newCropPrice" type="number" min="0" step="0.01" placeholder="भाव (₹/किलो)"></div>
+            <div><select id="newCropUnit"></select></div>
+            <div class="full"><select id="newCropCat"></select></div>
+            <div class="full"><button class="btn btn-primary btn-block" id="addCropBtn" data-i18n="addCrop">नई फसल जोड़ें</button></div>
           </div>
         </div>
       </div>
-
-      <!-- बल्क टैब -->
       <div id="tab-bulk" class="hidden">
         <p class="section-title" data-i18n="bulkTitle">📋 बल्क भाव अपडेट (CSV)</p>
-        <p class="hint" data-i18n="bulkHint">
-          हर लाइन में लिखें: <b>फसल-आईडी, भाव</b> — जैसे:<br>
-          <code>wheat,24.80</code><br>
-          <code>chana,54.50</code>
-        </p>
-        <div id="bulkIds" class="hint"
-             style="background:var(--bg);padding:10px 13px;border-radius:11px;font-family:monospace"></div>
-        <textarea class="bulk-area" id="bulkArea"
-                  placeholder="wheat,24.80&#10;chana,54.50"></textarea>
+        <p class="hint" data-i18n="bulkHint">हर लाइन में: फसल-आईडी, भाव</p>
+        <div id="bulkIds" class="hint" style="background:var(--bg);padding:10px 13px;border-radius:11px;font-family:monospace"></div>
+        <textarea class="bulk-area" id="bulkArea" placeholder="wheat,24.80&#10;chana,54.50"></textarea>
         <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
           <button class="btn btn-primary" id="bulkApply" data-i18n="bulkApply">लागू करें</button>
           <button class="btn btn-ghost" id="bulkLoadCurrent" data-i18n="bulkLoad">मौजूदा भाव भरें</button>
         </div>
       </div>
-
-      <!-- लीड्स टैब -->
       <div id="tab-leads" class="hidden">
         <p class="section-title" data-i18n="leadTitle">📥 किसानों की पूछताछ</p>
         <div id="leadList"></div>
@@ -1418,38 +420,16 @@ body.hc .mobile-bar { background: #fff; }
           <button class="btn btn-ghost btn-sm" id="exportLeads" data-i18n="leadExport">CSV डाउनलोड</button>
         </div>
       </div>
-
-      <!-- दुकान टैब -->
       <div id="tab-shop" class="hidden">
-        <div class="field">
-          <label data-i18n="shopName">दुकान का नाम</label>
-          <input id="inShopName" type="text">
-        </div>
-        <div class="field">
-          <label data-i18n="ownerName">मालिक का नाम</label>
-          <input id="inOwner" type="text">
-        </div>
-        <div class="field">
-          <label data-i18n="phone">मोबाइल नंबर</label>
-          <input id="inPhone" type="tel" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label data-i18n="whatsapp">व्हाट्सएप नंबर</label>
-          <input id="inWhatsapp" type="tel" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label data-i18n="address">पता</label>
-          <input id="inAddress" type="text">
-        </div>
-        <div class="field">
-          <label data-i18n="changePin">लॉगिन पिन (4-6 अंक)</label>
-          <input id="inPin" type="text" inputmode="numeric" maxlength="6">
-        </div>
+        <div class="field"><label data-i18n="shopName">दुकान का नाम</label><input id="inShopName" type="text"></div>
+        <div class="field"><label data-i18n="ownerName">मालिक का नाम</label><input id="inOwner" type="text"></div>
+        <div class="field"><label data-i18n="phone">मोबाइल नंबर</label><input id="inPhone" type="tel" inputmode="numeric"></div>
+        <div class="field"><label data-i18n="whatsapp">व्हाट्सएप नंबर</label><input id="inWhatsapp" type="tel" inputmode="numeric"></div>
+        <div class="field"><label data-i18n="address">पता</label><input id="inAddress" type="text"></div>
+        <div class="field"><label data-i18n="changePin">लॉगिन पिन (4-6 अंक)</label><input id="inPin" type="text" inputmode="numeric" maxlength="6"></div>
         <p class="hint" data-i18n="pinWarn">⚠️ पिन याद रखें।</p>
       </div>
-
     </div>
-
     <div class="modal-foot">
       <button class="btn btn-danger" id="resetBtn" data-i18n="reset">रीसेट</button>
       <button class="btn btn-ghost" id="logoutBtn2" data-i18n="logout">लॉगआउट</button>
@@ -1458,20 +438,14 @@ body.hc .mobile-bar { background: #fff; }
   </div>
 </div>
 
-<!-- 🪟 QR मोडल -->
 <div class="backdrop hidden" id="qrModal">
   <div class="modal small">
-    <div class="modal-head">
-      <h3 data-i18n="qrTitle">📱 QR कोड</h3>
-      <button class="close-x" data-close="qrModal">✕</button>
-    </div>
+    <div class="modal-head"><h3 data-i18n="qrTitle">📱 QR कोड</h3><button class="close-x" data-close="qrModal">✕</button></div>
     <div class="modal-body">
       <div class="qr-box">
         <img id="qrImg" alt="QR Code" src="">
         <div class="lnk" id="qrLink"></div>
-        <p class="hint" style="margin-top:12px" data-i18n="qrSub">
-          इस QR कोड को दुकान पर लगाएँ।
-        </p>
+        <p class="hint" style="margin-top:12px" data-i18n="qrSub">दुकान पर लगाएँ।</p>
       </div>
     </div>
     <div class="modal-foot">
@@ -1481,233 +455,92 @@ body.hc .mobile-bar { background: #fff; }
   </div>
 </div>
 
-<!-- छोटा संदेश दिखाने वाला बॉक्स -->
 <div class="toast" id="toast"></div>
 
-
-
 <script>
-/* ═══════════════════════════════════════════════════════════════════════════
-   🧠 JAVASCRIPT — वेबसाइट का दिमाग़
-   ═══════════════════════════════════════════════════════════════════════════
-   इस हिस्से में वह सब कोड है जो वेबसाइट को काम कराता है।
+/* ═══════════════════════════════════════════════════════════════════
+   🌾 किसान मंडी भाव — JavaScript
+   ═══════════════════════════════════════════════════════════════════
+   📌 बदलने के लिए:
+   • STEP 1: DATA_VERSION  (कोड बदलने पर +1)
+   • STEP 2: SHOP          (दुकान की जानकारी, मालिक का नाम)
+   • STEP 3: LIVE          (API settings)
+   • STEP 4: CROPS         (फसलों के भाव)
+   • STEP 5: NEARBY        (आसपास की मंडियाँ)
+   ═══════════════════════════════════════════════════════════════════ */
 
-   📖 पढ़ने का तरीक़ा:
-   हर बड़ा हिस्सा "═══ भाग N ═══" से शुरू होता है।
-   सबसे ज़रूरी हिस्सा है "भाग 1: सेटिंग्स" — बाक़ी अपने आप चलेगा।
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* 📌 STEP 1: DATA_VERSION — कोड बदलने पर +1 करें */
+const DATA_VERSION = 5;
 
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 1: सेटिंग्स — यहाँ अपनी जानकारी भरें ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-
-/* ─────────────────────────────────────────────────────────────────────────
-   📌 STEP 1: DATA_VERSION — कोड बदलने पर इसे बढ़ाएँ
-   ─────────────────────────────────────────────────────────────────────────
-   जब भी आप नीचे SHOP, CROPS, या LIVE में कुछ बदलें,
-   इस नंबर को 1 से 2, 2 से 3 कर दें। फिर पेज refresh करें।
-   इससे पुराना सेव किया हुआ डेटा हट जाएगा और नया लागू होगा।
-   ───────────────────────────────────────────────────────────────────────── */
-const DATA_VERSION = 3;
-
-
-/* ─────────────────────────────────────────────────────────────────────────
-   📌 STEP 2: दुकान की जानकारी
-   ───────────────────────────────────────────────────────────────────────── */
+/* 📌 STEP 2: दुकान की जानकारी — यहाँ अपना नाम, फ़ोन, पता डालें */
 const SHOP = {
-  name:     'दुकान नं.8 नवीन मंडी खागा फतेहपुर',              /* दुकान का नाम */
-  owner:    'Dinesh kesharwani ',                                /* मालिक का नाम */
-  phone:    '7380849700',                           /* मोबाइल नंबर */
-  whatsapp: '7380849700',                           /* व्हाट्सएप नंबर */
-  address:  'दुकान नं.8 नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)', /* पता */
-  pin:      '2008'                                  /* एडमिन लॉगिन पिन */
+  name:     'नवीन मंडी खागा फतेहपुर',
+  owner:    'shiva',                 /* ⬅️ मालिक का नाम यहाँ डालें */
+  phone:    'xxxxxxxx70',
+  whatsapp: 'xxxxxxxx70',
+  address:  'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)',
+  pin:      '1234'
 };
 
-
-/* ─────────────────────────────────────────────────────────────────────────
-   📌 STEP 3: लाइव भाव API (वैकल्पिक)
-   ─────────────────────────────────────────────────────────────────────────
-   👉 असली मंडी भाव लाने के लिए:
-      1. data.gov.in पर मुफ़्त रजिस्टर करें
-      2. API key लें
-      3. नीचे endpoint और apiKey में डालें
-
-   👉 अगर endpoint खाली ('') छोड़ेंगे तो डेमो मोड चलेगा।
-   ───────────────────────────────────────────────────────────────────────── */
+/* 📌 STEP 3: लाइव भाव API — endpoint खाली = डेमो मोड */
 const LIVE = {
-  endpoint:  '',                 /* API URL — खाली = डेमो मोड */
-  apiKey:    '',                 /* data.gov.in की key */
-  refreshMs: 5 * 60 * 1000,      /* हर 5 मिनट में ऑटो-अपडेट */
-  volatility: 0.012,             /* डेमो में ±1.2% उतार-चढ़ाव */
-  district:  'Fatehpur',         /* ज़िला */
-  market:    'Khaga',            /* मंडी का नाम */
-  staleHours: 24                 /* इतने घंटे बाद चेतावनी */
+  endpoint:  '',
+  apiKey:    '',
+  refreshMs: 5 * 60 * 1000,
+  volatility: 0.012,
+  district:  'Fatehpur',
+  market:    'Khaga',
+  staleHours: 24
 };
 
-
-/* ─────────────────────────────────────────────────────────────────────────
-   📌 STEP 4: फसलों की सूची और भाव
-   ─────────────────────────────────────────────────────────────────────────
-   हर फसल का अपना { ... } ब्लॉक है।
-
-   🔹 भाव बदलने के लिए: price: 24.50  का नंबर बदलें
-   🔹 नई फसल जोड़ने के लिए: नीचे कोई ब्लॉक कॉपी करके ऊपर जोड़ें
-   🔹 फसल हटाने के लिए: उसका पूरा { ... } डिलीट करें
-
-   📋 cat के विकल्प:
-      'cereal' = अनाज  |  'millet' = मोटे अनाज  |  'pulse' = दालें
-   📋 unit के विकल्प:
-      'kg' = किलो  |  'quintal' = क्विंटल
-
-   💡 price = आज का भाव
-   💡 prev  = पिछला भाव (इससे ▲/▼ दिखता है)
-   💡 base  = डेमो सिमुलेशन का केंद्र-भाव
-   ───────────────────────────────────────────────────────────────────────── */
+/* 📌 STEP 4: फसलों की सूची और भाव — price = ₹/किलो */
 const CROPS = [
-
-  /* ---------- अनाज (CEREALS) ---------- */
-  {
-    id: 'wheat', emoji: '🌾', cat: 'cereal', unit: 'kg',
-    price: 24.50, prev: 24.20, base: 24.50,
-    apiKeys: ['wheat','gehun','गेहूं'],
-    names: {
-      hi:'गेहूं', en:'Wheat', mr:'गहू', pa:'ਕਣਕ',
-      gu:'ઘઉં', bn:'গম', ta:'கோதுமை', te:'గోధుమ'
-    }
-  },
-  {
-    id: 'paddy', emoji: '🌾', cat: 'cereal', unit: 'kg',
-    price: 23.00, prev: 23.10, base: 23.00,
-    apiKeys: ['paddy','dhan','धान','rice'],
-    names: {
-      hi:'धान (मोटा)', en:'Paddy', mr:'भात', pa:'ਝੋਨਾ',
-      gu:'ડાંગર', bn:'ধান', ta:'நெல்', te:'వరి'
-    }
-  },
-  {
-    id: 'maize', emoji: '🌽', cat: 'cereal', unit: 'kg',
-    price: 21.20, prev: 21.20, base: 21.20,
-    apiKeys: ['maize','makka','मक्का','corn'],
-    names: {
-      hi:'मक्का', en:'Maize', mr:'मका', pa:'ਮੱਕੀ',
-      gu:'મકાઈ', bn:'ভুট্টা', ta:'மக்காச்சோளம்', te:'మొక్కజొన్న'
-    }
-  },
-
-  /* ---------- मोटे अनाज (MILLETS) ---------- */
-  {
-    id: 'bajra', emoji: '🌾', cat: 'millet', unit: 'kg',
-    price: 25.00, prev: 24.60, base: 25.00,
-    apiKeys: ['bajra','pearl millet','बाजरा'],
-    names: {
-      hi:'बाजरा', en:'Pearl Millet (Bajra)', mr:'बाजरी', pa:'ਬਾਜਰਾ',
-      gu:'બાજરી', bn:'বাজরা', ta:'கம்பு', te:'సజ్జలు'
-    }
-  },
-  {
-    id: 'jowar', emoji: '🌾', cat: 'millet', unit: 'kg',
-    price: 29.00, prev: 29.00, base: 29.00,
-    apiKeys: ['jowar','sorghum','ज्वार'],
-    names: {
-      hi:'ज्वार', en:'Sorghum (Jowar)', mr:'ज्वारी', pa:'ਜਵਾਰ',
-      gu:'જુવાર', bn:'জোয়ার', ta:'சோளம்', te:'జొన్నలు'
-    }
-  },
-  {
-    id: 'ragi', emoji: '🌾', cat: 'millet', unit: 'kg',
-    price: 32.00, prev: 31.40, base: 32.00,
-    apiKeys: ['ragi','finger millet','रागी'],
-    names: {
-      hi:'रागी (मंडुआ)', en:'Finger Millet (Ragi)', mr:'नाचणी', pa:'ਰਾਗੀ',
-      gu:'રાગી', bn:'রাগি', ta:'ராகி', te:'రాగి'
-    }
-  },
-  {
-    id: 'kangni', emoji: '🌾', cat: 'millet', unit: 'kg',
-    price: 35.00, prev: 35.00, base: 35.00,
-    apiKeys: ['kangni','foxtail millet','कंगनी'],
-    names: {
-      hi:'कंगनी (काकुन)', en:'Foxtail Millet (Kangni)', mr:'कांग', pa:'ਕੰਗਣੀ',
-      gu:'કાંગ', bn:'কাঙ্গনি', ta:'தினை', te:'కొర్రలు'
-    }
-  },
-
-  /* ---------- दालें (PULSES) ---------- */
-  {
-    id: 'chana', emoji: '🫘', cat: 'pulse', unit: 'kg',
-    price: 54.00, prev: 53.50, base: 54.00,
-    apiKeys: ['chana','gram','चना','chickpea'],
-    names: {
-      hi:'चना', en:'Chickpea (Chana)', mr:'हरभरा', pa:'ਛੋਲੇ',
-      gu:'ચણા', bn:'ছোলা', ta:'கொண்டைக்கடலை', te:'శనగ'
-    }
-  },
-  {
-    id: 'tur', emoji: '🫘', cat: 'pulse', unit: 'kg',
-    price: 70.00, prev: 71.50, base: 70.00,
-    apiKeys: ['tur','arhar','तूर','pigeon pea'],
-    names: {
-      hi:'अरहर (तूर)', en:'Pigeon Pea (Tur)', mr:'तूर', pa:'ਅਰਹਰ',
-      gu:'તુવેર', bn:'অড়হর', ta:'துவரை', te:'కంది'
-    }
-  },
-  {
-    id: 'moong', emoji: '🫘', cat: 'pulse', unit: 'kg',
-    price: 75.00, prev: 75.00, base: 75.00,
-    apiKeys: ['moong','green gram','मूंग'],
-    names: {
-      hi:'मूंग', en:'Green Gram (Moong)', mr:'मूग', pa:'ਮੂੰਗ',
-      gu:'મગ', bn:'মুগ', ta:'பாசிப்பயறு', te:'పెసర'
-    }
-  },
-  {
-    id: 'urad', emoji: '🫘', cat: 'pulse', unit: 'kg',
-    price: 72.00, prev: 70.50, base: 72.00,
-    apiKeys: ['urad','black gram','उड़द'],
-    names: {
-      hi:'उड़द', en:'Black Gram (Urad)', mr:'उडीद', pa:'ਮਾਸ਼',
-      gu:'અડદ', bn:'মাসকলাই', ta:'உளுந்து', te:'మినుము'
-    }
-  },
-  {
-    id: 'masoor', emoji: '🫘', cat: 'pulse', unit: 'kg',
-    price: 60.00, prev: 60.00, base: 60.00,
-    apiKeys: ['masoor','lentil','मसूर'],
-    names: {
-      hi:'मसूर', en:'Lentil (Masoor)', mr:'मसूर', pa:'ਮਸਰ',
-      gu:'મસૂર', bn:'মসুর', ta:'மைசூர்ப் பருப்பு', te:'మసూర్'
-    }
-  }
+  { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50,
+    apiKeys:['wheat','gehun','गेहूं'],
+    names:{hi:'गेहूं',en:'Wheat',mr:'गहू',pa:'ਕਣਕ',gu:'ઘઉં',bn:'গম',ta:'கோதுமை',te:'గోధుమ'} },
+  { id:'paddy', emoji:'🌾', cat:'cereal', unit:'kg', price:23.00, prev:23.10, base:23.00,
+    apiKeys:['paddy','dhan','धान'],
+    names:{hi:'धान (मोटा)',en:'Paddy',mr:'भात',pa:'ਝੋਨਾ',gu:'ડાંગર',bn:'ধান',ta:'நெல்',te:'వరి'} },
+  { id:'maize', emoji:'🌽', cat:'cereal', unit:'kg', price:21.20, prev:21.20, base:21.20,
+    apiKeys:['maize','makka','मक्का'],
+    names:{hi:'मक्का',en:'Maize',mr:'मका',pa:'ਮੱਕੀ',gu:'મકાઈ',bn:'ভুট্টা',ta:'மக்காச்சோளம்',te:'మొక్కజొన్న'} },
+  { id:'bajra', emoji:'🌾', cat:'millet', unit:'kg', price:25.00, prev:24.60, base:25.00,
+    apiKeys:['bajra','pearl millet','बाजरा'],
+    names:{hi:'बाजरा',en:'Pearl Millet (Bajra)',mr:'बाजरी',pa:'ਬਾਜਰਾ',gu:'બાજરી',bn:'বাজরা',ta:'கம்பு',te:'సజ్జలు'} },
+  { id:'jowar', emoji:'🌾', cat:'millet', unit:'kg', price:29.00, prev:29.00, base:29.00,
+    apiKeys:['jowar','sorghum','ज्वार'],
+    names:{hi:'ज्वार',en:'Sorghum (Jowar)',mr:'ज्वारी',pa:'ਜਵਾਰ',gu:'જુવાર',bn:'জোয়ার',ta:'சோளம்',te:'జొన్నలు'} },
+  { id:'ragi', emoji:'🌾', cat:'millet', unit:'kg', price:32.00, prev:31.40, base:32.00,
+    apiKeys:['ragi','finger millet','रागी'],
+    names:{hi:'रागी (मंडुआ)',en:'Finger Millet (Ragi)',mr:'नाचणी',pa:'ਰਾਗੀ',gu:'રાગી',bn:'রাগি',ta:'ராகி',te:'రాగి'} },
+  { id:'kangni', emoji:'🌾', cat:'millet', unit:'kg', price:35.00, prev:35.00, base:35.00,
+    apiKeys:['kangni','कंगनी'],
+    names:{hi:'कंगनी (काकुन)',en:'Foxtail Millet (Kangni)',mr:'कांग',pa:'ਕੰਗਣੀ',gu:'કાંગ',bn:'কাঙ্গনি',ta:'தினை',te:'కొర్రలు'} },
+  { id:'chana', emoji:'🫘', cat:'pulse', unit:'kg', price:54.00, prev:53.50, base:54.00,
+    apiKeys:['chana','gram','चना','chickpea'],
+    names:{hi:'चना',en:'Chickpea (Chana)',mr:'हरभरा',pa:'ਛੋਲੇ',gu:'ચણા',bn:'ছোলা',ta:'கொண்டைக்கடலை',te:'శనగ'} },
+  { id:'tur', emoji:'🫘', cat:'pulse', unit:'kg', price:70.00, prev:71.50, base:70.00,
+    apiKeys:['tur','arhar','तूर','pigeon pea'],
+    names:{hi:'अरहर (तूर)',en:'Pigeon Pea (Tur)',mr:'तूर',pa:'ਅਰਹਰ',gu:'તુવેર',bn:'অড়হর',ta:'துவரை',te:'కంది'} },
+  { id:'moong', emoji:'🫘', cat:'pulse', unit:'kg', price:75.00, prev:75.00, base:75.00,
+    apiKeys:['moong','green gram','मूंग'],
+    names:{hi:'मूंग',en:'Green Gram (Moong)',mr:'मूग',pa:'ਮੂੰਗ',gu:'મગ',bn:'মুগ',ta:'பாசிப்பயறு',te:'పెసర'} },
+  { id:'urad', emoji:'🫘', cat:'pulse', unit:'kg', price:72.00, prev:70.50, base:72.00,
+    apiKeys:['urad','black gram','उड़द'],
+    names:{hi:'उड़द',en:'Black Gram (Urad)',mr:'उडीद',pa:'ਮਾਸ਼',gu:'અડદ',bn:'মাসকলাই',ta:'உளுந்து',te:'మినుము'} },
+  { id:'masoor', emoji:'🫘', cat:'pulse', unit:'kg', price:60.00, prev:60.00, base:60.00,
+    apiKeys:['masoor','lentil','मसूर'],
+    names:{hi:'मसूर',en:'Lentil (Masoor)',mr:'मसूर',pa:'ਮਸਰ',gu:'મસૂર',bn:'মসুর',ta:'மைசூர்ப் பருப்பு',te:'మసూర్'} }
 ];
 
-/* कौन-कौन सी कैटेगरी हैं */
-const CATEGORIES = ['cereal', 'millet', 'pulse'];
+const CATEGORIES = ['cereal','millet','pulse'];
 
-
-/* ─────────────────────────────────────────────────────────────────────────
-   📌 STEP 5: आसपास की मंडियाँ (वैकल्पिक)
-   ─────────────────────────────────────────────────────────────────────────
-   अगर आप आसपास की मंडियों के भाव दिखाना चाहते हैं, तो नीचे लिखें।
-   खाली छोड़ने पर यह सेक्शन छिप जाएगा।
-
-   उदाहरण:
-   { name:'फतेहपुर मंडी', prices:{ wheat:24.80, chana:54.50 } },
-   ───────────────────────────────────────────────────────────────────────── */
+/* 📌 STEP 5: आसपास की मंडियाँ (खाली = छिपा रहेगा) */
 const NEARBY = [
-  // { name:'फतेहपुर मंडी', prices:{ wheat:24.80, chana:54.50, tur:70.50 } },
+  // { name:'फतेहपुर मंडी', prices:{ wheat:24.80, chana:54.50 } },
 ];
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 2: भाषाएँ (TRANSLATIONS) ═══
-   ═══════════════════════════════════════════════════════════════════════════
-   हर भाषा का अपना कोड है। नई भाषा जोड़ने के लिए नीचे देखें।
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* उपलब्ध भाषाएँ */
+/* ═══ भाषाएँ ═══ */
 const LANGS = [
   { code:'hi', label:'हिंदी',   speech:'hi-IN' },
   { code:'en', label:'English', speech:'en-IN' },
@@ -1719,236 +552,109 @@ const LANGS = [
   { code:'te', label:'తెలుగు',  speech:'te-IN' }
 ];
 
-/* हर भाषा के टेक्स्ट। बाक़ी भाषाएँ हिंदी पर fallback करेंगी। */
 const I18N = {
-  /* ----- हिंदी ----- */
   hi: {
-    tagline:'आज के ताज़ा मंडी भाव',
-    todayRates:'आज के भाव',
-    updatedAt:'अंतिम अपडेट',
-    search:'फसल खोजें…',
-    all:'सभी',
-    catCereal:'अनाज',
-    catMillet:'मोटे अनाज',
-    catPulse:'दालें',
-    perQuintal:'प्रति क्विंटल',
-    perKg:'प्रति किलो',
+    tagline:'आज के ताज़ा मंडी भाव', todayRates:'आज के भाव', updatedAt:'अंतिम अपडेट',
+    search:'फसल खोजें…', all:'सभी',
+    catCereal:'अनाज', catMillet:'मोटे अनाज', catPulse:'दालें',
+    perQuintal:'प्रति क्विंटल', perKg:'प्रति किलो',
     up:'बढ़त', down:'गिरावट', same:'स्थिर',
     callNow:'कॉल करें', whatsapp:'व्हाट्सएप',
     listen:'सुनें', stopSpeaking:'रोकें',
-    noResults:'कोई फसल नहीं मिली',
-    contactTitle:'हमसे संपर्क करें',
-    adminLogin:'दुकानदार लॉगिन',
-    enterPin:'पिन दर्ज करें',
-    login:'लॉगिन',
-    loginTitle:'सिर्फ़ दुकानदार के लिए',
-    loginSub:'किसानों को लॉगिन की ज़रूरत नहीं है।',
-    wrongPin:'गलत पिन, फिर कोशिश करें',
-    cancel:'रद्द करें',
-    save:'सेव करें',
-    shopName:'दुकान का नाम',
-    ownerName:'मालिक का नाम',
-    phone:'मोबाइल नंबर',
-    address:'पता',
-    editRates:'भाव बदलें',
-    addCrop:'नई फसल जोड़ें',
-    cropName:'फसल का नाम',
-    price:'भाव',
-    unit:'इकाई',
-    remove:'हटाएं',
-    logout:'लॉगआउट',
-    saved:'सेव हो गया ✓',
-    print:'प्रिंट करें',
-    shopSettings:'दुकान',
-    adminPanel:'दुकानदार पैनल',
-    reset:'रीसेट',
-    changePin:'लॉगिन पिन (4-6 अंक)',
-    footerNote:'किसानों के लिए समर्पित',
+    noResults:'कोई फसल नहीं मिली', contactTitle:'हमसे संपर्क करें',
+    adminLogin:'दुकानदार लॉगिन', enterPin:'पिन दर्ज करें', login:'लॉगिन',
+    loginTitle:'सिर्फ़ दुकानदार के लिए', loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',
+    wrongPin:'गलत पिन', cancel:'रद्द करें', save:'सेव करें',
+    shopName:'दुकान का नाम', ownerName:'मालिक का नाम', phone:'मोबाइल नंबर',
+    address:'पता', editRates:'भाव बदलें', addCrop:'नई फसल जोड़ें', cropName:'फसल का नाम',
+    price:'भाव', unit:'इकाई', remove:'हटाएं', logout:'लॉगआउट', saved:'सेव हो गया ✓',
+    print:'प्रिंट करें', shopSettings:'दुकान', adminPanel:'दुकानदार पैनल',
+    reset:'रीसेट', changePin:'लॉगिन पिन', footerNote:'किसानों के लिए समर्पित',
     editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',
-    fillAll:'कृपया सारी जानकारी भरें',
-    confirmReset:'सारा डेटा रीसेट हो जाएगा। पक्का?',
-    resetDone:'रीसेट हो गया',
-    noCrops:'कोई फसल नहीं है',
-    syncNow:'लाइव भाव लाएँ',
-    syncing:'लाइव भाव लोड हो रहे हैं…',
-    synced:'लाइव भाव अपडेट हुए ✓',
-    syncFail:'लाइव डेटा नहीं मिला — पुराने भाव दिखा रहे हैं',
-    liveNote:'स्रोत: डेमो लाइव सिमुलेशन • हर 5 मिनट में अपडेट',
-    liveNoteApi:'स्रोत: लाइव मंडी API • हर 5 मिनट में अपडेट',
-    liveNoteCode:'स्रोत: कोड में तय भाव',
-    adminModeOn:'एडमिन मोड चालू — आपके पास पूरा कंट्रोल है',
-    openPanel:'पैनल खोलें',
-    loggedIn:'लॉगिन हो गया ✓',
-    loggedOut:'लॉगआउट हो गया',
+    fillAll:'कृपया सारी जानकारी भरें', confirmReset:'सारा डेटा रीसेट हो जाएगा?',
+    resetDone:'रीसेट हो गया', noCrops:'कोई फसल नहीं है',
+    syncNow:'लाइव भाव लाएँ', syncing:'लाइव भाव लोड हो रहे हैं…', synced:'लाइव भाव अपडेट हुए ✓',
+    syncFail:'लाइव डेटा नहीं मिला', liveNote:'स्रोत: डेमो लाइव सिमुलेशन',
+    liveNoteApi:'स्रोत: लाइव मंडी API', adminModeOn:'एडमिन मोड चालू', openPanel:'पैनल खोलें',
+    loggedIn:'लॉगिन हो गया ✓', loggedOut:'लॉगआउट हो गया',
     pinWarn:'⚠️ पिन याद रखें।',
-    speechUnsupported:'इस ब्राउज़र में आवाज़ नहीं चल सकती',
-    speechStarted:'भाव सुनाए जा रहे हैं…',
-    staleWarning:'भाव 24 घंटे से पुराने हैं — कृपया नए भाव लेकर आएँ',
-    refreshNow:'अभी अपडेट करें',
-    calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',
-    calcSub:'अपनी फसल और मात्रा चुनें।',
-    calcCrop:'फसल चुनें',
-    calcQty:'मात्रा',
-    calcUnit:'इकाई',
-    calcTotal:'अनुमानित कुल मूल्य',
-    calcHint:'*  यह अनुमानित राशि है। अंतिम भाव दुकान पर तौल और गुणवत्ता के अनुसार तय होगा और इसमें कोई मंडी और पल्लेदारी  शुल्क शामिल नहीं है ।',
+    speechUnsupported:'इस ब्राउज़र में आवाज़ नहीं चल सकती', speechStarted:'भाव सुनाए जा रहे हैं…',
+    staleWarning:'भाव 24 घंटे से पुराने हैं', refreshNow:'अभी अपडेट करें',
+    calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य', calcSub:'अपनी फसल और मात्रा चुनें।',
+    calcCrop:'फसल चुनें', calcQty:'मात्रा', calcUnit:'इकाई',
+    calcTotal:'अनुमानित कुल मूल्य', calcHint:'* अनुमानित राशि है। अंतिम भाव दुकान पर तय होगा।',
     quintal:'क्विंटल', kg:'किलो',
-    nearbyTitle:'📍 आसपास की मंडियों के भाव',
-    nearbySub:'तुलना करें और सही मंडी चुनें।',
-    enquiryTitle:'📝 बेचना है? पूछताछ भेजें',
-    enquirySub:'अपनी फसल की जानकारी भरें।',
-    yourName:'आपका नाम',
-    yourPhone:'मोबाइल नंबर',
-    yourCrop:'फसल',
-    yourQty:'मात्रा (क्विंटल)',
-    yourMsg:'अतिरिक्त जानकारी (वैकल्पिक)',
+    nearbyTitle:'📍 आसपास की मंडियों के भाव', nearbySub:'तुलना करें।',
+    enquiryTitle:'📝 बेचना है? पूछताछ भेजें', enquirySub:'अपनी फसल की जानकारी भरें।',
+    yourName:'आपका नाम', yourPhone:'मोबाइल नंबर', yourCrop:'फसल',
+    yourQty:'मात्रा (क्विंटल)', yourMsg:'अतिरिक्त जानकारी (वैकल्पिक)',
     sendWhatsApp:'व्हाट्सएप पर भेजें',
-    enquiryNote:'आपकी जानकारी सिर्फ़ दुकानदार को भेजी जाएगी।',
-    enqNeedName:'कृपया अपना नाम लिखें',
-    enqNeedPhone:'कृपया सही 10 अंकों का मोबाइल नंबर लिखें',
-    enqNeedQty:'कृपया मात्रा लिखें',
-    enqSent:'व्हाट्सएप खुल रहा है…',
-    qrShow:'QR कोड',
-    qrTitle:'📱 QR कोड',
-    qrSub:'इस QR कोड को दुकान पर लगाएँ।',
-    copyLink:'लिंक कॉपी करें',
-    linkCopied:'लिंक कॉपी हो गया ✓',
-    close:'बंद करें',
-    bulkTab:'बल्क अपडेट',
-    leadsTab:'पूछताछ',
-    bulkTitle:'📋 बल्क भाव अपडेट (CSV)',
-    bulkHint:'हर लाइन में लिखें: फसल-आईडी, भाव',
-    bulkApply:'लागू करें',
-    bulkLoad:'मौजूदा भाव भरें',
-    bulkDone:'भाव अपडेट हो गए ✓',
-    bulkError:'कुछ लाइनें समझ नहीं आईं',
-    leadTitle:'📥 किसानों की पूछताछ',
-    leadEmpty:'अभी कोई पूछताछ नहीं आई।',
-    leadClear:'सब हटाएँ',
-    leadExport:'CSV डाउनलोड',
-    leadConfirmClear:'सारी पूछताछ हट जाएँगी। पक्का?',
-    hist7d:'7 दिन का रुझान',
-    disclaimer:'भाव केवल जानकारी के लिए हैं। अंतिम भाव दुकान पर तय होगा।',
-    micUnsupported:'इस ब्राउज़र में आवाज़ से खोज नहीं हो सकती',
-    micListening:'सुन रहे हैं… बोलिए'
+    enqNeedName:'कृपया अपना नाम लिखें', enqNeedPhone:'कृपया सही 10 अंकों का मोबाइल नंबर लिखें',
+    enqNeedQty:'कृपया मात्रा लिखें', enqSent:'व्हाट्सएप खुल रहा है…',
+    qrShow:'QR कोड', qrTitle:'📱 QR कोड', qrSub:'दुकान पर लगाएँ।',
+    copyLink:'लिंक कॉपी करें', linkCopied:'लिंक कॉपी हो गया ✓', close:'बंद करें',
+    bulkTab:'बल्क अपडेट', leadsTab:'पूछताछ',
+    bulkTitle:'📋 बल्क भाव अपडेट (CSV)', bulkHint:'हर लाइन में: फसल-आईडी, भाव',
+    bulkApply:'लागू करें', bulkLoad:'मौजूदा भाव भरें',
+    bulkDone:'भाव अपडेट हो गए ✓', bulkError:'कुछ लाइनें समझ नहीं आईं',
+    leadTitle:'📥 किसानों की पूछताछ', leadEmpty:'अभी कोई पूछताछ नहीं आई।',
+    leadClear:'सब हटाएँ', leadExport:'CSV डाउनलोड', leadConfirmClear:'सारी पूछताछ हट जाएँगी?',
+    hist7d:'7 दिन का रुझान', disclaimer:'भाव केवल जानकारी के लिए हैं।',
+    micUnsupported:'इस ब्राउज़र में आवाज़ से खोज नहीं हो सकती', micListening:'सुन रहे हैं… बोलिए'
   },
-
-  /* ----- English ----- */
   en: {
-    tagline:'Fresh mandi rates today',
-    todayRates:"Today's Rates",
-    updatedAt:'Last updated',
-    search:'Search crop…',
-    all:'All',
-    catCereal:'Cereals', catMillet:'Millets', catPulse:'Pulses',
-    perQuintal:'per quintal', perKg:'per kg',
-    up:'Up', down:'Down', same:'Stable',
-    callNow:'Call Now', whatsapp:'WhatsApp',
-    listen:'Listen', stopSpeaking:'Stop',
-    noResults:'No crop found',
-    contactTitle:'Contact Us',
-    adminLogin:'Shop Owner Login',
-    enterPin:'Enter PIN',
-    login:'Login',
-    loginTitle:'For shop owner only',
-    loginSub:'Farmers do not need to login.',
-    wrongPin:'Wrong PIN, try again',
-    cancel:'Cancel', save:'Save',
-    shopName:'Shop Name', ownerName:'Owner Name',
-    phone:'Mobile Number', address:'Address',
-    editRates:'Edit Rates', addCrop:'Add New Crop',
-    cropName:'Crop Name', price:'Price', unit:'Unit',
-    remove:'Remove', logout:'Logout', saved:'Saved ✓',
-    print:'Print', shopSettings:'Shop',
-    adminPanel:'Owner Panel', reset:'Reset',
-    changePin:'Login PIN (4-6 digits)',
-    footerNote:'Dedicated to farmers',
-    editRatesHint:'Change prices below and press Save.',
-    fillAll:'Please fill all fields',
-    confirmReset:'All data will be reset. Are you sure?',
-    resetDone:'Reset done', noCrops:'No crops added',
-    syncNow:'Sync Live Rates',
-    syncing:'Fetching live rates…',
-    synced:'Live rates updated ✓',
-    syncFail:'Live data unavailable',
-    liveNote:'Source: demo live simulation',
-    liveNoteApi:'Source: live mandi API',
-    liveNoteCode:'Source: rates set in code',
-    adminModeOn:'Admin mode ON — you have full control',
-    openPanel:'Open Panel',
-    loggedIn:'Logged in ✓', loggedOut:'Logged out',
-    pinWarn:'⚠️ Remember this PIN.',
-    speechUnsupported:'Speech not supported',
-    speechStarted:'Reading rates aloud…',
-    staleWarning:'Rates are over 24 hours old — please refresh',
-    refreshNow:'Refresh now',
-    calcTitle:'🧮 Estimated Value of My Crop',
-    calcSub:'Pick your crop and quantity.',
+    tagline:'Fresh mandi rates today', todayRates:"Today's Rates", updatedAt:'Last updated',
+    search:'Search crop…', all:'All', catCereal:'Cereals', catMillet:'Millets', catPulse:'Pulses',
+    perQuintal:'per quintal', perKg:'per kg', up:'Up', down:'Down', same:'Stable',
+    callNow:'Call Now', whatsapp:'WhatsApp', listen:'Listen', stopSpeaking:'Stop',
+    noResults:'No crop found', contactTitle:'Contact Us', adminLogin:'Shop Owner Login',
+    enterPin:'Enter PIN', login:'Login', loginTitle:'For shop owner only',
+    loginSub:'Farmers do not need to login.', wrongPin:'Wrong PIN', cancel:'Cancel', save:'Save',
+    shopName:'Shop Name', ownerName:'Owner Name', phone:'Mobile Number', address:'Address',
+    editRates:'Edit Rates', addCrop:'Add New Crop', cropName:'Crop Name', price:'Price',
+    unit:'Unit', remove:'Remove', logout:'Logout', saved:'Saved ✓', print:'Print',
+    shopSettings:'Shop', adminPanel:'Owner Panel', reset:'Reset', changePin:'Login PIN',
+    footerNote:'Dedicated to farmers', editRatesHint:'Change prices below and press Save.',
+    fillAll:'Please fill all fields', confirmReset:'All data will be reset?', resetDone:'Reset done',
+    noCrops:'No crops added', syncNow:'Sync Live Rates', syncing:'Fetching live rates…',
+    synced:'Live rates updated ✓', syncFail:'Live data unavailable',
+    liveNote:'Source: demo live simulation', liveNoteApi:'Source: live mandi API',
+    adminModeOn:'Admin mode ON', openPanel:'Open Panel', loggedIn:'Logged in ✓',
+    loggedOut:'Logged out', pinWarn:'⚠️ Remember PIN.',
+    speechUnsupported:'Speech not supported', speechStarted:'Reading rates aloud…',
+    staleWarning:'Rates are over 24 hours old', refreshNow:'Refresh now',
+    calcTitle:'🧮 Estimated Value of My Crop', calcSub:'Pick crop and quantity.',
     calcCrop:'Choose crop', calcQty:'Quantity', calcUnit:'Unit',
-    calcTotal:'Estimated Total Value',
-    calcHint:'* This is an estimate.',
-    quintal:'Quintal', kg:'Kilogram',
-    nearbyTitle:'📍 Nearby Mandi Rates',
-    nearbySub:'Compare and pick the right mandi.',
-    enquiryTitle:'📝 Want to sell? Send an enquiry',
-    enquirySub:'Fill your crop details.',
-    yourName:'Your Name', yourPhone:'Mobile Number',
-    yourCrop:'Crop', yourQty:'Quantity (quintal)',
-    yourMsg:'Additional details (optional)',
-    sendWhatsApp:'Send on WhatsApp',
-    enquiryNote:'Your details go only to the shop owner.',
-    enqNeedName:'Please enter your name',
-    enqNeedPhone:'Please enter a valid 10-digit mobile number',
-    enqNeedQty:'Please enter the quantity',
-    enqSent:'Opening WhatsApp…',
-    qrShow:'QR Code', qrTitle:'📱 QR Code',
-    qrSub:'Print this QR code at your shop.',
-    copyLink:'Copy link', linkCopied:'Link copied ✓',
-    close:'Close',
-    bulkTab:'Bulk Update', leadsTab:'Enquiries',
-    bulkTitle:'📋 Bulk Rate Update (CSV)',
-    bulkHint:'Write one per line: crop-id, price',
-    bulkApply:'Apply', bulkLoad:'Fill current rates',
-    bulkDone:'Rates updated ✓',
-    bulkError:'Some lines could not be parsed',
-    leadTitle:'📥 Farmer Enquiries',
-    leadEmpty:'No enquiries yet.',
-    leadClear:'Clear all', leadExport:'Download CSV',
-    leadConfirmClear:'All enquiries will be deleted. Are you sure?',
-    hist7d:'7-day trend',
-    disclaimer:'Rates are for information only.',
-    micUnsupported:'Voice search not supported',
-    micListening:'Listening… speak now'
+    calcTotal:'Estimated Total Value', calcHint:'* Estimate only.',
+    quintal:'Quintal', kg:'Kilogram', nearbyTitle:'📍 Nearby Mandi Rates',
+    nearbySub:'Compare and pick.', enquiryTitle:'📝 Want to sell? Send an enquiry',
+    enquirySub:'Fill your crop details.', yourName:'Your Name', yourPhone:'Mobile Number',
+    yourCrop:'Crop', yourQty:'Quantity (quintal)', yourMsg:'Additional details (optional)',
+    sendWhatsApp:'Send on WhatsApp', enqNeedName:'Please enter your name',
+    enqNeedPhone:'Please enter a valid 10-digit mobile number', enqNeedQty:'Please enter quantity',
+    enqSent:'Opening WhatsApp…', qrShow:'QR Code', qrTitle:'📱 QR Code',
+    qrSub:'Print at your shop.', copyLink:'Copy link', linkCopied:'Link copied ✓', close:'Close',
+    bulkTab:'Bulk Update', leadsTab:'Enquiries', bulkTitle:'📋 Bulk Rate Update (CSV)',
+    bulkHint:'Write: crop-id, price', bulkApply:'Apply', bulkLoad:'Fill current rates',
+    bulkDone:'Rates updated ✓', bulkError:'Some lines could not be parsed',
+    leadTitle:'📥 Farmer Enquiries', leadEmpty:'No enquiries yet.', leadClear:'Clear all',
+    leadExport:'Download CSV', leadConfirmClear:'All enquiries will be deleted?',
+    hist7d:'7-day trend', disclaimer:'Rates are for information only.',
+    micUnsupported:'Voice search not supported', micListening:'Listening… speak now'
   },
-
-  /* बाक़ी भाषाएँ हिंदी पर fallback करेंगी */
-  mr: {}, pa: {}, gu: {}, bn: {}, ta: {}, te: {}
+  mr:{}, pa:{}, gu:{}, bn:{}, ta:{}, te:{}
 };
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 3: डेटा सेव करने की जगह ═══
-   ═══════════════════════════════════════════════════════════════════════════
-   ब्राउज़र में डेटा सुरक्षित रखने के लिए localStorage का उपयोग।
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-const STORAGE_KEY = 'kisan_mandi_v6';
+/* ═══ STATE + STORAGE ═══ */
+const STORAGE_KEY = 'kisan_mandi_v8';
 const SESSION_KEY = 'kisan_mandi_admin_session';
 const LEADS_KEY   = 'kisan_mandi_leads';
 const HISTORY_KEY = 'kisan_mandi_history';
+const copyObject = o => JSON.parse(JSON.stringify(o));
 
-/* डेटा की एक गहरी कॉपी बनाने के लिए छोटा function */
-function copyObject(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-/* शुरुआती state — पहले से सेव डेटा लोड करो या डिफ़ॉल्ट */
 let state = loadState();
 let history = loadHistory();
 let leads = loadLeads();
-
-/* छोटी-मोटी चीज़ें */
 let filterCat = 'all';
 let searchQuery = '';
 let isOwner = false;
@@ -1957,876 +663,440 @@ let speechPlaying = false;
 let recognition = null;
 let micListening = false;
 
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 4: छोटे सहायक functions ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* शॉर्टकट: document.getElementById */
-function $(id) { return document.getElementById(id); }
-
-/* HTML को सुरक्षित बनाओ (ताकि कोई गड़बड़ न कर सके) */
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g, function(c) {
-    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
-  });
-}
-
-/* भाषा से टेक्स्ट निकालो */
-function t(key) {
-  const lang = I18N[state.lang] || {};
-  return lang[key] || I18N.hi[key] || key;
-}
-
-/* अभी कौन सी भाषा है */
-function currentLang() {
-  return LANGS.find(function(l) { return l.code === state.lang; }) || LANGS[0];
-}
-
-/* फसल का नाम (भाषा के अनुसार) */
-function cropName(crop) {
-  if (!crop.names) return crop.id;
-  return crop.names[state.lang] || crop.names.en || crop.names.hi || crop.id;
-}
-
-/* यूनिट का लेबल */
-function unitLabel(crop) {
-  return crop.unit === 'kg' ? t('perKg') : t('perQuintal');
-}
-
-/* पैसे का फ़ॉर्मेट: ₹1,234.50 */
-function money(n) {
-  const num = Number(n) || 0;
-  const opts = Number.isInteger(num)
-    ? { maximumFractionDigits: 0 }
-    : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-  return '₹' + num.toLocaleString('en-IN', opts);
-}
-
-/* 2 दशमलव तक गोल करो */
-function round2(n) { return Math.round(n * 100) / 100; }
-
-/* तारीख़ को सुंदर बनाओ */
-function formatDate(d) {
-  try {
-    return new Date(d).toLocaleDateString(currentLang().speech, {
-      weekday:'long', day:'numeric', month:'long', year:'numeric'
-    });
-  } catch(e) { return new Date(d).toLocaleDateString(); }
-}
-function formatTime(d) {
-  try {
-    return new Date(d).toLocaleTimeString(currentLang().speech, {
-      hour:'2-digit', minute:'2-digit'
-    });
-  } catch(e) { return ''; }
-}
-
-/* छोटा संदेश दिखाओ */
-let toastTimer;
-function toast(msg) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2600);
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 5: डेटा लोड और सेव ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
       const sameVersion = (saved.version === DATA_VERSION);
-
-      /* अगर कोड में DATA_VERSION बदला है तो नया डेटा लोड करो */
-      const crops = (sameVersion && saved.crops && saved.crops.length)
-        ? saved.crops
-        : copyObject(CROPS);
-
+      const crops = (sameVersion && saved.crops && saved.crops.length) ? saved.crops : copyObject(CROPS);
       return {
         version: DATA_VERSION,
-        shop: (sameVersion && saved.shop)
-          ? Object.assign(copyObject(SHOP), saved.shop)
-          : copyObject(SHOP),
-        crops: crops,
-        lang: saved.lang || 'hi',
-        fs:   saved.fs   || 17,
-        hc:   !!saved.hc,
-        updatedAt: saved.updatedAt || Date.now()
+        shop: (sameVersion && saved.shop) ? Object.assign(copyObject(SHOP), saved.shop) : copyObject(SHOP),
+        crops: crops, lang: saved.lang || 'hi', fs: saved.fs || 17,
+        hc: !!saved.hc, updatedAt: saved.updatedAt || Date.now()
       };
     }
-  } catch(e) { console.warn('Load error:', e); }
-
-  /* पहली बार खुलने पर */
-  return {
-    version: DATA_VERSION,
-    shop: copyObject(SHOP),
-    crops: copyObject(CROPS),
-    lang: 'hi', fs: 17, hc: false,
-    updatedAt: Date.now()
-  };
+  } catch(e) {}
+  return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS),
+    lang:'hi', fs:17, hc:false, updatedAt: Date.now() };
 }
-
-function saveState() {
-  state.version = DATA_VERSION;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  catch(e) { console.warn('Save error:', e); }
-}
-
-/* भाव के इतिहास का प्रबंधन */
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); }
-  catch(e) { return {}; }
-}
-function saveHistory() {
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
-  catch(e) {}
-}
+function saveState() { state.version = DATA_VERSION; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { return {}; } }
+function saveHistory() { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {} }
 function pushHistory() {
-  const today = new Date().toISOString().slice(0,10); /* YYYY-MM-DD */
-  state.crops.forEach(function(crop) {
-    if (!history[crop.id]) history[crop.id] = [];
-    const arr = history[crop.id];
-    const last = arr[arr.length - 1];
-    if (last && last.d === today) {
-      last.p = crop.price;
-    } else {
-      arr.push({ d: today, p: crop.price });
-    }
+  const today = new Date().toISOString().slice(0,10);
+  state.crops.forEach(c => {
+    if (!history[c.id]) history[c.id] = [];
+    const arr = history[c.id];
+    const last = arr[arr.length-1];
+    if (last && last.d === today) last.p = c.price;
+    else arr.push({ d: today, p: c.price });
     if (arr.length > 30) arr.splice(0, arr.length - 30);
   });
   saveHistory();
 }
+function loadLeads() { try { return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]'); } catch(e) { return []; } }
+function saveLeads() { try { localStorage.setItem(LEADS_KEY, JSON.stringify(leads)); } catch(e) {} }
+function saveAdminSession(on) { try { on ? sessionStorage.setItem(SESSION_KEY, '1') : sessionStorage.removeItem(SESSION_KEY); } catch(e) {} }
+function readAdminSession() { try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch(e) { return false; } }
 
-/* पूछताछ की सूची */
-function loadLeads() {
-  try { return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]'); }
-  catch(e) { return []; }
+/* ═══ HELPERS ═══ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function t(key) { const lang = I18N[state.lang] || {}; return lang[key] || I18N.hi[key] || key; }
+function currentLang() { return LANGS.find(l => l.code === state.lang) || LANGS[0]; }
+function cropName(c) { if (!c.names) return c.id; return c.names[state.lang] || c.names.en || c.names.hi || c.id; }
+function unitLabel(c) { return c.unit === 'kg' ? t('perKg') : t('perQuintal'); }
+function money(n) {
+  const num = Number(n) || 0;
+  const opts = Number.isInteger(num) ? { maximumFractionDigits:0 } : { minimumFractionDigits:2, maximumFractionDigits:2 };
+  return '₹' + num.toLocaleString('en-IN', opts);
 }
-function saveLeads() {
-  try { localStorage.setItem(LEADS_KEY, JSON.stringify(leads)); }
-  catch(e) {}
-}
+function round2(n) { return Math.round(n * 100) / 100; }
+function formatDate(d) { try { return new Date(d).toLocaleDateString(currentLang().speech, { weekday:'long', day:'numeric', month:'long', year:'numeric' }); } catch(e) { return new Date(d).toLocaleDateString(); } }
+function formatTime(d) { try { return new Date(d).toLocaleTimeString(currentLang().speech, { hour:'2-digit', minute:'2-digit' }); } catch(e) { return ''; } }
+let toastTimer;
+function toast(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600); }
 
-/* एडमिन सेशन */
-function saveAdminSession(on) {
-  try {
-    if (on) sessionStorage.setItem(SESSION_KEY, '1');
-    else    sessionStorage.removeItem(SESSION_KEY);
-  } catch(e) {}
-}
-function readAdminSession() {
-  try { return sessionStorage.getItem(SESSION_KEY) === '1'; }
-  catch(e) { return false; }
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 6: लाइव भाव (API / डेमो) ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* API के नाम को फसल से मैच करो */
+/* ═══ LIVE MARKET ═══ */
 function matchCropByApiName(rawName) {
   if (!rawName) return null;
   const name = String(rawName).toLowerCase().trim();
-
-  /* पहले apiKeys से ढूँढो */
-  for (let i = 0; i < state.crops.length; i++) {
-    const crop = state.crops[i];
+  for (const crop of state.crops) {
     if (Array.isArray(crop.apiKeys)) {
-      for (let j = 0; j < crop.apiKeys.length; j++) {
-        const key = String(crop.apiKeys[j]).toLowerCase();
-        if (name === key || name.includes(key) || key.includes(name)) {
-          return crop;
-        }
+      for (const key of crop.apiKeys) {
+        const k = String(key).toLowerCase();
+        if (name === k || name.includes(k) || k.includes(name)) return crop;
       }
     }
   }
-
-  /* फिर नाम से ढूँढो */
-  for (let i = 0; i < state.crops.length; i++) {
-    const crop = state.crops[i];
-    const values = Object.values(crop.names || {}).map(function(v) {
-      return String(v).toLowerCase();
-    });
-    if (values.some(function(v) { return v === name || v.includes(name); })) {
-      return crop;
-    }
+  for (const crop of state.crops) {
+    const vals = Object.values(crop.names || {}).map(v => String(v).toLowerCase());
+    if (vals.some(v => v === name || v.includes(name))) return crop;
   }
   return null;
 }
-
-/* API के record को फसल-भाव में बदलो */
 function mapApiRecord(rec) {
   const name = rec.commodity || rec.crop || rec.name || '';
   const price = Number(rec.modal_price || rec.modalPrice || rec.price || rec.rate || 0);
   const unit = String(rec.unit || 'quintal').toLowerCase();
   if (!name || !price) return null;
-
   const crop = matchCropByApiName(name);
   if (!crop) return null;
-
-  /* क्विंटल में भाव आया तो किलो में बदलो */
   const perKg = unit.includes('quintal') ? price / 100 : price;
   return { id: crop.id, price: round2(perKg) };
 }
-
-/* डेमो: बाज़ार जैसा उतार-चढ़ाव */
 function simulateLiveRates() {
-  state.crops.forEach(function(crop) {
-    const anchor = Number(crop.base) || Number(crop.price) || 1;
+  state.crops.forEach(c => {
+    const anchor = Number(c.base) || Number(c.price) || 1;
     const drift = 1 + (Math.random() - 0.5) * 2 * LIVE.volatility;
     let next = round2(anchor * drift);
-
-    /* कभी-कभी भाव वही रहता है */
-    if (Math.random() < 0.12) next = crop.price;
-
-    /* सीमा तय करो: anchor का ±12% */
+    if (Math.random() < 0.12) next = c.price;
     next = Math.min(round2(anchor * 1.12), Math.max(round2(anchor * 0.88), next));
-
-    if (next !== crop.price) {
-      crop.prev = crop.price;
-      crop.price = next;
-    }
+    if (next !== c.price) { c.prev = c.price; c.price = next; }
   });
 }
-
-/* असली API से भाव लाओ */
 async function fetchFromApi() {
   if (!LIVE.endpoint) throw new Error('No endpoint');
-
   const url = new URL(LIVE.endpoint);
   if (LIVE.apiKey) url.searchParams.set('api-key', LIVE.apiKey);
   if (LIVE.district) url.searchParams.set('filters[district]', LIVE.district);
   if (LIVE.market) url.searchParams.set('filters[market]', LIVE.market);
   if (!url.searchParams.get('format')) url.searchParams.set('format', 'json');
   if (!url.searchParams.get('limit')) url.searchParams.set('limit', '500');
-
   const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' } });
   if (!res.ok) throw new Error('HTTP ' + res.status);
-
   const data = await res.json();
   const records = data.records || data.data || (Array.isArray(data) ? data : []);
   const mapped = records.map(mapApiRecord).filter(Boolean);
   if (!mapped.length) throw new Error('No matching crops');
-
-  /* हर फसल का नया भाव */
   const latest = {};
-  mapped.forEach(function(m) { latest[m.id] = m.price; });
-
-  Object.keys(latest).forEach(function(id) {
-    const crop = state.crops.find(function(c) { return c.id === id; });
-    if (crop && latest[id] !== crop.price) {
-      crop.prev = crop.price;
-      crop.price = latest[id];
-    }
+  mapped.forEach(m => { latest[m.id] = m.price; });
+  Object.keys(latest).forEach(id => {
+    const crop = state.crops.find(c => c.id === id);
+    if (crop && latest[id] !== crop.price) { crop.prev = crop.price; crop.price = latest[id]; }
   });
 }
-
-/* मुख्य sync function */
 async function syncLiveRates(manual) {
   if (syncing) return;
   if (manual && !isOwner) return;
-
   syncing = true;
   const btn = $('syncBtn');
   const btnLabel = btn.querySelector('span');
   const oldLabel = btnLabel.textContent;
   btn.disabled = true;
   btnLabel.innerHTML = '<span class="spin">🔄</span> ' + esc(t('syncing'));
-
   let ok = true;
   try {
-    if (LIVE.endpoint) {
-      await fetchFromApi();
-    } else {
-      await new Promise(function(r) { setTimeout(r, 700); });
-      simulateLiveRates();
-    }
-  } catch(err) {
-    console.warn('Live sync failed:', err);
-    ok = false;
-  }
-
+    if (LIVE.endpoint) await fetchFromApi();
+    else { await new Promise(r => setTimeout(r, 700)); simulateLiveRates(); }
+  } catch(err) { ok = false; }
   state.updatedAt = Date.now();
-  pushHistory();
-  saveState();
-  renderCrops();
-  renderShopInfo();
-  renderCalc();
-  renderNearby();
+  pushHistory(); saveState();
+  renderCrops(); renderShopInfo(); renderCalc(); renderNearby();
   if (isOwner) { renderEditList(); renderBulkIds(); }
-
   btn.disabled = false;
   btnLabel.textContent = oldLabel;
   syncing = false;
-
   if (manual || !ok) toast(ok ? t('synced') : t('syncFail'));
   checkStale();
 }
-
-/* ऑटो-सिंक: हर 5 मिनट में */
 let syncTimer = null;
 function startAutoSync() {
   if (syncTimer) clearInterval(syncTimer);
-  syncTimer = setInterval(function() {
-    if (!document.hidden) syncLiveRates(false);
-  }, LIVE.refreshMs);
+  syncTimer = setInterval(() => { if (!document.hidden) syncLiveRates(false); }, LIVE.refreshMs);
 }
-
-/* भाव पुराने हैं क्या? */
 function checkStale() {
   const ageHours = (Date.now() - state.updatedAt) / 3600000;
   $('staleBanner').classList.toggle('hidden', ageHours < LIVE.staleHours);
 }
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 7: स्क्रीन पर दिखाना (RENDER) ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* सब कुछ दोबारा बनाओ */
-function renderAll() {
-  document.documentElement.lang = state.lang;
-  document.documentElement.style.setProperty('--fs', state.fs + 'px');
-  document.body.classList.toggle('hc', !!state.hc);
-  $('hcBtn').classList.toggle('on', !!state.hc);
-
-  applyTranslations();
-  renderShopInfo();
-  renderChips();
-  renderCrops();
-  renderCalc();
-  renderNearby();
-  if (isOwner) { renderEditList(); renderBulkIds(); renderLeads(); }
-  fillAdminForm();
-  renderLiveBadge();
-  applyRole();
-  updateSpeakBtn();
-  checkStale();
-}
-
-/* भाषा के हिसाब से टेक्स्ट बदलो */
-function applyTranslations() {
-  /* [data-i18n] वाले सभी एलिमेंट */
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    const value = t(el.dataset.i18n);
-    if (value) el.textContent = value;
-  });
-  /* [data-i18n-ph] वाले placeholder */
-  document.querySelectorAll('[data-i18n-ph]').forEach(function(el) {
-    const value = t(el.dataset.i18nPh);
-    if (value) el.placeholder = value;
-  });
-
-  /* यूनिट का dropdown */
-  $('newCropUnit').innerHTML =
-    '<option value="kg">' + esc(t('perKg')) + '</option>' +
-    '<option value="quintal">' + esc(t('perQuintal')) + '</option>';
-
-  /* कैटेगरी का dropdown */
-  $('newCropCat').innerHTML = CATEGORIES.map(function(k) {
-    const label = t('cat' + k.charAt(0).toUpperCase() + k.slice(1));
-    return '<option value="' + k + '">' + esc(label) + '</option>';
-  }).join('');
-}
-
-/* दुकान की जानकारी दिखाओ */
-function renderShopInfo() {
-  $('shopNameEl').textContent   = state.shop.name;
-  $('footShopName').textContent = state.shop.name;
-  $('cOwner').textContent       = state.shop.owner;
-
-  const phoneClean = String(state.shop.phone).replace(/\s/g, '');
-  $('cPhone').textContent = state.shop.phone;
-  $('cPhone').href = 'tel:' + phoneClean;
-  $('cAddress').textContent = state.shop.address;
-  $('callBtn').href  = 'tel:' + phoneClean;
-  $('callBtnM').href = 'tel:' + phoneClean;
-
-  /* WhatsApp लिंक (सिर्फ अगर 10 अंकों का नंबर हो) */
-  const waDigits = String(state.shop.whatsapp || '').replace(/\D/g, '');
-  const waUrl = waDigits.length >= 10
-    ? 'https://wa.me/91' + waDigits.slice(-10)
-    : null;
-
-  [$('waBtn'), $('waBtnM')].forEach(function(a) {
-    if (waUrl) {
-      a.href = waUrl;
-      a.style.opacity = '1';
-      a.style.pointerEvents = 'auto';
-    } else {
-      a.removeAttribute('href');
-      a.style.opacity = '.5';
-      a.style.pointerEvents = 'none';
-    }
-  });
-
-  $('dateLine').textContent  = formatDate(new Date());
-  $('updatedAt').textContent = formatDate(state.updatedAt) + ' • ' + formatTime(state.updatedAt);
-  $('yearEl').textContent    = new Date().getFullYear();
-}
-
-/* LIVE / डेमो बैज */
-function renderLiveBadge() {
-  const pill = $('livePill');
-  const isApi = !!LIVE.endpoint;
-  pill.classList.remove('demo', 'api');
-  pill.classList.add(isApi ? 'api' : 'demo');
-  $('liveNote').textContent = isApi ? t('liveNoteApi') : t('liveNote');
-}
-
-/* कैटेगरी चिप्स */
-function renderChips() {
-  const chips = [
-    { k:'all',    label: t('all') },
-    { k:'cereal', label: t('catCereal') },
-    { k:'millet', label: t('catMillet') },
-    { k:'pulse',  label: t('catPulse') }
-  ];
-  $('categoryChips').innerHTML = chips.map(function(c) {
-    const active = filterCat === c.k ? 'active' : '';
-    return '<button class="chip ' + active + '" data-cat="' + c.k + '">' +
-           esc(c.label) + '</button>';
-  }).join('');
-}
-
-/* छाने हुए फसल (फ़िल्टर + सर्च) */
-function visibleCrops() {
-  const q = searchQuery.trim().toLowerCase();
-  return state.crops.filter(function(crop) {
-    if (filterCat !== 'all' && crop.cat !== filterCat) return false;
-    if (!q) return true;
-
-    const hay = Object.values(crop.names || {}).join(' ').toLowerCase()
-              + ' ' + crop.id
-              + ' ' + (crop.apiKeys || []).join(' ').toLowerCase();
-    return hay.includes(q);
-  });
-}
-
-/* 7-दिन का छोटा चार्ट */
-function sparkline(cropId, w, h) {
-  const arr = (history[cropId] || []).slice(-7);
-  if (arr.length < 2) return '';
-
-  const prices = arr.map(function(a) { return a.p; });
-  const min = Math.min.apply(null, prices);
-  const max = Math.max.apply(null, prices);
-  const range = (max - min) || 1;
-  const step = w / (arr.length - 1);
-
-  const points = arr.map(function(a, i) {
-    const x = i * step;
-    const y = h - ((a.p - min) / range) * (h - 5) - 2.5;
-    return x.toFixed(1) + ',' + y.toFixed(1);
-  }).join(' ');
-
-  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">' +
-         '<polyline points="' + points + '" fill="none" stroke="currentColor" ' +
-         'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-}
-
-/* भाव कार्ड्स दिखाओ */
-function renderCrops() {
-  const list = visibleCrops();
-  const grid = $('ratesGrid');
-
-  if (!list.length) {
-    grid.innerHTML = '<div class="empty"><span class="big">🌱</span>' +
-                     esc(t('noResults')) + '</div>';
-    return;
-  }
-
-  grid.innerHTML = list.map(function(crop) {
-    const prev = (typeof crop.prev === 'number') ? crop.prev : crop.price;
-    const diff = round2(crop.price - prev);
-
-    let trend = 'same', icon = '➖', label = t('same');
-    if (diff > 0)      { trend = 'up';   icon = '▲'; label = t('up'); }
-    else if (diff < 0) { trend = 'down'; icon = '▼'; label = t('down'); }
-
-    const diffText = diff === 0
-      ? '—'
-      : (diff > 0 ? '+' : '−') + money(Math.abs(diff));
-
-    const spark = sparkline(crop.id, 68, 22);
-    const hasHistory = (history[crop.id] || []).length >= 2;
-
-    return '' +
-      '<article class="crop-card ' + trend + '">' +
-        '<div class="card-top">' +
-          '<div style="display:flex;gap:11px;align-items:flex-start;min-width:0">' +
-            '<span class="crop-emoji">' + (crop.emoji || '🌾') + '</span>' +
-            '<div style="min-width:0">' +
-              '<div class="crop-name">' + esc(cropName(crop)) + '</div>' +
-              '<div class="crop-sub">' +
-                esc(t('cat' + crop.cat.charAt(0).toUpperCase() + crop.cat.slice(1))) +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-          '<span class="badge ' + trend + '">' + icon + ' ' + esc(label) + '</span>' +
-        '</div>' +
-        '<div class="price-row">' +
-          '<span class="price">' + money(crop.price) + '</span>' +
-          '<span class="unit">/ ' + esc(unitLabel(crop)) + '</span>' +
-        '</div>' +
-        '<div class="change-line ' + trend + '">' +
-          esc(diff === 0 ? t('same') : diffText + ' ' + (diff > 0 ? '▲' : '▼')) +
-        '</div>' +
-        (hasHistory
-          ? '<div class="card-bottom">' +
-              '<span class="hist-lbl">' + esc(t('hist7d')) + '</span>' + spark +
-            '</div>'
-          : '') +
-      '</article>';
-  }).join('');
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 8: कैलकुलेटर ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function renderCalc() {
-  /* फसल का dropdown भरो */
-  const calcSel = $('calcCrop');
-  const prevCalc = calcSel.value;
-  calcSel.innerHTML = state.crops.map(function(c) {
-    return '<option value="' + esc(c.id) + '">' +
-           esc(c.emoji || '🌾') + ' ' + esc(cropName(c)) + '</option>';
-  }).join('');
-  if (prevCalc && state.crops.some(function(c) { return c.id === prevCalc; })) {
-    calcSel.value = prevCalc;
-  }
-
-  /* पूछताछ वाला dropdown भी */
-  const enqSel = $('enqCrop');
-  const prevEnq = enqSel.value;
-  enqSel.innerHTML = state.crops.map(function(c) {
-    return '<option value="' + esc(c.id) + '">' + esc(cropName(c)) + '</option>';
-  }).join('');
-  if (prevEnq && state.crops.some(function(c) { return c.id === prevEnq; })) {
-    enqSel.value = prevEnq;
-  }
-
-  calcUpdate();
-}
-
-function calcUpdate() {
-  const id = $('calcCrop').value;
-  const qty = parseFloat($('calcQty').value) || 0;
-  const unit = $('calcUnit').value;
-  const crop = state.crops.find(function(c) { return c.id === id; });
-
-  if (!crop || qty <= 0) {
-    $('calcTotal').textContent = money(0);
-    $('calcBreakdown').textContent = '';
-    return;
-  }
-
-  /* सब कुछ किलो में बदलो */
-  const qtyKg = unit === 'quintal' ? qty * 100 : qty;
-
-  let total;
-  if (crop.unit === 'kg') {
-    total = qtyKg * crop.price;
-  } else {
-    total = (qtyKg / 100) * crop.price;
-  }
-  total = Math.round(total);
-
-  $('calcTotal').textContent = '₹' + total.toLocaleString('en-IN');
-
-  const qtyText = unit === 'quintal'
-    ? qty.toLocaleString('en-IN') + ' ' + t('quintal')
-    : qty.toLocaleString('en-IN') + ' ' + t('kg');
-
-  const unitText = crop.unit === 'kg' ? t('kg') : t('quintal');
-  $('calcBreakdown').textContent = qtyText + ' × ' + money(crop.price) + ' / ' + unitText;
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 9: आसपास की मंडियाँ ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function renderNearby() {
-  const sec = $('nearbySec');
-  if (!NEARBY.length) {
-    sec.classList.add('hidden');
-    return;
-  }
-  sec.classList.remove('hidden');
-
-  $('nearbyGrid').innerHTML = NEARBY.map(function(market) {
-    const rows = Object.keys(market.prices || {}).map(function(cid) {
-      const crop = state.crops.find(function(c) { return c.id === cid; });
-      if (!crop) return '';
-
-      const ownPrice = crop.price;
-      const theirPrice = market.prices[cid];
-      const diff = round2(theirPrice - ownPrice);
-      const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : 'var(--muted)';
-      const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '=';
-
-      return '<div class="nearby-row">' +
-             '<span>' + esc(cropName(crop)) + '</span>' +
-             '<b>' + money(theirPrice) +
-             ' <span style="color:' + color + ';font-size:.82rem">' + arrow + '</span>' +
-             '</b></div>';
-    }).join('');
-
-    return '<div class="nearby-card">' +
-           '<div class="mkt">🏬 ' + esc(market.name) + '</div>' +
-           rows +
-           '</div>';
-  }).join('');
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 10: एडमिन / दुकानदार ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function openModal(id)  { $(id).classList.remove('hidden'); }
-function closeModal(id) { $(id).classList.add('hidden'); }
-
-/* दुकानदार मोड लागू करो */
+/* ═══ ROLE ═══ */
 function applyRole() {
   $('adminRibbon').classList.toggle('hidden', !isOwner);
   $('syncBtn').classList.toggle('hidden', !isOwner);
   $('ownerLoginBtn').classList.toggle('hidden', isOwner);
   $('ownerLogoutBtn').classList.toggle('hidden', !isOwner);
-  if (!isOwner) {
-    closeModal('adminModal');
-    closeModal('pinModal');
-  }
+  if (!isOwner) { closeModal('adminModal'); closeModal('pinModal'); }
 }
 
-/* भाव लाइन बनाओ */
+/* ═══ RENDER ═══ */
+function renderAll() {
+  document.documentElement.lang = state.lang;
+  document.documentElement.style.setProperty('--fs', state.fs + 'px');
+  document.body.classList.toggle('hc', !!state.hc);
+  $('hcBtn').classList.toggle('on', !!state.hc);
+  applyTranslations(); renderShopInfo(); renderChips(); renderCrops();
+  renderCalc(); renderNearby();
+  if (isOwner) { renderEditList(); renderBulkIds(); renderLeads(); }
+  fillAdminForm(); renderLiveBadge(); applyRole(); updateSpeakBtn(); checkStale();
+}
+function renderLiveBadge() {
+  const pill = $('livePill');
+  const isApi = !!LIVE.endpoint;
+  pill.classList.remove('demo','api');
+  pill.classList.add(isApi ? 'api' : 'demo');
+  $('liveNote').textContent = isApi ? t('liveNoteApi') : t('liveNote');
+}
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { const v = t(el.dataset.i18n); if (v) el.textContent = v; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { const v = t(el.dataset.i18nPh); if (v) el.placeholder = v; });
+  $('newCropUnit').innerHTML = '<option value="kg">' + esc(t('perKg')) + '</option><option value="quintal">' + esc(t('perQuintal')) + '</option>';
+  $('newCropCat').innerHTML = CATEGORIES.map(k => '<option value="' + k + '">' + esc(t('cat' + k.charAt(0).toUpperCase() + k.slice(1))) + '</option>').join('');
+}
+function renderShopInfo() {
+  $('shopNameEl').textContent = state.shop.name;
+  $('footShopName').textContent = state.shop.name;
+  $('cOwner').textContent = state.shop.owner;
+  const phoneClean = String(state.shop.phone).replace(/\s/g, '');
+  $('cPhone').textContent = state.shop.phone;
+  $('cPhone').href = 'tel:' + phoneClean;
+  $('cAddress').textContent = state.shop.address;
+  $('callBtn').href = 'tel:' + phoneClean;
+  $('callBtnM').href = 'tel:' + phoneClean;
+  const waDigits = String(state.shop.whatsapp || '').replace(/\D/g, '');
+  const waUrl = waDigits.length >= 10 ? 'https://wa.me/91' + waDigits.slice(-10) : null;
+  [$('waBtn'), $('waBtnM')].forEach(a => {
+    if (waUrl) { a.href = waUrl; a.style.opacity = '1'; a.style.pointerEvents = 'auto'; }
+    else { a.removeAttribute('href'); a.style.opacity = '.5'; a.style.pointerEvents = 'none'; }
+  });
+  $('dateLine').textContent = formatDate(new Date());
+  $('updatedAt').textContent = formatDate(state.updatedAt) + ' • ' + formatTime(state.updatedAt);
+  $('yearEl').textContent = new Date().getFullYear();
+}
+function renderChips() {
+  const chips = [
+    { k:'all', label: t('all') },
+    { k:'cereal', label: t('catCereal') },
+    { k:'millet', label: t('catMillet') },
+    { k:'pulse', label: t('catPulse') }
+  ];
+  $('categoryChips').innerHTML = chips.map(c =>
+    '<button class="chip ' + (filterCat === c.k ? 'active' : '') + '" data-cat="' + c.k + '">' + esc(c.label) + '</button>'
+  ).join('');
+}
+function visibleCrops() {
+  const q = searchQuery.trim().toLowerCase();
+  return state.crops.filter(c => {
+    if (filterCat !== 'all' && c.cat !== filterCat) return false;
+    if (!q) return true;
+    const hay = Object.values(c.names || {}).join(' ').toLowerCase() + ' ' + c.id + ' ' + (c.apiKeys || []).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+function sparkline(cropId, w, h) {
+  const arr = (history[cropId] || []).slice(-7);
+  if (arr.length < 2) return '';
+  const prices = arr.map(a => a.p);
+  const min = Math.min.apply(null, prices);
+  const max = Math.max.apply(null, prices);
+  const range = (max - min) || 1;
+  const step = w / (arr.length - 1);
+  const points = arr.map((a, i) => (i * step).toFixed(1) + ',' + (h - ((a.p - min) / range) * (h - 5) - 2.5).toFixed(1)).join(' ');
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '"><polyline points="' + points + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+function renderCrops() {
+  const list = visibleCrops();
+  const grid = $('ratesGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty"><span class="big">🌱</span>' + esc(t('noResults')) + '</div>';
+    return;
+  }
+  grid.innerHTML = list.map(c => {
+    const prev = (typeof c.prev === 'number') ? c.prev : c.price;
+    const diff = round2(c.price - prev);
+    let trend = 'same', icon = '➖', label = t('same');
+    if (diff > 0) { trend = 'up'; icon = '▲'; label = t('up'); }
+    else if (diff < 0) { trend = 'down'; icon = '▼'; label = t('down'); }
+    const diffText = diff === 0 ? '—' : (diff > 0 ? '+' : '−') + money(Math.abs(diff));
+    const spark = sparkline(c.id, 68, 22);
+    const hasHistory = (history[c.id] || []).length >= 2;
+    return '<article class="crop-card ' + trend + '">' +
+      '<div class="card-top"><div style="display:flex;gap:11px;align-items:flex-start;min-width:0">' +
+      '<span class="crop-emoji">' + (c.emoji || '🌾') + '</span>' +
+      '<div style="min-width:0"><div class="crop-name">' + esc(cropName(c)) + '</div>' +
+      '<div class="crop-sub">' + esc(t('cat' + c.cat.charAt(0).toUpperCase() + c.cat.slice(1))) + '</div></div></div>' +
+      '<span class="badge ' + trend + '">' + icon + ' ' + esc(label) + '</span></div>' +
+      '<div class="price-row"><span class="price">' + money(c.price) + '</span>' +
+      '<span class="unit">/ ' + esc(unitLabel(c)) + '</span></div>' +
+      '<div class="change-line ' + trend + '">' + esc(diff === 0 ? t('same') : diffText + ' ' + (diff > 0 ? '▲' : '▼')) + '</div>' +
+      (hasHistory ? '<div class="card-bottom"><span class="hist-lbl">' + esc(t('hist7d')) + '</span>' + spark + '</div>' : '') +
+      '</article>';
+  }).join('');
+}
+
+/* ═══ CALCULATOR ═══ */
+function renderCalc() {
+  const calcSel = $('calcCrop');
+  const prevCalc = calcSel.value;
+  calcSel.innerHTML = state.crops.map(c => '<option value="' + esc(c.id) + '">' + esc(c.emoji || '🌾') + ' ' + esc(cropName(c)) + '</option>').join('');
+  if (prevCalc && state.crops.some(c => c.id === prevCalc)) calcSel.value = prevCalc;
+  const enqSel = $('enqCrop');
+  const prevEnq = enqSel.value;
+  enqSel.innerHTML = state.crops.map(c => '<option value="' + esc(c.id) + '">' + esc(cropName(c)) + '</option>').join('');
+  if (prevEnq && state.crops.some(c => c.id === prevEnq)) enqSel.value = prevEnq;
+  calcUpdate();
+}
+function calcUpdate() {
+  const id = $('calcCrop').value;
+  const qty = parseFloat($('calcQty').value) || 0;
+  const unit = $('calcUnit').value;
+  const crop = state.crops.find(c => c.id === id);
+  if (!crop || qty <= 0) { $('calcTotal').textContent = money(0); $('calcBreakdown').textContent = ''; return; }
+  const qtyKg = unit === 'quintal' ? qty * 100 : qty;
+  let total = crop.unit === 'kg' ? qtyKg * crop.price : (qtyKg / 100) * crop.price;
+  total = Math.round(total);
+  $('calcTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  const qtyText = unit === 'quintal' ? qty.toLocaleString('en-IN') + ' ' + t('quintal') : qty.toLocaleString('en-IN') + ' ' + t('kg');
+  const unitText = crop.unit === 'kg' ? t('kg') : t('quintal');
+  $('calcBreakdown').textContent = qtyText + ' × ' + money(crop.price) + ' / ' + unitText;
+}
+
+/* ═══ NEARBY ═══ */
+function renderNearby() {
+  const sec = $('nearbySec');
+  if (!NEARBY.length) { sec.classList.add('hidden'); return; }
+  sec.classList.remove('hidden');
+  $('nearbyGrid').innerHTML = NEARBY.map(market => {
+    const rows = Object.keys(market.prices || {}).map(cid => {
+      const crop = state.crops.find(c => c.id === cid);
+      if (!crop) return '';
+      const ownPrice = crop.price;
+      const theirPrice = market.prices[cid];
+      const diff = round2(theirPrice - ownPrice);
+      const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : 'var(--muted)';
+      const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '=';
+      return '<div class="nearby-row"><span>' + esc(cropName(crop)) + '</span><b>' + money(theirPrice) + ' <span style="color:' + color + ';font-size:.82rem">' + arrow + '</span></b></div>';
+    }).join('');
+    return '<div class="nearby-card"><div class="mkt">🏬 ' + esc(market.name) + '</div>' + rows + '</div>';
+  }).join('');
+}
+
+/* ═══ ADMIN ═══ */
+function openModal(id) { $(id).classList.remove('hidden'); }
+function closeModal(id) { $(id).classList.add('hidden'); }
+
 function renderEditList() {
   const box = $('rateEditList');
-  if (!state.crops.length) {
-    box.innerHTML = '<p class="section-title">' + esc(t('noCrops')) + '</p>';
-    return;
-  }
-  box.innerHTML = state.crops.map(function(crop) {
-    return '' +
-      '<div class="edit-row" data-id="' + esc(crop.id) + '">' +
-        '<span class="edit-emoji">' + (crop.emoji || '🌾') + '</span>' +
-        '<span class="edit-name">' + esc(cropName(crop)) + '</span>' +
-        '<div class="edit-price">' +
-          '<span>₹</span>' +
-          '<input type="number" class="price-input" value="' + (Number(crop.price) || 0) +
-                 '" min="0" step="0.01" inputmode="decimal">' +
-        '</div>' +
-        '<select class="unit-select">' +
-          '<option value="kg" ' + (crop.unit === 'kg' ? 'selected' : '') + '>' +
-            esc(t('perKg')) + '</option>' +
-          '<option value="quintal" ' + (crop.unit !== 'kg' ? 'selected' : '') + '>' +
-            esc(t('perQuintal')) + '</option>' +
-        '</select>' +
-        '<button class="del-btn" data-del="' + esc(crop.id) + '">🗑️</button>' +
-      '</div>';
-  }).join('');
+  if (!state.crops.length) { box.innerHTML = '<p class="section-title">' + esc(t('noCrops')) + '</p>'; return; }
+  box.innerHTML = state.crops.map(c =>
+    '<div class="edit-row" data-id="' + esc(c.id) + '">' +
+    '<span class="edit-emoji">' + (c.emoji || '🌾') + '</span>' +
+    '<span class="edit-name">' + esc(cropName(c)) + '</span>' +
+    '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="' + (Number(c.price) || 0) + '" min="0" step="0.01" inputmode="decimal"></div>' +
+    '<select class="unit-select"><option value="kg" ' + (c.unit === 'kg' ? 'selected' : '') + '>' + esc(t('perKg')) + '</option><option value="quintal" ' + (c.unit !== 'kg' ? 'selected' : '') + '>' + esc(t('perQuintal')) + '</option></select>' +
+    '<button class="del-btn" data-del="' + esc(c.id) + '">🗑️</button>' +
+    '</div>'
+  ).join('');
 }
-
-/* बल्क अपडेट के लिए ID की सूची */
 function renderBulkIds() {
-  $('bulkIds').innerHTML = state.crops.map(function(c) {
-    return '<b>' + esc(c.id) + '</b> = ' + esc(cropName(c)) + ' (' + money(c.price) + ')';
-  }).join('<br>');
+  $('bulkIds').innerHTML = state.crops.map(c => '<b>' + esc(c.id) + '</b> = ' + esc(cropName(c)) + ' (' + money(c.price) + ')').join('<br>');
 }
-
-/* पूछताछ की सूची */
 function renderLeads() {
   const box = $('leadList');
-  if (!leads.length) {
-    box.innerHTML = '<p class="hint">' + esc(t('leadEmpty')) + '</p>';
-    return;
-  }
-  box.innerHTML = leads.slice(0, 60).map(function(l) {
+  if (!leads.length) { box.innerHTML = '<p class="hint">' + esc(t('leadEmpty')) + '</p>'; return; }
+  box.innerHTML = leads.slice(0, 60).map(l => {
     const dt = new Date(l.ts);
-    const when = dt.toLocaleDateString('en-IN') + ' ' +
-                 dt.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
-
-    return '' +
-      '<div class="lead-item">' +
-        '<div class="top">' +
-          '<span class="nm">👤 ' + esc(l.name) + '</span>' +
-          '<span class="tm">' + esc(when) + '</span>' +
-        '</div>' +
-        '<div class="mt">' +
-          '📞 ' + esc(l.phone) + '<br>' +
-          '🌾 ' + esc(l.crop) + ' — ' + esc(l.qty) + ' क्विंटल' +
-          (l.msg ? '<br>📝 ' + esc(l.msg) : '') +
-        '</div>' +
-        '<div class="acts">' +
-          '<a class="btn btn-ghost btn-sm" href="tel:' + esc(l.phone) + '">📞 कॉल</a>' +
-          '<a class="btn btn-blue btn-sm" target="_blank" rel="noopener" ' +
-             'href="https://wa.me/91' + esc(String(l.phone).slice(-10)) + '">💬 WhatsApp</a>' +
-        '</div>' +
-      '</div>';
+    const when = dt.toLocaleDateString('en-IN') + ' ' + dt.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+    return '<div class="lead-item">' +
+      '<div class="top"><span class="nm">👤 ' + esc(l.name) + '</span><span class="tm">' + esc(when) + '</span></div>' +
+      '<div class="mt">📞 ' + esc(l.phone) + '<br>🌾 ' + esc(l.crop) + ' — ' + esc(l.qty) + ' क्विंटल' + (l.msg ? '<br>📝 ' + esc(l.msg) : '') + '</div>' +
+      '<div class="acts"><a class="btn btn-ghost btn-sm" href="tel:' + esc(l.phone) + '">📞 कॉल</a>' +
+      '<a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="https://wa.me/91' + esc(String(l.phone).slice(-10)) + '">💬 WhatsApp</a></div></div>';
   }).join('');
 }
-
-/* दुकान का फ़ॉर्म भरो */
 function fillAdminForm() {
   $('inShopName').value = state.shop.name;
-  $('inOwner').value    = state.shop.owner;
-  $('inPhone').value    = state.shop.phone;
+  $('inOwner').value = state.shop.owner;
+  $('inPhone').value = state.shop.phone;
   $('inWhatsapp').value = state.shop.whatsapp;
-  $('inAddress').value  = state.shop.address;
-  $('inPin').value      = state.shop.pin;
+  $('inAddress').value = state.shop.address;
+  $('inPin').value = state.shop.pin;
 }
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 11: बटन दबाने पर क्या हो ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* भाषा dropdown */
-$('langSelect').innerHTML = LANGS.map(function(l) {
-  const sel = l.code === state.lang ? 'selected' : '';
-  return '<option value="' + l.code + '" ' + sel + '>' + l.label + '</option>';
-}).join('');
-
-$('langSelect').addEventListener('change', function(e) {
-  state.lang = e.target.value;
-  saveState();
-  renderAll();
-});
-
-/* सर्च बॉक्स */
-$('searchInput').addEventListener('input', function(e) {
-  searchQuery = e.target.value;
-  renderCrops();
-});
-
-/* कैटेगरी चिप्स */
-$('categoryChips').addEventListener('click', function(e) {
+/* ═══ INTERACTIONS ═══ */
+$('langSelect').innerHTML = LANGS.map(l => '<option value="' + l.code + '" ' + (l.code === state.lang ? 'selected' : '') + '>' + l.label + '</option>').join('');
+$('langSelect').addEventListener('change', e => { state.lang = e.target.value; saveState(); renderAll(); });
+$('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderCrops(); });
+$('categoryChips').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if (!chip) return;
-  filterCat = chip.dataset.cat;
-  renderChips();
-  renderCrops();
+  filterCat = chip.dataset.cat; renderChips(); renderCrops();
 });
+$('fontUp').addEventListener('click', () => { state.fs = Math.min(24, state.fs + 1); saveState(); document.documentElement.style.setProperty('--fs', state.fs + 'px'); });
+$('fontDown').addEventListener('click', () => { state.fs = Math.max(13, state.fs - 1); saveState(); document.documentElement.style.setProperty('--fs', state.fs + 'px'); });
+$('hcBtn').addEventListener('click', () => { state.hc = !state.hc; saveState(); document.body.classList.toggle('hc', state.hc); $('hcBtn').classList.toggle('on', state.hc); });
+$('syncBtn').addEventListener('click', () => { if (isOwner) syncLiveRates(true); });
+$('staleRefresh').addEventListener('click', () => syncLiveRates(true));
+['calcCrop','calcQty','calcUnit'].forEach(id => { $(id).addEventListener('input', calcUpdate); $(id).addEventListener('change', calcUpdate); });
+document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
+document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click', e => { if (e.target === bd) bd.classList.add('hidden'); }));
 
-/* फ़ॉन्ट साइज़ */
-$('fontUp').addEventListener('click', function() {
-  state.fs = Math.min(24, state.fs + 1);
-  saveState();
-  document.documentElement.style.setProperty('--fs', state.fs + 'px');
-});
-$('fontDown').addEventListener('click', function() {
-  state.fs = Math.max(13, state.fs - 1);
-  saveState();
-  document.documentElement.style.setProperty('--fs', state.fs + 'px');
-});
-
-/* हाई कॉन्ट्रास्ट */
-$('hcBtn').addEventListener('click', function() {
-  state.hc = !state.hc;
-  saveState();
-  document.body.classList.toggle('hc', state.hc);
-  $('hcBtn').classList.toggle('on', state.hc);
-});
-
-/* सिंक बटन (सिर्फ़ एडमिन) */
-$('syncBtn').addEventListener('click', function() {
-  if (isOwner) syncLiveRates(true);
-});
-$('staleRefresh').addEventListener('click', function() {
-  syncLiveRates(true);
-});
-
-/* कैलकुलेटर के बदलाव */
-['calcCrop', 'calcQty', 'calcUnit'].forEach(function(id) {
-  $(id).addEventListener('input', calcUpdate);
-  $(id).addEventListener('change', calcUpdate);
-});
-
-/* मॉडल बंद करने वाले बटन */
-document.querySelectorAll('[data-close]').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    closeModal(btn.dataset.close);
-  });
-});
-document.querySelectorAll('.backdrop').forEach(function(bd) {
-  bd.addEventListener('click', function(e) {
-    if (e.target === bd) bd.classList.add('hidden');
-  });
-});
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 12: आवाज़ से खोज (VOICE SEARCH) ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
+/* ═══ VOICE SEARCH ═══ */
 (function setupVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    $('micBtn').style.opacity = '.45';
-    return;
-  }
-
+  if (!SR) { $('micBtn').style.opacity = '.45'; return; }
   recognition = new SR();
   recognition.continuous = false;
   recognition.interimResults = false;
-
-  recognition.onstart = function() {
-    micListening = true;
-    $('micBtn').classList.add('listening');
-    toast(t('micListening'));
-  };
-  recognition.onresult = function(ev) {
-    const text = ev.results[0][0].transcript;
-    $('searchInput').value = text;
-    searchQuery = text;
-    renderCrops();
-  };
-  recognition.onerror = function() {
-    micListening = false;
-    $('micBtn').classList.remove('listening');
-  };
-  recognition.onend = function() {
-    micListening = false;
-    $('micBtn').classList.remove('listening');
-  };
+  recognition.onstart = () => { micListening = true; $('micBtn').classList.add('listening'); toast(t('micListening')); };
+  recognition.onresult = ev => { const text = ev.results[0][0].transcript; $('searchInput').value = text; searchQuery = text; renderCrops(); };
+  recognition.onerror = () => { micListening = false; $('micBtn').classList.remove('listening'); };
+  recognition.onend = () => { micListening = false; $('micBtn').classList.remove('listening'); };
 })();
-
-$('micBtn').addEventListener('click', function() {
+$('micBtn').addEventListener('click', () => {
   if (!recognition) { toast(t('micUnsupported')); return; }
   if (micListening) { recognition.stop(); return; }
   recognition.lang = currentLang().speech;
   try { recognition.start(); } catch(e) {}
 });
 
+/* ═══════════════════════════════════════════════════════════════════
+   🔊 SPEECH — हिंदी में सही बोलने के लिए फिक्स किया गया
+   ═══════════════════════════════════════════════════════════════════ */
 
+/* 🎯 बेहतरीन voice चुनो */
+function getBestVoice(langCode) {
+  if (!('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  const prefix = langCode.split('-')[0];
+  return voices.find(v => v.lang === langCode)
+      || voices.find(v => v.lang.startsWith(prefix))
+      || voices.find(v => v.lang.startsWith('hi'))
+      || voices.find(v => v.lang === 'en-IN')
+      || null;
+}
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 13: सुनने वाला बटन (PLAY / STOP) ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* 📝 Speech के लिए text तैयार करो — भाषा के हिसाब से */
+function buildSpeechText() {
+  const isHindi = (state.lang === 'hi');
+  const list = visibleCrops();
+  return list.map(c => {
+    const name = cropName(c);
+    const priceText = isHindi ? (c.price + ' रुपये') : (c.price + ' rupees');
+    let unitText;
+    if (c.unit === 'kg') unitText = isHindi ? 'प्रति किलो' : 'per kilogram';
+    else unitText = isHindi ? 'प्रति क्विंटल' : 'per quintal';
+    return name + ' — ' + priceText + ', ' + unitText;
+  }).join('. ');
+}
+
+/* 🔥 Voice list पहले से load करो */
+(function warmUpVoices() {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+})();
+document.addEventListener('click', function warmUp() {
+  if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+  document.removeEventListener('click', warmUp);
+}, { once: true });
 
 function updateSpeakBtn() {
   const btn = $('speakBtn');
   const label = $('speakBtnLabel');
-
   if (speechPlaying) {
     btn.firstChild.nodeValue = '⏹️ ';
     label.textContent = t('stopSpeaking');
@@ -2839,487 +1109,258 @@ function updateSpeakBtn() {
     btn.classList.add('btn-ghost');
   }
 }
-
 function stopSpeech() {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   speechPlaying = false;
   updateSpeakBtn();
 }
-
-$('speakBtn').addEventListener('click', function() {
+$('speakBtn').addEventListener('click', () => {
   if (!('speechSynthesis' in window)) { toast(t('speechUnsupported')); return; }
   if (speechPlaying) { stopSpeech(); return; }
-
   window.speechSynthesis.cancel();
-  const list = visibleCrops();
-  if (!list.length) return;
-
-  const text = list.map(function(c) {
-    return cropName(c) + ' — ' + c.price + ' ' + t('price') + ' ' + unitLabel(c);
-  }).join('. ');
-
+  const text = buildSpeechText();
+  if (!text) return;
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = currentLang().speech;
-  u.rate = 0.92;
-  u.onend = function() { speechPlaying = false; updateSpeakBtn(); };
-  u.onerror = function() { speechPlaying = false; updateSpeakBtn(); };
-
+  const targetLang = currentLang().speech;
+  u.lang = targetLang;
+  const voice = getBestVoice(targetLang);
+  if (voice) u.voice = voice;
+  u.rate = 0.85;
+  u.pitch = 1;
+  u.volume = 1;
+  u.onend = () => { speechPlaying = false; updateSpeakBtn(); };
+  u.onerror = () => { speechPlaying = false; updateSpeakBtn(); };
   speechPlaying = true;
   updateSpeakBtn();
   toast(t('speechStarted'));
-  window.speechSynthesis.speak(u);
+  setTimeout(() => window.speechSynthesis.speak(u), 100);
 });
-
 window.addEventListener('beforeunload', stopSpeech);
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden && speechPlaying) stopSpeech();
-});
+document.addEventListener('visibilitychange', () => { if (document.hidden && speechPlaying) stopSpeech(); });
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 14: WhatsApp शेयर और प्रिंट ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-$('shareBtn').addEventListener('click', function() {
-  const lines = [
-    '*' + state.shop.name + '*',
-    t('todayRates') + ' — ' + formatDate(new Date()),
-    ''
-  ];
-  state.crops.forEach(function(c) {
-    lines.push((c.emoji || '🌾') + ' ' + cropName(c) + ' — ' +
-               money(c.price) + ' ' + unitLabel(c));
-  });
+/* ═══ SHARE / PRINT ═══ */
+$('shareBtn').addEventListener('click', () => {
+  const lines = ['*' + state.shop.name + '*', t('todayRates') + ' — ' + formatDate(new Date()), ''];
+  state.crops.forEach(c => lines.push((c.emoji || '🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + unitLabel(c)));
   lines.push('', '👤 ' + state.shop.owner, '📞 ' + state.shop.phone, '📍 ' + state.shop.address);
-
-  window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')),
-              '_blank', 'noopener');
+  window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
 });
+$('printBtn').addEventListener('click', () => window.print());
 
-$('printBtn').addEventListener('click', function() { window.print(); });
-
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 15: QR कोड ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-$('qrBtn').addEventListener('click', function() {
+/* ═══ QR CODE ═══ */
+$('qrBtn').addEventListener('click', () => {
   const url = location.href.split('#')[0];
   $('qrLink').textContent = url;
-  $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data='
-                 + encodeURIComponent(url);
+  $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data=' + encodeURIComponent(url);
   openModal('qrModal');
 });
-
-$('copyLinkBtn').addEventListener('click', async function() {
+$('copyLinkBtn').addEventListener('click', async () => {
   const url = location.href.split('#')[0];
-  try {
-    await navigator.clipboard.writeText(url);
-    toast(t('linkCopied'));
-  } catch(e) {
-    /* पुराने ब्राउज़र के लिए */
+  try { await navigator.clipboard.writeText(url); toast(t('linkCopied')); }
+  catch(e) {
     const ta = document.createElement('textarea');
-    ta.value = url;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
+    ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
     toast(t('linkCopied'));
   }
 });
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 16: पूछताछ फ़ॉर्म ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-$('enqSubmit').addEventListener('click', function() {
+/* ═══ ENQUIRY ═══ */
+$('enqSubmit').addEventListener('click', () => {
   const name = $('enqName').value.trim();
   const phoneRaw = $('enqPhone').value.replace(/\D/g, '');
   const cropId = $('enqCrop').value;
   const qty = parseFloat($('enqQty').value) || 0;
   const msg = $('enqMsg').value.trim();
-
-  /* जाँच */
-  if (!name)                  { toast(t('enqNeedName'));  $('enqName').focus();  return; }
+  if (!name) { toast(t('enqNeedName')); $('enqName').focus(); return; }
   if (phoneRaw.length !== 10) { toast(t('enqNeedPhone')); $('enqPhone').focus(); return; }
-  if (qty <= 0)               { toast(t('enqNeedQty'));   $('enqQty').focus();   return; }
-
-  const crop = state.crops.find(function(c) { return c.id === cropId; });
+  if (qty <= 0) { toast(t('enqNeedQty')); $('enqQty').focus(); return; }
+  const crop = state.crops.find(c => c.id === cropId);
   const cropLabel = crop ? cropName(crop) : cropId;
-
-  /* अनुमानित मूल्य */
   let est = 0;
-  if (crop) {
-    const qtyKg = qty * 100;
-    est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price;
-    est = Math.round(est);
-  }
-
-  /* व्हाट्सएप संदेश */
-  const text =
-    '*नई पूछताछ — ' + state.shop.name + '*\n\n' +
-    '👤 नाम: ' + name + '\n' +
-    '📞 मोबाइल: ' + phoneRaw + '\n' +
-    '🌾 फसल: ' + cropLabel + '\n' +
-    '⚖️ मात्रा: ' + qty + ' क्विंटल\n' +
-    (est ? '💰 अनुमानित मूल्य: ₹' + est.toLocaleString('en-IN') + '\n' : '') +
-    (msg ? '📝 जानकारी: ' + msg + '\n' : '') +
-    '\n_भेजा गया: ' + formatDate(new Date()) + ' ' + formatTime(new Date()) + '_';
-
-  /* लीड लॉग में सेव */
-  leads.unshift({
-    name: name,
-    phone: phoneRaw,
-    crop: cropLabel,
-    qty: qty,
-    msg: msg,
-    ts: Date.now()
-  });
+  if (crop) { const qtyKg = qty * 100; est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price; est = Math.round(est); }
+  const text = '*नई पूछताछ — ' + state.shop.name + '*\n\n👤 नाम: ' + name + '\n📞 मोबाइल: ' + phoneRaw + '\n🌾 फसल: ' + cropLabel + '\n⚖️ मात्रा: ' + qty + ' क्विंटल\n' + (est ? '💰 अनुमानित मूल्य: ₹' + est.toLocaleString('en-IN') + '\n' : '') + (msg ? '📝 जानकारी: ' + msg + '\n' : '') + '\n_भेजा गया: ' + formatDate(new Date()) + ' ' + formatTime(new Date()) + '_';
+  leads.unshift({ name, phone: phoneRaw, crop: cropLabel, qty, msg, ts: Date.now() });
   if (leads.length > 200) leads.length = 200;
   saveLeads();
-
-  /* WhatsApp खोलो */
   const waDigits = String(state.shop.whatsapp || '').replace(/\D/g, '');
   const target = waDigits.length >= 10 ? '91' + waDigits.slice(-10) : '';
-  const url = target
-    ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text)
-    : 'https://wa.me/?text=' + encodeURIComponent(text);
-
+  const url = target ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text) : 'https://wa.me/?text=' + encodeURIComponent(text);
   toast(t('enqSent'));
   window.open(url, '_blank', 'noopener');
-
-  /* फ़ॉर्म साफ़ करो */
-  $('enqQty').value = '';
-  $('enqMsg').value = '';
+  $('enqQty').value = ''; $('enqMsg').value = '';
 });
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 17: एडमिन लॉगिन और पैनल ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-$('ownerLoginBtn').addEventListener('click', function() {
-  $('pinInput').value = '';
-  $('pinErr').textContent = '';
+/* ═══ ADMIN LOGIN ═══ */
+$('ownerLoginBtn').addEventListener('click', () => {
+  $('pinInput').value = ''; $('pinErr').textContent = '';
   openModal('pinModal');
-  setTimeout(function() { $('pinInput').focus(); }, 100);
+  setTimeout(() => $('pinInput').focus(), 100);
 });
-
 $('pinSubmit').addEventListener('click', tryLogin);
-$('pinInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') tryLogin();
-});
-
+$('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
 function tryLogin() {
   const val = $('pinInput').value.trim();
   if (val === String(state.shop.pin)) {
-    isOwner = true;
-    saveAdminSession(true);
+    isOwner = true; saveAdminSession(true);
     closeModal('pinModal');
-    renderEditList();
-    renderBulkIds();
-    renderLeads();
-    fillAdminForm();
-    applyRole();
-    toast(t('loggedIn'));
-    setTimeout(function() { openModal('adminModal'); }, 300);
+    renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm();
+    applyRole(); toast(t('loggedIn'));
+    setTimeout(() => openModal('adminModal'), 300);
   } else {
     $('pinErr').textContent = t('wrongPin');
-    $('pinInput').value = '';
-    $('pinInput').focus();
+    $('pinInput').value = ''; $('pinInput').focus();
   }
 }
-
-function doLogout() {
-  isOwner = false;
-  saveAdminSession(false);
-  applyRole();
-  toast(t('loggedOut'));
-}
+function doLogout() { isOwner = false; saveAdminSession(false); applyRole(); toast(t('loggedOut')); }
 $('ownerLogoutBtn').addEventListener('click', doLogout);
-$('logoutBtn2').addEventListener('click', function() {
-  closeModal('adminModal');
-  doLogout();
-});
-
-$('openAdminFromRibbon').addEventListener('click', function() {
+$('logoutBtn2').addEventListener('click', () => { closeModal('adminModal'); doLogout(); });
+$('openAdminFromRibbon').addEventListener('click', () => {
   if (!isOwner) return;
-  renderEditList();
-  renderBulkIds();
-  renderLeads();
-  fillAdminForm();
+  renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm();
   openModal('adminModal');
 });
 
-/* टैब बदलना */
-document.querySelectorAll('.tab').forEach(function(tab) {
-  tab.addEventListener('click', function() {
-    document.querySelectorAll('.tab').forEach(function(x) { x.classList.remove('active'); });
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     tab.classList.add('active');
-
     const which = tab.dataset.tab;
-    ['rates','bulk','leads','shop'].forEach(function(k) {
-      $('tab-' + k).classList.toggle('hidden', k !== which);
-    });
+    ['rates','bulk','leads','shop'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== which));
   });
 });
 
-/* भाव लाइन हटाना */
-$('rateEditList').addEventListener('click', function(e) {
+$('rateEditList').addEventListener('click', e => {
   if (!isOwner) return;
   const btn = e.target.closest('[data-del]');
   if (!btn) return;
-  state.crops = state.crops.filter(function(c) { return c.id !== btn.dataset.del; });
-  renderEditList();
-  renderCrops();
-  renderCalc();
-  renderBulkIds();
+  state.crops = state.crops.filter(c => c.id !== btn.dataset.del);
+  renderEditList(); renderCrops(); renderCalc(); renderBulkIds();
 });
 
-/* नई फसल जोड़ना */
-$('addCropBtn').addEventListener('click', function() {
+$('addCropBtn').addEventListener('click', () => {
   if (!isOwner) return;
-
   const name = $('newCropName').value.trim();
   const price = parseFloat($('newCropPrice').value);
   if (!name || isNaN(price)) { toast(t('fillAll')); return; }
-
   const unit = $('newCropUnit').value;
   const cat = $('newCropCat').value;
-
-  /* सभी भाषाओं में एक ही नाम डालो */
-  const names = {};
-  LANGS.forEach(function(l) { names[l.code] = name; });
-
-  state.crops.push({
-    id: 'custom_' + Date.now(),
-    emoji: '🌿',
-    cat: cat,
-    unit: unit,
-    price: round2(price),
-    prev: round2(price),
-    base: round2(price),
-    apiKeys: [name.toLowerCase()],
-    names: names
-  });
-
-  $('newCropName').value = '';
-  $('newCropPrice').value = '';
-  renderEditList();
-  renderCrops();
-  renderCalc();
-  renderBulkIds();
+  const names = {}; LANGS.forEach(l => names[l.code] = name);
+  state.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat, unit, price: round2(price), prev: round2(price), base: round2(price), apiKeys: [name.toLowerCase()], names });
+  $('newCropName').value = ''; $('newCropPrice').value = '';
+  renderEditList(); renderCrops(); renderCalc(); renderBulkIds();
   toast(t('saved'));
 });
 
-/* बल्क अपडेट */
-$('bulkLoadCurrent').addEventListener('click', function() {
-  $('bulkArea').value = state.crops.map(function(c) {
-    return c.id + ',' + c.price;
-  }).join('\n');
+$('bulkLoadCurrent').addEventListener('click', () => {
+  $('bulkArea').value = state.crops.map(c => c.id + ',' + c.price).join('\n');
 });
-
-$('bulkApply').addEventListener('click', function() {
+$('bulkApply').addEventListener('click', () => {
   if (!isOwner) return;
   const raw = $('bulkArea').value.trim();
   if (!raw) { toast(t('bulkError')); return; }
-
   let done = 0, bad = 0;
-  raw.split(/\r?\n/).forEach(function(line) {
-    const ln = line.trim();
-    if (!ln) return;
-
-    const parts = ln.split(/[,\t;]+/).map(function(s) { return s.trim(); });
+  raw.split(/\r?\n/).forEach(line => {
+    const ln = line.trim(); if (!ln) return;
+    const parts = ln.split(/[,\t;]+/).map(s => s.trim());
     if (parts.length < 2) { bad++; return; }
-
-    const id = parts[0];
-    const price = parseFloat(parts[1]);
-    const crop = state.crops.find(function(c) { return c.id === id; });
+    const id = parts[0]; const price = parseFloat(parts[1]);
+    const crop = state.crops.find(c => c.id === id);
     if (!crop || isNaN(price)) { bad++; return; }
-
     const newPrice = round2(price);
-    if (newPrice !== crop.price) {
-      crop.prev = crop.price;
-      crop.price = newPrice;
-      crop.base = newPrice;
-    }
+    if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
     done++;
   });
-
   state.updatedAt = Date.now();
-  pushHistory();
-  saveState();
-  renderCrops();
-  renderEditList();
-  renderCalc();
-  renderNearby();
-  renderBulkIds();
-  checkStale();
-
+  pushHistory(); saveState();
+  renderCrops(); renderEditList(); renderCalc(); renderNearby(); renderBulkIds(); checkStale();
   toast(done + ' ' + t('bulkDone') + (bad ? ' • ' + bad + ' ' + t('bulkError') : ''));
 });
 
-/* पूछताछ साफ़ करना */
-$('clearLeads').addEventListener('click', function() {
+$('clearLeads').addEventListener('click', () => {
   if (!isOwner) return;
   if (!confirm(t('leadConfirmClear'))) return;
-  leads = [];
-  saveLeads();
-  renderLeads();
+  leads = []; saveLeads(); renderLeads();
 });
-
-/* पूछताछ CSV डाउनलोड */
-$('exportLeads').addEventListener('click', function() {
+$('exportLeads').addEventListener('click', () => {
   if (!isOwner) return;
-
-  const rows = [['Name','Phone','Crop','Qty(quintal)','Message','Date']];
-  leads.forEach(function(l) {
-    rows.push([
-      l.name, l.phone, l.crop, l.qty, l.msg || '',
-      new Date(l.ts).toLocaleString('en-IN')
-    ]);
-  });
-
-  const csv = rows.map(function(r) {
-    return r.map(function(x) {
-      return '"' + String(x).replace(/"/g, '""') + '"';
-    }).join(',');
-  }).join('\n');
-
+  const rows = [['Name','Phone','Crop','Qty','Message','Date']];
+  leads.forEach(l => rows.push([l.name, l.phone, l.crop, l.qty, l.msg || '', new Date(l.ts).toLocaleString('en-IN')]));
+  const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'kisan-enquiries-' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
-  setTimeout(function() { URL.revokeObjectURL(a.href); }, 2000);
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
 
-/* सेव करना */
-$('saveBtn').addEventListener('click', function() {
+$('saveBtn').addEventListener('click', () => {
   if (!isOwner) return;
-
-  /* सभी भाव पढ़ो */
-  document.querySelectorAll('#rateEditList .edit-row').forEach(function(row) {
-    const crop = state.crops.find(function(c) { return c.id === row.dataset.id; });
+  document.querySelectorAll('#rateEditList .edit-row').forEach(row => {
+    const crop = state.crops.find(c => c.id === row.dataset.id);
     if (!crop) return;
-
     const newPrice = round2(parseFloat(row.querySelector('.price-input').value) || 0);
     const newUnit = row.querySelector('.unit-select').value;
-
-    if (newPrice !== crop.price) {
-      crop.prev = crop.price;
-      crop.price = newPrice;
-      crop.base = newPrice;
-    }
+    if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
     crop.unit = newUnit;
   });
-
-  /* दुकान की जानकारी */
   const pin = $('inPin').value.trim();
   if (!/^\d{4,6}$/.test(pin)) { toast(t('fillAll')); return; }
-
-  state.shop.name     = $('inShopName').value.trim() || SHOP.name;
-  state.shop.owner    = $('inOwner').value.trim();
-  state.shop.phone    = $('inPhone').value.trim();
+  state.shop.name = $('inShopName').value.trim() || SHOP.name;
+  state.shop.owner = $('inOwner').value.trim();
+  state.shop.phone = $('inPhone').value.trim();
   state.shop.whatsapp = $('inWhatsapp').value.trim() || state.shop.phone;
-  state.shop.address  = $('inAddress').value.trim();
-  state.shop.pin      = pin;
-
+  state.shop.address = $('inAddress').value.trim();
+  state.shop.pin = pin;
   state.updatedAt = Date.now();
-  pushHistory();
-  saveState();
-  renderAll();
+  pushHistory(); saveState(); renderAll();
   toast(t('saved'));
 });
 
-/* रीसेट */
-$('resetBtn').addEventListener('click', function() {
+$('resetBtn').addEventListener('click', () => {
   if (!isOwner) return;
   if (!confirm(t('confirmReset'))) return;
-
   state.crops = copyObject(CROPS);
   state.shop = copyObject(SHOP);
   state.version = DATA_VERSION;
   state.updatedAt = Date.now();
-  history = {};
-  saveHistory();
-  saveState();
-  renderAll();
+  history = {}; saveHistory(); saveState(); renderAll();
   toast(t('resetDone'));
 });
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 18: PWA (फ़ोन में ऐप की तरह इंस्टॉल करने के लिए) ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
+/* ═══ PWA MANIFEST ═══ */
 (function setupPWA() {
   try {
-    const icon = 'data:image/svg+xml,' + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">' +
-      '<rect width="192" height="192" rx="34" fill="#15803d"/>' +
-      '<text x="96" y="132" font-size="112" text-anchor="middle">🌾</text></svg>'
-    );
-
+    const icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="34" fill="#15803d"/><text x="96" y="132" font-size="112" text-anchor="middle">🌾</text></svg>');
     const manifest = {
-      name: state.shop.name,
-      short_name: 'मंडी भाव',
-      description: 'किसान मंडी भाव',
-      start_url: '.',
-      scope: '.',
-      display: 'standalone',
-      background_color: '#f4f7f2',
-      theme_color: '#15803d',
-      lang: 'hi',
+      name: state.shop.name, short_name: 'मंडी भाव',
+      description: 'किसान मंडी भाव', start_url: '.', scope: '.',
+      display: 'standalone', background_color: '#f4f7f2',
+      theme_color: '#15803d', lang: 'hi',
       icons: [
         { src: icon, sizes: '192x192', type: 'image/svg+xml' },
         { src: icon, sizes: '512x512', type: 'image/svg+xml' }
       ]
     };
-
     const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
     const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = URL.createObjectURL(blob);
+    link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
     document.head.appendChild(link);
   } catch(e) {}
 })();
 
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   ═══ भाग 19: शुरुआत ═══
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* एडमिन सेशन जाँचो */
+/* ═══ INIT ═══ */
 isOwner = readAdminSession();
-
-/* सब कुछ पहली बार दिखाओ */
 renderAll();
 updateSpeakBtn();
 startAutoSync();
-
-/* अगर भाव 5 मिनट से पुराने हैं तो लाइव भाव ले आओ */
 if (Date.now() - state.updatedAt > 5 * 60 * 1000) {
-  setTimeout(function() { syncLiveRates(false); }, 1200);
+  setTimeout(() => syncLiveRates(false), 1200);
 } else {
-  pushHistory();
-  saveHistory();
+  pushHistory(); saveHistory();
 }
-
-/* कंसोल में पुष्टि */
-console.log(
-  '%c🌾 किसान मंडी भाव — वर्ज़न ' + DATA_VERSION + ' चालू है\n' +
-  '👉 भाव बदलने के लिए CROPS में एडिट करें और DATA_VERSION बढ़ाएँ।',
-  'color:#15803d;font-weight:bold;font-size:13px'
-);
+console.log('%c🌾 किसान मंडी भाव — वर्ज़न ' + DATA_VERSION + ' चालू है', 'color:#15803d;font-weight:bold;font-size:13px');
 </script>
 
 </body>
