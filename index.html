@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#15803d">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://api.data.gov.in https://api.qrserver.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>किसान मंडी भाव | Kisan Mandi Bhav</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -17,15 +18,12 @@ button{cursor:pointer;border:none;background:none}
 .hidden{display:none!important}
 h2.sec{font-size:1.35rem;font-weight:800;color:var(--green-dark);margin-bottom:6px}
 p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
-
 .admin-ribbon{background:linear-gradient(90deg,#78350f,#92400e);color:#fff;padding:9px 16px;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .admin-ribbon .left{display:flex;align-items:center;gap:9px}
 .admin-ribbon .dot{width:9px;height:9px;border-radius:50%;background:#fbbf24;animation:pulse 1.8s infinite}
 .admin-ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:9px;padding:6px 14px;font-weight:800;font-size:.8rem}
-
 .stale-banner{background:#fef3c7;border-bottom:2px solid #fcd34d;color:#92400e;padding:11px 16px;font-size:.88rem;font-weight:800;text-align:center}
 .stale-banner button{margin-left:10px;background:#92400e;color:#fff;border-radius:9px;padding:5px 14px;font-weight:800;font-size:.78rem}
-
 .site-header{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#15803d 0%,#166534 100%);color:#fff;box-shadow:0 2px 12px rgba(20,83,45,.25)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
@@ -38,7 +36,6 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .lang-wrap select option{color:#12261a;background:#fff}
 .tool-btn{width:42px;height:42px;border-radius:12px;font-weight:800;font-size:1rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;display:grid;place-items:center}
 .tool-btn.on{background:#fff;color:var(--green-dark);border-color:#fff}
-
 .hero{background:var(--card);border-bottom:1px solid var(--border);padding:20px 0}
 .hero-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
 .hero h2{font-size:1.5rem;font-weight:800;color:var(--green-dark)}
@@ -54,7 +51,6 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
 .spin{display:inline-block;animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:11px 18px;font-weight:700;font-size:.94rem;transition:.15s;border:2px solid transparent;white-space:nowrap;text-decoration:none}
 .btn-primary{background:var(--green);color:#fff;box-shadow:0 3px 10px rgba(21,128,61,.28)}
 .btn-ghost{background:var(--card);color:var(--green-dark);border-color:var(--border)}
@@ -66,7 +62,6 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .btn[disabled]{opacity:.6;cursor:wait}
 .btn.speaking{animation:speakPulse 1.2s ease-in-out infinite}
 @keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
-
 .toolbar{padding:20px 0 6px}
 .search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:8px 12px 8px 16px}
 .search-box:focus-within{border-color:var(--green-mid);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
@@ -77,14 +72,12 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .chips::-webkit-scrollbar{display:none}
 .chip{background:var(--card);border:2px solid var(--border);border-radius:999px;padding:9px 18px;font-weight:700;font-size:.9rem;color:var(--muted);white-space:nowrap}
 .chip.active{background:var(--green);border-color:var(--green);color:#fff}
-
 .grid-section{padding:10px 0 34px}
 .rates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:15px}
 .crop-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:17px 18px 14px;box-shadow:var(--shadow);transition:.18s;position:relative;overflow:hidden}
 .crop-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--green-soft)}
 .crop-card.up::before{background:#22c55e}
 .crop-card.down::before{background:#f87171}
-.crop-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
 .crop-emoji{font-size:1.75rem;line-height:1}
 .crop-name{font-size:1.08rem;font-weight:800}
@@ -105,11 +98,9 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .hist-lbl{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase}
 .empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--muted);background:var(--card);border-radius:var(--radius);border:2px dashed var(--border)}
 .empty .big{font-size:2.6rem;display:block;margin-bottom:10px}
-
 .sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
 section.band{padding:28px 0}
 section.band.alt{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-
 .calc-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;align-items:end}
 .calc-field label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
 .calc-field input,.calc-field select{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:13px;outline:none;background:var(--card);font-size:1rem;font-weight:700}
@@ -117,14 +108,12 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .calc-result .lbl{font-size:.8rem;opacity:.9;font-weight:700;text-transform:uppercase}
 .calc-result .val{font-size:2rem;font-weight:800}
 .calc-result .brk{font-size:.85rem;opacity:.92;font-weight:600}
-
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-grid .full{grid-column:1/-1}
 .fld label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
 .fld input,.fld select,.fld textarea{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:13px;outline:none;background:var(--card);font-size:.97rem;font-weight:600;font-family:inherit;resize:vertical}
 .fld textarea{min-height:78px}
 .form-note{font-size:.8rem;color:var(--muted);font-weight:600;margin-top:12px;line-height:1.5}
-
 .contact{background:var(--card);border-top:1px solid var(--border);padding:34px 0}
 .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
 .contact-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;gap:13px;align-items:flex-start}
@@ -133,14 +122,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .contact-card .val{font-size:.98rem;font-weight:700;margin-top:3px;word-break:break-word}
 .contact-card a{color:var(--green-dark);text-decoration:none}
 .contact-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-
 .site-footer{background:var(--green-dark);color:#cbe8d4;padding:26px 0;text-align:center;font-size:.86rem}
 .disclaimer{max-width:760px;margin:0 auto 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:13px;padding:12px 16px;font-size:.8rem;line-height:1.6;color:#e5f3ea;font-weight:600}
 .site-footer .owner-link{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.85rem}
-
 .mobile-bar{position:fixed;bottom:0;left:0;right:0;z-index:55;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--border);backdrop-filter:blur(10px)}
 .mobile-bar .btn{flex:1}
-
 .backdrop{position:fixed;inset:0;z-index:100;background:rgba(10,30,18,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
 .modal{background:var(--card);border-radius:22px;width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:pop .22s ease}
@@ -159,12 +145,10 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .lock-hero .big-lock{font-size:2.6rem;width:74px;height:74px;margin:0 auto 12px;display:grid;place-items:center;background:var(--green-soft);border-radius:50%}
 .lock-hero h4{font-size:1.02rem;font-weight:800;color:var(--green-dark)}
 .lock-hero p{font-size:.85rem;color:var(--muted);margin-top:4px}
-
 .tabs{display:flex;gap:6px;padding:14px 18px 0;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:10px 15px;border-radius:12px 12px 0 0;font-weight:800;font-size:.87rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
 .tab.active{color:var(--green-dark);border-bottom-color:var(--green);background:#f3faf5}
-
 .edit-row{display:grid;grid-template-columns:34px 1fr 112px 100px 42px;align-items:center;gap:9px;padding:10px;border-radius:13px;background:var(--bg);margin-bottom:9px}
 .edit-emoji{font-size:1.3rem;text-align:center}
 .edit-name{font-weight:700;font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -173,7 +157,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .edit-price input{width:100%;border:none;outline:none;padding:9px 0;font-weight:800;font-size:.95rem;background:transparent}
 .edit-row select{border:2px solid var(--border);border-radius:11px;padding:9px 7px;font-size:.82rem;font-weight:700;background:var(--card);outline:none;width:100%}
 .del-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:2px solid var(--border);font-size:1rem;display:grid;place-items:center}
-
 .add-box{background:#f3faf5;border:2px dashed #b9dfc4;border-radius:16px;padding:16px;margin-top:16px}
 .add-box h4{font-size:.95rem;font-weight:800;color:var(--green-dark);margin-bottom:12px}
 .add-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -187,14 +170,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .lead-item .tm{font-size:.75rem;color:var(--muted);font-weight:700}
 .lead-item .mt{color:var(--muted);font-weight:600;line-height:1.5}
 .lead-item .acts{display:flex;gap:8px;margin-top:9px}
-
 .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:#14532d;color:#fff;padding:13px 26px;border-radius:14px;font-weight:700;font-size:.92rem;z-index:200;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
 .qr-box{text-align:center;padding:8px 0}
 .qr-box img{width:230px;height:230px;border-radius:16px;border:6px solid var(--card);background:#fff}
 .qr-box .lnk{margin-top:14px;font-size:.82rem;word-break:break-all;font-weight:700;background:var(--bg);padding:11px 14px;border-radius:12px;color:var(--green-dark)}
-
 @media (max-width:760px){
   .brand h1{font-size:1.02rem}
   .logo{width:44px;height:44px;flex-basis:44px;font-size:1.4rem}
@@ -264,7 +244,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 <div class="wrap toolbar">
   <div class="search-box">
     <span>🔍</span>
-    <input type="search" id="searchInput" data-i18n-ph="search" placeholder="फसल खोजें…" autocomplete="off">
+    <input type="search" id="searchInput" maxlength="40" data-i18n-ph="search" placeholder="फसल खोजें…" autocomplete="off">
     <button class="mic-btn" id="micBtn">🎤</button>
   </div>
   <div class="chips" id="categoryChips"></div>
@@ -280,27 +260,12 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
       <h2 class="sec" data-i18n="calcTitle">🧮 मेरी फसल का अनुमानित मूल्य</h2>
       <p class="secSub" data-i18n="calcSub">अपनी फसल और मात्रा चुनें।</p>
       <div class="calc-grid">
-        <div class="calc-field">
-          <label data-i18n="calcCrop">फसल चुनें</label>
-          <select id="calcCrop"></select>
-        </div>
-        <div class="calc-field">
-          <label data-i18n="calcQty">मात्रा</label>
-          <input type="number" id="calcQty" min="0" step="0.01" inputmode="decimal" placeholder="100">
-        </div>
-        <div class="calc-field">
-          <label data-i18n="calcUnit">इकाई</label>
-          <select id="calcUnit">
-            <option value="quintal" data-i18n="quintal">क्विंटल</option>
-            <option value="kg" data-i18n="kg">किलो</option>
-          </select>
-        </div>
+        <div class="calc-field"><label data-i18n="calcCrop">फसल चुनें</label><select id="calcCrop"></select></div>
+        <div class="calc-field"><label data-i18n="calcQty">मात्रा</label><input type="number" id="calcQty" min="0" max="100000" step="0.01" inputmode="decimal" placeholder="100"></div>
+        <div class="calc-field"><label data-i18n="calcUnit">इकाई</label><select id="calcUnit"><option value="quintal" data-i18n="quintal">क्विंटल</option><option value="kg" data-i18n="kg">किलो</option></select></div>
       </div>
       <div class="calc-result">
-        <div>
-          <div class="lbl" data-i18n="calcTotal">अनुमानित कुल मूल्य</div>
-          <div class="val" id="calcTotal">₹0</div>
-        </div>
+        <div><div class="lbl" data-i18n="calcTotal">अनुमानित कुल मूल्य</div><div class="val" id="calcTotal">₹0</div></div>
         <div class="brk" id="calcBreakdown"></div>
       </div>
       <p class="form-note" data-i18n="calcHint">* अनुमानित राशि है। अंतिम भाव दुकान पर तय होगा।</p>
@@ -322,11 +287,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
       <h2 class="sec" data-i18n="enquiryTitle">📝 बेचना है? पूछताछ भेजें</h2>
       <p class="secSub" data-i18n="enquirySub">अपनी फसल की जानकारी भरें।</p>
       <div class="form-grid">
-        <div class="fld"><label data-i18n="yourName">आपका नाम</label><input type="text" id="enqName" placeholder="जैसे: रामलाल"></div>
-        <div class="fld"><label data-i18n="yourPhone">मोबाइल नंबर</label><input type="tel" id="enqPhone" inputmode="numeric" maxlength="10" placeholder="10 अंक"></div>
+        <div class="fld"><label data-i18n="yourName">आपका नाम</label><input type="text" id="enqName" maxlength="50" placeholder="जैसे: रामलाल" autocomplete="name"></div>
+        <div class="fld"><label data-i18n="yourPhone">मोबाइल नंबर</label><input type="tel" id="enqPhone" maxlength="10" inputmode="numeric" placeholder="10 अंक" autocomplete="tel"></div>
         <div class="fld"><label data-i18n="yourCrop">फसल</label><select id="enqCrop"></select></div>
-        <div class="fld"><label data-i18n="yourQty">मात्रा (क्विंटल)</label><input type="number" id="enqQty" min="0" step="0.1" inputmode="decimal" placeholder="50"></div>
-        <div class="fld full"><label data-i18n="yourMsg">अतिरिक्त जानकारी (वैकल्पिक)</label><textarea id="enqMsg" placeholder="जैसे: गेहूं सूखा और साफ है"></textarea></div>
+        <div class="fld"><label data-i18n="yourQty">मात्रा (क्विंटल)</label><input type="number" id="enqQty" min="0" max="100000" step="0.1" inputmode="decimal" placeholder="50"></div>
+        <div class="fld full"><label data-i18n="yourMsg">अतिरिक्त जानकारी (वैकल्पिक)</label><textarea id="enqMsg" maxlength="200" placeholder="जैसे: गेहूं सूखा और साफ है"></textarea></div>
         <div class="full"><button class="btn btn-primary btn-block" id="enqSubmit">💬 <span data-i18n="sendWhatsApp">व्हाट्सएप पर भेजें</span></button></div>
       </div>
     </div>
@@ -343,7 +308,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
     </div>
     <div class="contact-actions">
       <a class="btn btn-primary" id="callBtn" href="tel:">📞 <span data-i18n="callNow">कॉल करें</span></a>
-      <a class="btn btn-ghost" id="waBtn" href="#" target="_blank" rel="noopener">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
+      <a class="btn btn-ghost" id="waBtn" href="#" target="_blank" rel="noopener noreferrer">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
       <button class="btn btn-ghost" id="qrBtn">📱 <span data-i18n="qrShow">QR कोड</span></button>
     </div>
   </div>
@@ -360,7 +325,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 
 <div class="mobile-bar">
   <a class="btn btn-primary" id="callBtnM" href="tel:">📞 <span data-i18n="callNow">कॉल करें</span></a>
-  <a class="btn btn-ghost" id="waBtnM" href="#" target="_blank" rel="noopener">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
+  <a class="btn btn-ghost" id="waBtnM" href="#" target="_blank" rel="noopener noreferrer">💬 <span data-i18n="whatsapp">व्हाट्सएप</span></a>
 </div>
 
 <div class="backdrop hidden" id="pinModal">
@@ -368,7 +333,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
     <div class="modal-head"><h3 data-i18n="adminLogin">दुकानदार लॉगिन</h3><button class="close-x" data-close="pinModal">✕</button></div>
     <div class="modal-body">
       <div class="lock-hero"><div class="big-lock">🔒</div><h4 data-i18n="loginTitle">सिर्फ़ दुकानदार के लिए</h4><p data-i18n="loginSub">किसानों को लॉगिन की ज़रूरत नहीं।</p></div>
-      <div class="field"><label data-i18n="enterPin">पिन दर्ज करें</label><input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+      <div class="field"><label data-i18n="enterPin">पिन दर्ज करें</label><input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off"></div>
       <p class="err" id="pinErr"></p>
     </div>
     <div class="modal-foot">
@@ -394,8 +359,8 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         <div class="add-box">
           <h4 data-i18n="addCrop">➕ नई फसल जोड़ें</h4>
           <div class="add-grid">
-            <div class="full"><input id="newCropName" data-i18n-ph="cropName" placeholder="फसल का नाम"></div>
-            <div><input id="newCropPrice" type="number" min="0" step="0.01" placeholder="भाव (₹/किलो)"></div>
+            <div class="full"><input id="newCropName" maxlength="50" data-i18n-ph="cropName" placeholder="फसल का नाम"></div>
+            <div><input id="newCropPrice" type="number" min="0" max="100000" step="0.01" maxlength="10" placeholder="भाव (₹/किलो)"></div>
             <div><select id="newCropUnit"></select></div>
             <div class="full"><select id="newCropCat"></select></div>
             <div class="full"><button class="btn btn-primary btn-block" id="addCropBtn" data-i18n="addCrop">नई फसल जोड़ें</button></div>
@@ -406,7 +371,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         <p class="section-title" data-i18n="bulkTitle">📋 बल्क भाव अपडेट (CSV)</p>
         <p class="hint" data-i18n="bulkHint">हर लाइन में: फसल-आईडी, भाव</p>
         <div id="bulkIds" class="hint" style="background:var(--bg);padding:10px 13px;border-radius:11px;font-family:monospace"></div>
-        <textarea class="bulk-area" id="bulkArea" placeholder="wheat,24.80&#10;chana,54.50"></textarea>
+        <textarea class="bulk-area" id="bulkArea" maxlength="5000" placeholder="wheat,24.80&#10;chana,54.50"></textarea>
         <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
           <button class="btn btn-primary" id="bulkApply" data-i18n="bulkApply">लागू करें</button>
           <button class="btn btn-ghost" id="bulkLoadCurrent" data-i18n="bulkLoad">मौजूदा भाव भरें</button>
@@ -421,11 +386,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         </div>
       </div>
       <div id="tab-shop" class="hidden">
-        <div class="field"><label data-i18n="shopName">दुकान का नाम</label><input id="inShopName" type="text"></div>
-        <div class="field"><label data-i18n="ownerName">मालिक का नाम</label><input id="inOwner" type="text"></div>
-        <div class="field"><label data-i18n="phone">मोबाइल नंबर</label><input id="inPhone" type="tel" inputmode="numeric"></div>
-        <div class="field"><label data-i18n="whatsapp">व्हाट्सएप नंबर</label><input id="inWhatsapp" type="tel" inputmode="numeric"></div>
-        <div class="field"><label data-i18n="address">पता</label><input id="inAddress" type="text"></div>
+        <div class="field"><label data-i18n="shopName">दुकान का नाम</label><input id="inShopName" type="text" maxlength="80"></div>
+        <div class="field"><label data-i18n="ownerName">मालिक का नाम</label><input id="inOwner" type="text" maxlength="50"></div>
+        <div class="field"><label data-i18n="phone">मोबाइल नंबर</label><input id="inPhone" type="tel" inputmode="numeric" maxlength="15"></div>
+        <div class="field"><label data-i18n="whatsapp">व्हाट्सएप नंबर</label><input id="inWhatsapp" type="tel" inputmode="numeric" maxlength="15"></div>
+        <div class="field"><label data-i18n="address">पता</label><input id="inAddress" type="text" maxlength="200"></div>
         <div class="field"><label data-i18n="changePin">लॉगिन पिन (4-6 अंक)</label><input id="inPin" type="text" inputmode="numeric" maxlength="6"></div>
         <p class="hint" data-i18n="pinWarn">⚠️ पिन याद रखें।</p>
       </div>
@@ -459,41 +424,38 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   🌾 किसान मंडी भाव — JavaScript
+   🌾 किसान मंडी भाव — v6 (SECURE EDITION)
    ═══════════════════════════════════════════════════════════════════
-   📌 बदलने के लिए:
-   • STEP 1: DATA_VERSION  (कोड बदलने पर +1)
-   • STEP 2: SHOP          (दुकान की जानकारी, मालिक का नाम)
-   • STEP 3: LIVE          (API settings)
-   • STEP 4: CROPS         (फसलों के भाव)
-   • STEP 5: NEARBY        (आसपास की मंडियाँ)
+   🔒 Security features:
+   • PIN SHA-256 hashing (plain PIN in source used only once)
+   • Login rate limiting (5 attempts → 30s lockout)
+   • Session auto-timeout (30 minutes)
+   • Input validation & max length
+   • localStorage validation
+   • CSP (Content Security Policy)
+   • External links: rel="noopener noreferrer"
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 📌 STEP 1: DATA_VERSION — कोड बदलने पर +1 करें */
-const DATA_VERSION = 5;
+const DATA_VERSION = 6;
 
-/* 📌 STEP 2: दुकान की जानकारी — यहाँ अपना नाम, फ़ोन, पता डालें */
+/* 📌 STEP 1: दुकान की जानकारी */
 const SHOP = {
   name:     'नवीन मंडी खागा फतेहपुर',
-  owner:    'Dinesh kesharwani',                 /* ⬅️ मालिक का नाम यहाँ डालें */
-  phone:    '7380849700',
-  whatsapp: '7380849700',
-  address:  'दुकान नं.8 नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)',
-  pin:      '2008'
+  owner:    'shiva',
+  phone:    'xxxxxxxx70',
+  whatsapp: 'xxxxxxxx70',
+  address:  'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)',
+  pin:      '2008',    /* ⬅️ यह प्लेन पिन सिर्फ पहली बार hash बनाने के लिए */
+  pinHash:  ''         /* ⬅️ पहली बार खुद भर जाएगा */
 };
 
-/* 📌 STEP 3: लाइव भाव API — endpoint खाली = डेमो मोड */
+/* 📌 STEP 2: लाइव API */
 const LIVE = {
-  endpoint:  '',
-  apiKey:    '',
-  refreshMs: 5 * 60 * 1000,
-  volatility: 0.012,
-  district:  'Fatehpur',
-  market:    'Khaga',
-  staleHours: 24
+  endpoint: '', apiKey: '', refreshMs: 5*60*1000,
+  volatility: 0.012, district: 'Fatehpur', market: 'Khaga', staleHours: 24
 };
 
-/* 📌 STEP 4: फसलों की सूची और भाव — price = ₹/किलो */
+/* 📌 STEP 3: फसलें और भाव */
 const CROPS = [
   { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50,
     apiKeys:['wheat','gehun','गेहूं'],
@@ -505,149 +467,52 @@ const CROPS = [
     apiKeys:['maize','makka','मक्का'],
     names:{hi:'मक्का',en:'Maize',mr:'मका',pa:'ਮੱਕੀ',gu:'મકાઈ',bn:'ভুট্টা',ta:'மக்காச்சோளம்',te:'మొక్కజొన్న'} },
   { id:'bajra', emoji:'🌾', cat:'millet', unit:'kg', price:25.00, prev:24.60, base:25.00,
-    apiKeys:['bajra','pearl millet','बाजरा'],
+    apiKeys:['bajra','बाजरा'],
     names:{hi:'बाजरा',en:'Pearl Millet (Bajra)',mr:'बाजरी',pa:'ਬਾਜਰਾ',gu:'બાજરી',bn:'বাজরা',ta:'கம்பு',te:'సజ్జలు'} },
   { id:'jowar', emoji:'🌾', cat:'millet', unit:'kg', price:29.00, prev:29.00, base:29.00,
-    apiKeys:['jowar','sorghum','ज्वार'],
+    apiKeys:['jowar','ज्वार'],
     names:{hi:'ज्वार',en:'Sorghum (Jowar)',mr:'ज्वारी',pa:'ਜਵਾਰ',gu:'જુવાર',bn:'জোয়ার',ta:'சோளம்',te:'జొన్నలు'} },
   { id:'ragi', emoji:'🌾', cat:'millet', unit:'kg', price:32.00, prev:31.40, base:32.00,
-    apiKeys:['ragi','finger millet','रागी'],
+    apiKeys:['ragi','रागी'],
     names:{hi:'रागी (मंडुआ)',en:'Finger Millet (Ragi)',mr:'नाचणी',pa:'ਰਾਗੀ',gu:'રાગી',bn:'রাগি',ta:'ராகி',te:'రాగి'} },
   { id:'kangni', emoji:'🌾', cat:'millet', unit:'kg', price:35.00, prev:35.00, base:35.00,
     apiKeys:['kangni','कंगनी'],
-    names:{hi:'कंगनी (काकुन)',en:'Foxtail Millet (Kangni)',mr:'कांग',pa:'ਕੰਗਣੀ',gu:'કાંગ',bn:'কাঙ্গনি',ta:'தினை',te:'కొర్రలు'} },
+    names:{hi:'कंगनी (काकुन)',en:'Foxtail Millet',mr:'कांग',pa:'ਕੰਗਣੀ',gu:'કાંગ',bn:'কাঙ্গনি',ta:'தினை',te:'కొర్రలు'} },
   { id:'chana', emoji:'🫘', cat:'pulse', unit:'kg', price:54.00, prev:53.50, base:54.00,
-    apiKeys:['chana','gram','चना','chickpea'],
+    apiKeys:['chana','चना'],
     names:{hi:'चना',en:'Chickpea (Chana)',mr:'हरभरा',pa:'ਛੋਲੇ',gu:'ચણા',bn:'ছোলা',ta:'கொண்டைக்கடலை',te:'శనగ'} },
   { id:'tur', emoji:'🫘', cat:'pulse', unit:'kg', price:70.00, prev:71.50, base:70.00,
-    apiKeys:['tur','arhar','तूर','pigeon pea'],
+    apiKeys:['tur','arhar','तूर'],
     names:{hi:'अरहर (तूर)',en:'Pigeon Pea (Tur)',mr:'तूर',pa:'ਅਰਹਰ',gu:'તુવેર',bn:'অড়হর',ta:'துவரை',te:'కంది'} },
   { id:'moong', emoji:'🫘', cat:'pulse', unit:'kg', price:75.00, prev:75.00, base:75.00,
-    apiKeys:['moong','green gram','मूंग'],
+    apiKeys:['moong','मूंग'],
     names:{hi:'मूंग',en:'Green Gram (Moong)',mr:'मूग',pa:'ਮੂੰਗ',gu:'મગ',bn:'মুগ',ta:'பாசிப்பயறு',te:'పెసర'} },
   { id:'urad', emoji:'🫘', cat:'pulse', unit:'kg', price:72.00, prev:70.50, base:72.00,
-    apiKeys:['urad','black gram','उड़द'],
+    apiKeys:['urad','उड़द'],
     names:{hi:'उड़द',en:'Black Gram (Urad)',mr:'उडीद',pa:'ਮਾਸ਼',gu:'અડદ',bn:'মাসকলাই',ta:'உளுந்து',te:'మినుము'} },
   { id:'masoor', emoji:'🫘', cat:'pulse', unit:'kg', price:60.00, prev:60.00, base:60.00,
-    apiKeys:['masoor','lentil','मसूर'],
+    apiKeys:['masoor','मसूर'],
     names:{hi:'मसूर',en:'Lentil (Masoor)',mr:'मसूर',pa:'ਮਸਰ',gu:'મસૂર',bn:'মসুর',ta:'மைசூர்ப் பருப்பு',te:'మసూర్'} }
 ];
-
 const CATEGORIES = ['cereal','millet','pulse'];
+const NEARBY = [];
 
-/* 📌 STEP 5: आसपास की मंडियाँ (खाली = छिपा रहेगा) */
-const NEARBY = [
-  // { name:'फतेहपुर मंडी', prices:{ wheat:24.80, chana:54.50 } },
-];
-
-/* ═══ भाषाएँ ═══ */
 const LANGS = [
-  { code:'hi', label:'हिंदी',   speech:'hi-IN' },
-  { code:'en', label:'English', speech:'en-IN' },
-  { code:'mr', label:'मराठी',   speech:'mr-IN' },
-  { code:'pa', label:'ਪੰਜਾਬੀ',  speech:'pa-IN' },
-  { code:'gu', label:'ગુજરાતી', speech:'gu-IN' },
-  { code:'bn', label:'বাংলা',   speech:'bn-IN' },
-  { code:'ta', label:'தமிழ்',   speech:'ta-IN' },
-  { code:'te', label:'తెలుగు',  speech:'te-IN' }
+  { code:'hi', label:'हिंदी', speech:'hi-IN' },{ code:'en', label:'English', speech:'en-IN' },
+  { code:'mr', label:'मराठी', speech:'mr-IN' },{ code:'pa', label:'ਪੰਜਾਬੀ', speech:'pa-IN' },
+  { code:'gu', label:'ગુજરાતી', speech:'gu-IN' },{ code:'bn', label:'বাংলা', speech:'bn-IN' },
+  { code:'ta', label:'தமிழ்', speech:'ta-IN' },{ code:'te', label:'తెలుగు', speech:'te-IN' }
 ];
 
 const I18N = {
-  hi: {
-    tagline:'आज के ताज़ा मंडी भाव', todayRates:'आज के भाव', updatedAt:'अंतिम अपडेट',
-    search:'फसल खोजें…', all:'सभी',
-    catCereal:'अनाज', catMillet:'मोटे अनाज', catPulse:'दालें',
-    perQuintal:'प्रति क्विंटल', perKg:'प्रति किलो',
-    up:'बढ़त', down:'गिरावट', same:'स्थिर',
-    callNow:'कॉल करें', whatsapp:'व्हाट्सएप',
-    listen:'सुनें', stopSpeaking:'रोकें',
-    noResults:'कोई फसल नहीं मिली', contactTitle:'हमसे संपर्क करें',
-    adminLogin:'दुकानदार लॉगिन', enterPin:'पिन दर्ज करें', login:'लॉगिन',
-    loginTitle:'सिर्फ़ दुकानदार के लिए', loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',
-    wrongPin:'गलत पिन', cancel:'रद्द करें', save:'सेव करें',
-    shopName:'दुकान का नाम', ownerName:'मालिक का नाम', phone:'मोबाइल नंबर',
-    address:'पता', editRates:'भाव बदलें', addCrop:'नई फसल जोड़ें', cropName:'फसल का नाम',
-    price:'भाव', unit:'इकाई', remove:'हटाएं', logout:'लॉगआउट', saved:'सेव हो गया ✓',
-    print:'प्रिंट करें', shopSettings:'दुकान', adminPanel:'दुकानदार पैनल',
-    reset:'रीसेट', changePin:'लॉगिन पिन', footerNote:'किसानों के लिए समर्पित',
-    editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',
-    fillAll:'कृपया सारी जानकारी भरें', confirmReset:'सारा डेटा रीसेट हो जाएगा?',
-    resetDone:'रीसेट हो गया', noCrops:'कोई फसल नहीं है',
-    syncNow:'लाइव भाव लाएँ', syncing:'लाइव भाव लोड हो रहे हैं…', synced:'लाइव भाव अपडेट हुए ✓',
-    syncFail:'लाइव डेटा नहीं मिला', liveNote:'स्रोत: डेमो लाइव सिमुलेशन',
-    liveNoteApi:'स्रोत: लाइव मंडी API', adminModeOn:'एडमिन मोड चालू', openPanel:'पैनल खोलें',
-    loggedIn:'लॉगिन हो गया ✓', loggedOut:'लॉगआउट हो गया',
-    pinWarn:'⚠️ पिन याद रखें।',
-    speechUnsupported:'इस ब्राउज़र में आवाज़ नहीं चल सकती', speechStarted:'भाव सुनाए जा रहे हैं…',
-    staleWarning:'भाव 24 घंटे से पुराने हैं', refreshNow:'अभी अपडेट करें',
-    calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य', calcSub:'अपनी फसल और मात्रा चुनें।',
-    calcCrop:'फसल चुनें', calcQty:'मात्रा', calcUnit:'इकाई',
-    calcTotal:'अनुमानित कुल मूल्य', calcHint:'* अनुमानित राशि है। अंतिम भाव दुकान पर तय होगा।',
-    quintal:'क्विंटल', kg:'किलो',
-    nearbyTitle:'📍 आसपास की मंडियों के भाव', nearbySub:'तुलना करें।',
-    enquiryTitle:'📝 बेचना है? पूछताछ भेजें', enquirySub:'अपनी फसल की जानकारी भरें।',
-    yourName:'आपका नाम', yourPhone:'मोबाइल नंबर', yourCrop:'फसल',
-    yourQty:'मात्रा (क्विंटल)', yourMsg:'अतिरिक्त जानकारी (वैकल्पिक)',
-    sendWhatsApp:'व्हाट्सएप पर भेजें',
-    enqNeedName:'कृपया अपना नाम लिखें', enqNeedPhone:'कृपया सही 10 अंकों का मोबाइल नंबर लिखें',
-    enqNeedQty:'कृपया मात्रा लिखें', enqSent:'व्हाट्सएप खुल रहा है…',
-    qrShow:'QR कोड', qrTitle:'📱 QR कोड', qrSub:'दुकान पर लगाएँ।',
-    copyLink:'लिंक कॉपी करें', linkCopied:'लिंक कॉपी हो गया ✓', close:'बंद करें',
-    bulkTab:'बल्क अपडेट', leadsTab:'पूछताछ',
-    bulkTitle:'📋 बल्क भाव अपडेट (CSV)', bulkHint:'हर लाइन में: फसल-आईडी, भाव',
-    bulkApply:'लागू करें', bulkLoad:'मौजूदा भाव भरें',
-    bulkDone:'भाव अपडेट हो गए ✓', bulkError:'कुछ लाइनें समझ नहीं आईं',
-    leadTitle:'📥 किसानों की पूछताछ', leadEmpty:'अभी कोई पूछताछ नहीं आई।',
-    leadClear:'सब हटाएँ', leadExport:'CSV डाउनलोड', leadConfirmClear:'सारी पूछताछ हट जाएँगी?',
-    hist7d:'7 दिन का रुझान', disclaimer:'भाव केवल जानकारी के लिए हैं।',
-    micUnsupported:'इस ब्राउज़र में आवाज़ से खोज नहीं हो सकती', micListening:'सुन रहे हैं… बोलिए'
-  },
-  en: {
-    tagline:'Fresh mandi rates today', todayRates:"Today's Rates", updatedAt:'Last updated',
-    search:'Search crop…', all:'All', catCereal:'Cereals', catMillet:'Millets', catPulse:'Pulses',
-    perQuintal:'per quintal', perKg:'per kg', up:'Up', down:'Down', same:'Stable',
-    callNow:'Call Now', whatsapp:'WhatsApp', listen:'Listen', stopSpeaking:'Stop',
-    noResults:'No crop found', contactTitle:'Contact Us', adminLogin:'Shop Owner Login',
-    enterPin:'Enter PIN', login:'Login', loginTitle:'For shop owner only',
-    loginSub:'Farmers do not need to login.', wrongPin:'Wrong PIN', cancel:'Cancel', save:'Save',
-    shopName:'Shop Name', ownerName:'Owner Name', phone:'Mobile Number', address:'Address',
-    editRates:'Edit Rates', addCrop:'Add New Crop', cropName:'Crop Name', price:'Price',
-    unit:'Unit', remove:'Remove', logout:'Logout', saved:'Saved ✓', print:'Print',
-    shopSettings:'Shop', adminPanel:'Owner Panel', reset:'Reset', changePin:'Login PIN',
-    footerNote:'Dedicated to farmers', editRatesHint:'Change prices below and press Save.',
-    fillAll:'Please fill all fields', confirmReset:'All data will be reset?', resetDone:'Reset done',
-    noCrops:'No crops added', syncNow:'Sync Live Rates', syncing:'Fetching live rates…',
-    synced:'Live rates updated ✓', syncFail:'Live data unavailable',
-    liveNote:'Source: demo live simulation', liveNoteApi:'Source: live mandi API',
-    adminModeOn:'Admin mode ON', openPanel:'Open Panel', loggedIn:'Logged in ✓',
-    loggedOut:'Logged out', pinWarn:'⚠️ Remember PIN.',
-    speechUnsupported:'Speech not supported', speechStarted:'Reading rates aloud…',
-    staleWarning:'Rates are over 24 hours old', refreshNow:'Refresh now',
-    calcTitle:'🧮 Estimated Value of My Crop', calcSub:'Pick crop and quantity.',
-    calcCrop:'Choose crop', calcQty:'Quantity', calcUnit:'Unit',
-    calcTotal:'Estimated Total Value', calcHint:'* Estimate only.',
-    quintal:'Quintal', kg:'Kilogram', nearbyTitle:'📍 Nearby Mandi Rates',
-    nearbySub:'Compare and pick.', enquiryTitle:'📝 Want to sell? Send an enquiry',
-    enquirySub:'Fill your crop details.', yourName:'Your Name', yourPhone:'Mobile Number',
-    yourCrop:'Crop', yourQty:'Quantity (quintal)', yourMsg:'Additional details (optional)',
-    sendWhatsApp:'Send on WhatsApp', enqNeedName:'Please enter your name',
-    enqNeedPhone:'Please enter a valid 10-digit mobile number', enqNeedQty:'Please enter quantity',
-    enqSent:'Opening WhatsApp…', qrShow:'QR Code', qrTitle:'📱 QR Code',
-    qrSub:'Print at your shop.', copyLink:'Copy link', linkCopied:'Link copied ✓', close:'Close',
-    bulkTab:'Bulk Update', leadsTab:'Enquiries', bulkTitle:'📋 Bulk Rate Update (CSV)',
-    bulkHint:'Write: crop-id, price', bulkApply:'Apply', bulkLoad:'Fill current rates',
-    bulkDone:'Rates updated ✓', bulkError:'Some lines could not be parsed',
-    leadTitle:'📥 Farmer Enquiries', leadEmpty:'No enquiries yet.', leadClear:'Clear all',
-    leadExport:'Download CSV', leadConfirmClear:'All enquiries will be deleted?',
-    hist7d:'7-day trend', disclaimer:'Rates are for information only.',
-    micUnsupported:'Voice search not supported', micListening:'Listening… speak now'
-  },
-  mr:{}, pa:{}, gu:{}, bn:{}, ta:{}, te:{}
+  hi:{tagline:'आज के ताज़ा मंडी भाव',todayRates:'आज के भाव',updatedAt:'अंतिम अपडेट',search:'फसल खोजें…',all:'सभी',catCereal:'अनाज',catMillet:'मोटे अनाज',catPulse:'दालें',perQuintal:'प्रति क्विंटल',perKg:'प्रति किलो',up:'बढ़त',down:'गिरावट',same:'स्थिर',callNow:'कॉल करें',whatsapp:'व्हाट्सएप',listen:'सुनें',stopSpeaking:'रोकें',noResults:'कोई फसल नहीं मिली',contactTitle:'हमसे संपर्क करें',adminLogin:'दुकानदार लॉगिन',enterPin:'पिन दर्ज करें',login:'लॉगिन',loginTitle:'सिर्फ़ दुकानदार के लिए',loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',wrongPin:'गलत पिन',cancel:'रद्द करें',save:'सेव करें',shopName:'दुकान का नाम',ownerName:'मालिक का नाम',phone:'मोबाइल नंबर',address:'पता',editRates:'भाव बदलें',addCrop:'नई फसल जोड़ें',cropName:'फसल का नाम',price:'भाव',unit:'इकाई',remove:'हटाएं',logout:'लॉगआउट',saved:'सेव हो गया ✓',print:'प्रिंट करें',shopSettings:'दुकान',adminPanel:'दुकानदार पैनल',reset:'रीसेट',changePin:'लॉगिन पिन',footerNote:'किसानों के लिए समर्पित',editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',fillAll:'कृपया सारी जानकारी भरें',confirmReset:'सारा डेटा रीसेट हो जाएगा?',resetDone:'रीसेट हो गया',noCrops:'कोई फसल नहीं है',syncNow:'लाइव भाव लाएँ',syncing:'लोड हो रहे हैं…',synced:'अपडेट हुए ✓',syncFail:'डेटा नहीं मिला',liveNote:'स्रोत: डेमो सिमुलेशन',liveNoteApi:'स्रोत: लाइव API',adminModeOn:'एडमिन मोड चालू',openPanel:'पैनल खोलें',loggedIn:'लॉगिन हो गया ✓',loggedOut:'लॉगआउट हो गया',pinWarn:'⚠️ पिन याद रखें।',speechUnsupported:'आवाज़ नहीं चल सकती',speechStarted:'भाव सुनाए जा रहे हैं…',staleWarning:'भाव पुराने हैं',refreshNow:'अपडेट करें',calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',calcSub:'फसल और मात्रा चुनें।',calcCrop:'फसल चुनें',calcQty:'मात्रा',calcUnit:'इकाई',calcTotal:'अनुमानित कुल मूल्य',calcHint:'* अनुमानित राशि है।',quintal:'क्विंटल',kg:'किलो',nearbyTitle:'📍 आसपास की मंडियाँ',nearbySub:'तुलना करें।',enquiryTitle:'📝 बेचना है? पूछताछ भेजें',enquirySub:'जानकारी भरें।',yourName:'आपका नाम',yourPhone:'मोबाइल नंबर',yourCrop:'फसल',yourQty:'मात्रा (क्विंटल)',yourMsg:'अतिरिक्त जानकारी',sendWhatsApp:'व्हाट्सएप पर भेजें',enqNeedName:'कृपया नाम लिखें',enqNeedPhone:'सही 10 अंकों का नंबर लिखें',enqNeedQty:'मात्रा लिखें',enqSent:'व्हाट्सएप खुल रहा है…',qrShow:'QR कोड',qrTitle:'📱 QR कोड',qrSub:'दुकान पर लगाएँ।',copyLink:'लिंक कॉपी करें',linkCopied:'कॉपी हो गया ✓',close:'बंद करें',bulkTab:'बल्क अपडेट',leadsTab:'पूछताछ',bulkTitle:'📋 बल्क अपडेट',bulkHint:'हर लाइन: फसल-आईडी, भाव',bulkApply:'लागू करें',bulkLoad:'मौजूदा भरें',bulkDone:'अपडेट ✓',bulkError:'कुछ लाइनें गलत',leadTitle:'📥 पूछताछ',leadEmpty:'कोई पूछताछ नहीं।',leadClear:'सब हटाएँ',leadExport:'CSV',leadConfirmClear:'सब हट जाएँगी?',hist7d:'7 दिन का रुझान',disclaimer:'भाव केवल जानकारी के लिए हैं।',micUnsupported:'आवाज़ से खोज नहीं',micListening:'सुन रहे हैं… बोलिए',tooManyAttempts:'बहुत बार गलत पिन — 30 सेकंड बाद कोशिश करें',invalidName:'नाम में सिर्फ अक्षर डालें',invalidPrice:'भाव सही नहीं है'},
+  en:{tagline:'Fresh mandi rates today',todayRates:"Today's Rates",updatedAt:'Last updated',search:'Search crop…',all:'All',catCereal:'Cereals',catMillet:'Millets',catPulse:'Pulses',perQuintal:'per quintal',perKg:'per kg',up:'Up',down:'Down',same:'Stable',callNow:'Call Now',whatsapp:'WhatsApp',listen:'Listen',stopSpeaking:'Stop',noResults:'No crop found',contactTitle:'Contact Us',adminLogin:'Shop Owner Login',enterPin:'Enter PIN',login:'Login',loginTitle:'For shop owner only',loginSub:'Farmers do not need to login.',wrongPin:'Wrong PIN',cancel:'Cancel',save:'Save',shopName:'Shop Name',ownerName:'Owner Name',phone:'Mobile Number',address:'Address',editRates:'Edit Rates',addCrop:'Add New Crop',cropName:'Crop Name',price:'Price',unit:'Unit',remove:'Remove',logout:'Logout',saved:'Saved ✓',print:'Print',shopSettings:'Shop',adminPanel:'Owner Panel',reset:'Reset',changePin:'Login PIN',footerNote:'Dedicated to farmers',editRatesHint:'Change prices below and press Save.',fillAll:'Please fill all fields',confirmReset:'All data will be reset?',resetDone:'Reset done',noCrops:'No crops added',syncNow:'Sync Live Rates',syncing:'Fetching…',synced:'Updated ✓',syncFail:'Live data unavailable',liveNote:'Source: demo simulation',liveNoteApi:'Source: live API',adminModeOn:'Admin mode ON',openPanel:'Open Panel',loggedIn:'Logged in ✓',loggedOut:'Logged out',pinWarn:'⚠️ Remember PIN.',speechUnsupported:'Speech not supported',speechStarted:'Reading rates aloud…',staleWarning:'Rates are old',refreshNow:'Refresh now',calcTitle:'🧮 Estimated Value of My Crop',calcSub:'Pick crop and quantity.',calcCrop:'Choose crop',calcQty:'Quantity',calcUnit:'Unit',calcTotal:'Estimated Total Value',calcHint:'* Estimate only.',quintal:'Quintal',kg:'Kilogram',nearbyTitle:'📍 Nearby Mandi Rates',nearbySub:'Compare.',enquiryTitle:'📝 Want to sell? Send an enquiry',enquirySub:'Fill your crop details.',yourName:'Your Name',yourPhone:'Mobile Number',yourCrop:'Crop',yourQty:'Quantity (quintal)',yourMsg:'Additional details',sendWhatsApp:'Send on WhatsApp',enqNeedName:'Please enter your name',enqNeedPhone:'Please enter a valid 10-digit mobile number',enqNeedQty:'Please enter quantity',enqSent:'Opening WhatsApp…',qrShow:'QR Code',qrTitle:'📱 QR Code',qrSub:'Print at your shop.',copyLink:'Copy link',linkCopied:'Link copied ✓',close:'Close',bulkTab:'Bulk Update',leadsTab:'Enquiries',bulkTitle:'📋 Bulk Update',bulkHint:'Line: crop-id, price',bulkApply:'Apply',bulkLoad:'Fill current',bulkDone:'Updated ✓',bulkError:'Some lines wrong',leadTitle:'📥 Enquiries',leadEmpty:'No enquiries yet.',leadClear:'Clear all',leadExport:'CSV',leadConfirmClear:'All enquiries will be deleted?',hist7d:'7-day trend',disclaimer:'Rates are for information only.',micUnsupported:'Voice search not supported',micListening:'Listening… speak now',tooManyAttempts:'Too many wrong PINs — try again in 30 seconds',invalidName:'Only letters allowed in name',invalidPrice:'Price is not valid'},
+  mr:{},pa:{},gu:{},bn:{},ta:{},te:{}
 };
 
 /* ═══ STATE + STORAGE ═══ */
-const STORAGE_KEY = 'kisan_mandi_v8';
-const SESSION_KEY = 'kisan_mandi_admin_session';
+const STORAGE_KEY = 'kisan_mandi_v9_secure';
+const SESSION_KEY = 'kisan_mandi_admin_session_secure';
 const LEADS_KEY   = 'kisan_mandi_leads';
 const HISTORY_KEY = 'kisan_mandi_history';
 const copyObject = o => JSON.parse(JSON.stringify(o));
@@ -662,26 +527,79 @@ let syncing = false;
 let speechPlaying = false;
 let recognition = null;
 let micListening = false;
+let loginAttempts = 0;
+let loginLockUntil = 0;
+let adminTimer = null;
 
+/* 🔐 SHA-256 hash function */
+async function hashString(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* 🔐 Ensure PIN hash is generated (first run only) */
+async function ensurePinHash() {
+  if (state.shop.pinHash) return;
+  const plain = state.shop.pin || SHOP.pin;
+  if (!plain) return;
+  state.shop.pinHash = await hashString(plain);
+  state.shop.pin = '';
+  saveState();
+}
+
+/* ═══ LOAD STATE — WITH VALIDATION ═══ */
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
       const sameVersion = (saved.version === DATA_VERSION);
-      const crops = (sameVersion && saved.crops && saved.crops.length) ? saved.crops : copyObject(CROPS);
+
+      /* Validate crops array */
+      let crops = copyObject(CROPS);
+      if (sameVersion && Array.isArray(saved.crops)) {
+        const validated = saved.crops.filter(c =>
+          c && typeof c.id === 'string' && c.id.length < 50 &&
+          typeof c.price === 'number' && c.price >= 0 && c.price < 1000000 &&
+          ['kg','quintal'].includes(c.unit) &&
+          CATEGORIES.includes(c.cat) &&
+          typeof c.names === 'object'
+        );
+        if (validated.length) crops = validated;
+      }
+
+      /* Validate shop object */
+      let shop = copyObject(SHOP);
+      if (sameVersion && saved.shop && typeof saved.shop === 'object') {
+        shop = Object.assign(shop, {
+          name:     String(saved.shop.name || SHOP.name).slice(0, 80),
+          owner:    String(saved.shop.owner || SHOP.owner).slice(0, 50),
+          phone:    String(saved.shop.phone || SHOP.phone).slice(0, 15),
+          whatsapp: String(saved.shop.whatsapp || SHOP.whatsapp).slice(0, 15),
+          address:  String(saved.shop.address || SHOP.address).slice(0, 200),
+          pinHash:  String(saved.shop.pinHash || '').slice(0, 128)
+        });
+      }
+
+      const validLangs = LANGS.map(l => l.code);
       return {
         version: DATA_VERSION,
-        shop: (sameVersion && saved.shop) ? Object.assign(copyObject(SHOP), saved.shop) : copyObject(SHOP),
-        crops: crops, lang: saved.lang || 'hi', fs: saved.fs || 17,
-        hc: !!saved.hc, updatedAt: saved.updatedAt || Date.now()
+        shop: shop,
+        crops: crops,
+        lang: validLangs.includes(saved.lang) ? saved.lang : 'hi',
+        fs: Math.max(13, Math.min(24, parseInt(saved.fs) || 17)),
+        hc: !!saved.hc,
+        updatedAt: (typeof saved.updatedAt === 'number' && saved.updatedAt > 0) ? saved.updatedAt : Date.now()
       };
     }
-  } catch(e) {}
-  return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS),
-    lang:'hi', fs:17, hc:false, updatedAt: Date.now() };
+  } catch(e) { console.warn('Load error:', e); }
+  return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: Date.now() };
 }
-function saveState() { state.version = DATA_VERSION; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+
+function saveState() {
+  state.version = DATA_VERSION;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
 function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { return {}; } }
 function saveHistory() { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {} }
 function pushHistory() {
@@ -696,7 +614,14 @@ function pushHistory() {
   });
   saveHistory();
 }
-function loadLeads() { try { return JSON.parse(localStorage.getItem(LEADS_KEY) || '[]'); } catch(e) { return []; } }
+function loadLeads() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+    return Array.isArray(raw) ? raw.filter(l =>
+      l && typeof l.name === 'string' && typeof l.phone === 'string'
+    ).slice(0, 200) : [];
+  } catch(e) { return []; }
+}
 function saveLeads() { try { localStorage.setItem(LEADS_KEY, JSON.stringify(leads)); } catch(e) {} }
 function saveAdminSession(on) { try { on ? sessionStorage.setItem(SESSION_KEY, '1') : sessionStorage.removeItem(SESSION_KEY); } catch(e) {} }
 function readAdminSession() { try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch(e) { return false; } }
@@ -716,13 +641,25 @@ function money(n) {
 function round2(n) { return Math.round(n * 100) / 100; }
 function formatDate(d) { try { return new Date(d).toLocaleDateString(currentLang().speech, { weekday:'long', day:'numeric', month:'long', year:'numeric' }); } catch(e) { return new Date(d).toLocaleDateString(); } }
 function formatTime(d) { try { return new Date(d).toLocaleTimeString(currentLang().speech, { hour:'2-digit', minute:'2-digit' }); } catch(e) { return ''; } }
+
 let toastTimer;
 function toast(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600); }
+
+/* ═══ SESSION TIMEOUT (30 min) ═══ */
+function startAdminTimer() {
+  if (adminTimer) clearTimeout(adminTimer);
+  adminTimer = setTimeout(() => {
+    if (isOwner) { doLogout(); toast('30 मिनट बाद लॉगआउट हो गया'); }
+  }, 30 * 60 * 1000);
+}
+function resetAdminTimer() { if (isOwner) startAdminTimer(); }
+document.addEventListener('click', resetAdminTimer);
+document.addEventListener('keydown', resetAdminTimer);
 
 /* ═══ LIVE MARKET ═══ */
 function matchCropByApiName(rawName) {
   if (!rawName) return null;
-  const name = String(rawName).toLowerCase().trim();
+  const name = String(rawName).toLowerCase().trim().slice(0, 100);
   for (const crop of state.crops) {
     if (Array.isArray(crop.apiKeys)) {
       for (const key of crop.apiKeys) {
@@ -741,7 +678,7 @@ function mapApiRecord(rec) {
   const name = rec.commodity || rec.crop || rec.name || '';
   const price = Number(rec.modal_price || rec.modalPrice || rec.price || rec.rate || 0);
   const unit = String(rec.unit || 'quintal').toLowerCase();
-  if (!name || !price) return null;
+  if (!name || !price || price < 0 || price > 10000000) return null;
   const crop = matchCropByApiName(name);
   if (!crop) return null;
   const perKg = unit.includes('quintal') ? price / 100 : price;
@@ -866,18 +803,11 @@ function renderShopInfo() {
   $('yearEl').textContent = new Date().getFullYear();
 }
 function renderChips() {
-  const chips = [
-    { k:'all', label: t('all') },
-    { k:'cereal', label: t('catCereal') },
-    { k:'millet', label: t('catMillet') },
-    { k:'pulse', label: t('catPulse') }
-  ];
-  $('categoryChips').innerHTML = chips.map(c =>
-    '<button class="chip ' + (filterCat === c.k ? 'active' : '') + '" data-cat="' + c.k + '">' + esc(c.label) + '</button>'
-  ).join('');
+  const chips = [{ k:'all', label: t('all') },{ k:'cereal', label: t('catCereal') },{ k:'millet', label: t('catMillet') },{ k:'pulse', label: t('catPulse') }];
+  $('categoryChips').innerHTML = chips.map(c => '<button class="chip ' + (filterCat === c.k ? 'active' : '') + '" data-cat="' + c.k + '">' + esc(c.label) + '</button>').join('');
 }
 function visibleCrops() {
-  const q = searchQuery.trim().toLowerCase();
+  const q = searchQuery.trim().toLowerCase().slice(0, 40);
   return state.crops.filter(c => {
     if (filterCat !== 'all' && c.cat !== filterCat) return false;
     if (!q) return true;
@@ -899,10 +829,7 @@ function sparkline(cropId, w, h) {
 function renderCrops() {
   const list = visibleCrops();
   const grid = $('ratesGrid');
-  if (!list.length) {
-    grid.innerHTML = '<div class="empty"><span class="big">🌱</span>' + esc(t('noResults')) + '</div>';
-    return;
-  }
+  if (!list.length) { grid.innerHTML = '<div class="empty"><span class="big">🌱</span>' + esc(t('noResults')) + '</div>'; return; }
   grid.innerHTML = list.map(c => {
     const prev = (typeof c.prev === 'number') ? c.prev : c.price;
     const diff = round2(c.price - prev);
@@ -943,7 +870,7 @@ function calcUpdate() {
   const qty = parseFloat($('calcQty').value) || 0;
   const unit = $('calcUnit').value;
   const crop = state.crops.find(c => c.id === id);
-  if (!crop || qty <= 0) { $('calcTotal').textContent = money(0); $('calcBreakdown').textContent = ''; return; }
+  if (!crop || qty <= 0 || qty > 1000000) { $('calcTotal').textContent = money(0); $('calcBreakdown').textContent = ''; return; }
   const qtyKg = unit === 'quintal' ? qty * 100 : qty;
   let total = crop.unit === 'kg' ? qtyKg * crop.price : (qtyKg / 100) * crop.price;
   total = Math.round(total);
@@ -962,9 +889,8 @@ function renderNearby() {
     const rows = Object.keys(market.prices || {}).map(cid => {
       const crop = state.crops.find(c => c.id === cid);
       if (!crop) return '';
-      const ownPrice = crop.price;
       const theirPrice = market.prices[cid];
-      const diff = round2(theirPrice - ownPrice);
+      const diff = round2(theirPrice - crop.price);
       const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : 'var(--muted)';
       const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '=';
       return '<div class="nearby-row"><span>' + esc(cropName(crop)) + '</span><b>' + money(theirPrice) + ' <span style="color:' + color + ';font-size:.82rem">' + arrow + '</span></b></div>';
@@ -984,7 +910,7 @@ function renderEditList() {
     '<div class="edit-row" data-id="' + esc(c.id) + '">' +
     '<span class="edit-emoji">' + (c.emoji || '🌾') + '</span>' +
     '<span class="edit-name">' + esc(cropName(c)) + '</span>' +
-    '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="' + (Number(c.price) || 0) + '" min="0" step="0.01" inputmode="decimal"></div>' +
+    '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="' + (Number(c.price) || 0) + '" min="0" max="100000" step="0.01" inputmode="decimal"></div>' +
     '<select class="unit-select"><option value="kg" ' + (c.unit === 'kg' ? 'selected' : '') + '>' + esc(t('perKg')) + '</option><option value="quintal" ' + (c.unit !== 'kg' ? 'selected' : '') + '>' + esc(t('perQuintal')) + '</option></select>' +
     '<button class="del-btn" data-del="' + esc(c.id) + '">🗑️</button>' +
     '</div>'
@@ -1003,7 +929,7 @@ function renderLeads() {
       '<div class="top"><span class="nm">👤 ' + esc(l.name) + '</span><span class="tm">' + esc(when) + '</span></div>' +
       '<div class="mt">📞 ' + esc(l.phone) + '<br>🌾 ' + esc(l.crop) + ' — ' + esc(l.qty) + ' क्विंटल' + (l.msg ? '<br>📝 ' + esc(l.msg) : '') + '</div>' +
       '<div class="acts"><a class="btn btn-ghost btn-sm" href="tel:' + esc(l.phone) + '">📞 कॉल</a>' +
-      '<a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="https://wa.me/91' + esc(String(l.phone).slice(-10)) + '">💬 WhatsApp</a></div></div>';
+      '<a class="btn btn-blue btn-sm" target="_blank" rel="noopener noreferrer" href="https://wa.me/91' + esc(String(l.phone).slice(-10)) + '">💬 WhatsApp</a></div></div>';
   }).join('');
 }
 function fillAdminForm() {
@@ -1012,18 +938,15 @@ function fillAdminForm() {
   $('inPhone').value = state.shop.phone;
   $('inWhatsapp').value = state.shop.whatsapp;
   $('inAddress').value = state.shop.address;
-  $('inPin').value = state.shop.pin;
+  $('inPin').value = '';
+  $('inPin').placeholder = '⬅️ बदलने के लिए नया पिन';
 }
 
 /* ═══ INTERACTIONS ═══ */
 $('langSelect').innerHTML = LANGS.map(l => '<option value="' + l.code + '" ' + (l.code === state.lang ? 'selected' : '') + '>' + l.label + '</option>').join('');
 $('langSelect').addEventListener('change', e => { state.lang = e.target.value; saveState(); renderAll(); });
-$('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderCrops(); });
-$('categoryChips').addEventListener('click', e => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  filterCat = chip.dataset.cat; renderChips(); renderCrops();
-});
+$('searchInput').addEventListener('input', e => { searchQuery = String(e.target.value).slice(0, 40); renderCrops(); });
+$('categoryChips').addEventListener('click', e => { const chip = e.target.closest('.chip'); if (!chip) return; filterCat = chip.dataset.cat; renderChips(); renderCrops(); });
 $('fontUp').addEventListener('click', () => { state.fs = Math.min(24, state.fs + 1); saveState(); document.documentElement.style.setProperty('--fs', state.fs + 'px'); });
 $('fontDown').addEventListener('click', () => { state.fs = Math.max(13, state.fs - 1); saveState(); document.documentElement.style.setProperty('--fs', state.fs + 'px'); });
 $('hcBtn').addEventListener('click', () => { state.hc = !state.hc; saveState(); document.body.classList.toggle('hc', state.hc); $('hcBtn').classList.toggle('on', state.hc); });
@@ -1041,7 +964,7 @@ document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click'
   recognition.continuous = false;
   recognition.interimResults = false;
   recognition.onstart = () => { micListening = true; $('micBtn').classList.add('listening'); toast(t('micListening')); };
-  recognition.onresult = ev => { const text = ev.results[0][0].transcript; $('searchInput').value = text; searchQuery = text; renderCrops(); };
+  recognition.onresult = ev => { const text = String(ev.results[0][0].transcript).slice(0, 40); $('searchInput').value = text; searchQuery = text; renderCrops(); };
   recognition.onerror = () => { micListening = false; $('micBtn').classList.remove('listening'); };
   recognition.onend = () => { micListening = false; $('micBtn').classList.remove('listening'); };
 })();
@@ -1052,11 +975,7 @@ $('micBtn').addEventListener('click', () => {
   try { recognition.start(); } catch(e) {}
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   🔊 SPEECH — हिंदी में सही बोलने के लिए फिक्स किया गया
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* 🎯 बेहतरीन voice चुनो */
+/* ═══ SPEECH ═══ */
 function getBestVoice(langCode) {
   if (!('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -1068,22 +987,15 @@ function getBestVoice(langCode) {
       || voices.find(v => v.lang === 'en-IN')
       || null;
 }
-
-/* 📝 Speech के लिए text तैयार करो — भाषा के हिसाब से */
 function buildSpeechText() {
   const isHindi = (state.lang === 'hi');
-  const list = visibleCrops();
-  return list.map(c => {
+  return visibleCrops().map(c => {
     const name = cropName(c);
     const priceText = isHindi ? (c.price + ' रुपये') : (c.price + ' rupees');
-    let unitText;
-    if (c.unit === 'kg') unitText = isHindi ? 'प्रति किलो' : 'per kilogram';
-    else unitText = isHindi ? 'प्रति क्विंटल' : 'per quintal';
+    const unitText = c.unit === 'kg' ? (isHindi ? 'प्रति किलो' : 'per kilogram') : (isHindi ? 'प्रति क्विंटल' : 'per quintal');
     return name + ' — ' + priceText + ', ' + unitText;
   }).join('. ');
 }
-
-/* 🔥 Voice list पहले से load करो */
 (function warmUpVoices() {
   if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.getVoices();
@@ -1115,7 +1027,7 @@ function stopSpeech() {
   speechPlaying = false;
   updateSpeakBtn();
 }
-$('speakBtn').addEventListener('click', () => {
+$('speakBtn').addEventListener('click', function() {
   if (!('speechSynthesis' in window)) { toast(t('speechUnsupported')); return; }
   if (speechPlaying) { stopSpeech(); return; }
   window.speechSynthesis.cancel();
@@ -1129,12 +1041,12 @@ $('speakBtn').addEventListener('click', () => {
   u.rate = 0.85;
   u.pitch = 1;
   u.volume = 1;
-  u.onend = () => { speechPlaying = false; updateSpeakBtn(); };
-  u.onerror = () => { speechPlaying = false; updateSpeakBtn(); };
+  u.onend = function() { speechPlaying = false; updateSpeakBtn(); };
+  u.onerror = function() { speechPlaying = false; updateSpeakBtn(); };
   speechPlaying = true;
   updateSpeakBtn();
   toast(t('speechStarted'));
-  setTimeout(() => window.speechSynthesis.speak(u), 100);
+  window.speechSynthesis.speak(u);
 });
 window.addEventListener('beforeunload', stopSpeech);
 document.addEventListener('visibilitychange', () => { if (document.hidden && speechPlaying) stopSpeech(); });
@@ -1144,19 +1056,19 @@ $('shareBtn').addEventListener('click', () => {
   const lines = ['*' + state.shop.name + '*', t('todayRates') + ' — ' + formatDate(new Date()), ''];
   state.crops.forEach(c => lines.push((c.emoji || '🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + unitLabel(c)));
   lines.push('', '👤 ' + state.shop.owner, '📞 ' + state.shop.phone, '📍 ' + state.shop.address);
-  window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
+  window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener,noreferrer');
 });
 $('printBtn').addEventListener('click', () => window.print());
 
 /* ═══ QR CODE ═══ */
 $('qrBtn').addEventListener('click', () => {
-  const url = location.href.split('#')[0];
+  const url = location.href.split('#')[0].slice(0, 500);
   $('qrLink').textContent = url;
   $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data=' + encodeURIComponent(url);
   openModal('qrModal');
 });
 $('copyLinkBtn').addEventListener('click', async () => {
-  const url = location.href.split('#')[0];
+  const url = location.href.split('#')[0].slice(0, 500);
   try { await navigator.clipboard.writeText(url); toast(t('linkCopied')); }
   catch(e) {
     const ta = document.createElement('textarea');
@@ -1165,33 +1077,55 @@ $('copyLinkBtn').addEventListener('click', async () => {
   }
 });
 
-/* ═══ ENQUIRY ═══ */
+/* ═══ ENQUIRY — WITH VALIDATION ═══ */
 $('enqSubmit').addEventListener('click', () => {
-  const name = $('enqName').value.trim();
-  const phoneRaw = $('enqPhone').value.replace(/\D/g, '');
+  let name = $('enqName').value.trim().slice(0, 50);
+  const phoneRaw = $('enqPhone').value.replace(/\D/g, '').slice(0, 10);
   const cropId = $('enqCrop').value;
   const qty = parseFloat($('enqQty').value) || 0;
-  const msg = $('enqMsg').value.trim();
+  const msg = $('enqMsg').value.trim().slice(0, 200);
+
+  /* Name validation */
   if (!name) { toast(t('enqNeedName')); $('enqName').focus(); return; }
-  if (phoneRaw.length !== 10) { toast(t('enqNeedPhone')); $('enqPhone').focus(); return; }
-  if (qty <= 0) { toast(t('enqNeedQty')); $('enqQty').focus(); return; }
+  if (!/^[a-zA-Z\u0900-\u097F\s.'-]{2,50}$/.test(name)) {
+    toast(t('invalidName')); $('enqName').focus(); return;
+  }
+
+  /* Phone validation */
+  if (phoneRaw.length !== 10 || !/^[6-9]\d{9}$/.test(phoneRaw)) {
+    toast(t('enqNeedPhone')); $('enqPhone').focus(); return;
+  }
+
+  /* Qty validation */
+  if (qty <= 0 || qty > 1000000) { toast(t('enqNeedQty')); $('enqQty').focus(); return; }
+
   const crop = state.crops.find(c => c.id === cropId);
   const cropLabel = crop ? cropName(crop) : cropId;
+
+  /* Estimate */
   let est = 0;
-  if (crop) { const qtyKg = qty * 100; est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price; est = Math.round(est); }
+  if (crop) {
+    const qtyKg = qty * 100;
+    est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price;
+    est = Math.round(est);
+  }
+
   const text = '*नई पूछताछ — ' + state.shop.name + '*\n\n👤 नाम: ' + name + '\n📞 मोबाइल: ' + phoneRaw + '\n🌾 फसल: ' + cropLabel + '\n⚖️ मात्रा: ' + qty + ' क्विंटल\n' + (est ? '💰 अनुमानित मूल्य: ₹' + est.toLocaleString('en-IN') + '\n' : '') + (msg ? '📝 जानकारी: ' + msg + '\n' : '') + '\n_भेजा गया: ' + formatDate(new Date()) + ' ' + formatTime(new Date()) + '_';
+
+  /* Save lead */
   leads.unshift({ name, phone: phoneRaw, crop: cropLabel, qty, msg, ts: Date.now() });
   if (leads.length > 200) leads.length = 200;
   saveLeads();
+
   const waDigits = String(state.shop.whatsapp || '').replace(/\D/g, '');
   const target = waDigits.length >= 10 ? '91' + waDigits.slice(-10) : '';
   const url = target ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text) : 'https://wa.me/?text=' + encodeURIComponent(text);
   toast(t('enqSent'));
-  window.open(url, '_blank', 'noopener');
+  window.open(url, '_blank', 'noopener,noreferrer');
   $('enqQty').value = ''; $('enqMsg').value = '';
 });
 
-/* ═══ ADMIN LOGIN ═══ */
+/* ═══ ADMIN LOGIN — WITH RATE LIMITING + HASHING ═══ */
 $('ownerLoginBtn').addEventListener('click', () => {
   $('pinInput').value = ''; $('pinErr').textContent = '';
   openModal('pinModal');
@@ -1199,20 +1133,56 @@ $('ownerLoginBtn').addEventListener('click', () => {
 });
 $('pinSubmit').addEventListener('click', tryLogin);
 $('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
-function tryLogin() {
+
+async function tryLogin() {
+  /* Rate limiting */
+  if (Date.now() < loginLockUntil) {
+    const secs = Math.ceil((loginLockUntil - Date.now()) / 1000);
+    $('pinErr').textContent = t('tooManyAttempts') + ' (' + secs + 's)';
+    return;
+  }
   const val = $('pinInput').value.trim();
-  if (val === String(state.shop.pin)) {
-    isOwner = true; saveAdminSession(true);
+  if (!val || val.length > 6 || !/^\d+$/.test(val)) {
+    $('pinErr').textContent = t('wrongPin');
+    $('pinInput').value = ''; $('pinInput').focus();
+    return;
+  }
+
+  /* Hash the input */
+  const inputHash = await hashString(val);
+  const storedHash = state.shop.pinHash || '';
+
+  if (storedHash && inputHash === storedHash) {
+    /* ✅ Success */
+    loginAttempts = 0;
+    isOwner = true;
+    saveAdminSession(true);
+    startAdminTimer();
     closeModal('pinModal');
     renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm();
     applyRole(); toast(t('loggedIn'));
     setTimeout(() => openModal('adminModal'), 300);
   } else {
+    /* ❌ Fail */
+    loginAttempts++;
     $('pinErr').textContent = t('wrongPin');
     $('pinInput').value = ''; $('pinInput').focus();
+
+    if (loginAttempts >= 5) {
+      loginLockUntil = Date.now() + 30000;
+      loginAttempts = 0;
+      $('pinErr').textContent = t('tooManyAttempts');
+      setTimeout(() => { if ($('pinErr')) $('pinErr').textContent = ''; }, 30000);
+    }
   }
 }
-function doLogout() { isOwner = false; saveAdminSession(false); applyRole(); toast(t('loggedOut')); }
+
+function doLogout() {
+  isOwner = false;
+  saveAdminSession(false);
+  if (adminTimer) clearTimeout(adminTimer);
+  applyRole(); toast(t('loggedOut'));
+}
 $('ownerLogoutBtn').addEventListener('click', doLogout);
 $('logoutBtn2').addEventListener('click', () => { closeModal('adminModal'); doLogout(); });
 $('openAdminFromRibbon').addEventListener('click', () => {
@@ -1240,11 +1210,13 @@ $('rateEditList').addEventListener('click', e => {
 
 $('addCropBtn').addEventListener('click', () => {
   if (!isOwner) return;
-  const name = $('newCropName').value.trim();
+  const name = $('newCropName').value.trim().slice(0, 50);
   const price = parseFloat($('newCropPrice').value);
-  if (!name || isNaN(price)) { toast(t('fillAll')); return; }
+  if (!name || isNaN(price) || price < 0 || price > 100000) { toast(t('fillAll')); return; }
+  if (!/^[a-zA-Z\u0900-\u097F\s.'-]{2,50}$/.test(name)) { toast(t('invalidName')); return; }
   const unit = $('newCropUnit').value;
   const cat = $('newCropCat').value;
+  if (!CATEGORIES.includes(cat)) return;
   const names = {}; LANGS.forEach(l => names[l.code] = name);
   state.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat, unit, price: round2(price), prev: round2(price), base: round2(price), apiKeys: [name.toLowerCase()], names });
   $('newCropName').value = ''; $('newCropPrice').value = '';
@@ -1257,16 +1229,16 @@ $('bulkLoadCurrent').addEventListener('click', () => {
 });
 $('bulkApply').addEventListener('click', () => {
   if (!isOwner) return;
-  const raw = $('bulkArea').value.trim();
+  const raw = $('bulkArea').value.trim().slice(0, 5000);
   if (!raw) { toast(t('bulkError')); return; }
   let done = 0, bad = 0;
   raw.split(/\r?\n/).forEach(line => {
     const ln = line.trim(); if (!ln) return;
     const parts = ln.split(/[,\t;]+/).map(s => s.trim());
     if (parts.length < 2) { bad++; return; }
-    const id = parts[0]; const price = parseFloat(parts[1]);
+    const id = parts[0].slice(0, 50); const price = parseFloat(parts[1]);
     const crop = state.crops.find(c => c.id === id);
-    if (!crop || isNaN(price)) { bad++; return; }
+    if (!crop || isNaN(price) || price < 0 || price > 100000) { bad++; return; }
     const newPrice = round2(price);
     if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
     done++;
@@ -1295,24 +1267,49 @@ $('exportLeads').addEventListener('click', () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
 
-$('saveBtn').addEventListener('click', () => {
+$('saveBtn').addEventListener('click', async () => {
   if (!isOwner) return;
+
+  /* Prices */
   document.querySelectorAll('#rateEditList .edit-row').forEach(row => {
     const crop = state.crops.find(c => c.id === row.dataset.id);
     if (!crop) return;
-    const newPrice = round2(parseFloat(row.querySelector('.price-input').value) || 0);
+    const rawPrice = parseFloat(row.querySelector('.price-input').value);
+    if (isNaN(rawPrice) || rawPrice < 0 || rawPrice > 100000) return;
+    const newPrice = round2(rawPrice);
     const newUnit = row.querySelector('.unit-select').value;
+    if (!['kg','quintal'].includes(newUnit)) return;
     if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
     crop.unit = newUnit;
   });
-  const pin = $('inPin').value.trim();
-  if (!/^\d{4,6}$/.test(pin)) { toast(t('fillAll')); return; }
-  state.shop.name = $('inShopName').value.trim() || SHOP.name;
-  state.shop.owner = $('inOwner').value.trim();
-  state.shop.phone = $('inPhone').value.trim();
-  state.shop.whatsapp = $('inWhatsapp').value.trim() || state.shop.phone;
-  state.shop.address = $('inAddress').value.trim();
-  state.shop.pin = pin;
+
+  /* Shop details with validation */
+  const shopName = $('inShopName').value.trim().slice(0, 80);
+  const owner = $('inOwner').value.trim().slice(0, 50);
+  const phone = $('inPhone').value.trim().slice(0, 15);
+  const whatsapp = $('inWhatsapp').value.trim().slice(0, 15);
+  const address = $('inAddress').value.trim().slice(0, 200);
+
+  if (!shopName || !owner || !address) { toast(t('fillAll')); return; }
+
+  state.shop.name = shopName;
+  state.shop.owner = owner;
+  state.shop.phone = phone;
+  state.shop.whatsapp = whatsapp || phone;
+  state.shop.address = address;
+
+  /* PIN change (optional) */
+  const newPin = $('inPin').value.trim();
+  if (newPin) {
+    if (!/^\d{4,6}$/.test(newPin)) {
+      $('pinErr') && ($('pinErr').textContent = '');
+      toast('पिन 4-6 अंकों का होना चाहिए');
+      return;
+    }
+    state.shop.pinHash = await hashString(newPin);
+    state.shop.pin = '';
+  }
+
   state.updatedAt = Date.now();
   pushHistory(); saveState(); renderAll();
   toast(t('saved'));
@@ -1325,42 +1322,29 @@ $('resetBtn').addEventListener('click', () => {
   state.shop = copyObject(SHOP);
   state.version = DATA_VERSION;
   state.updatedAt = Date.now();
-  history = {}; saveHistory(); saveState(); renderAll();
-  toast(t('resetDone'));
+  history = {}; saveHistory(); saveState();
+  initPinAndRender();
 });
 
-/* ═══ PWA MANIFEST ═══ */
-(function setupPWA() {
-  try {
-    const icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="34" fill="#15803d"/><text x="96" y="132" font-size="112" text-anchor="middle">🌾</text></svg>');
-    const manifest = {
-      name: state.shop.name, short_name: 'मंडी भाव',
-      description: 'किसान मंडी भाव', start_url: '.', scope: '.',
-      display: 'standalone', background_color: '#f4f7f2',
-      theme_color: '#15803d', lang: 'hi',
-      icons: [
-        { src: icon, sizes: '192x192', type: 'image/svg+xml' },
-        { src: icon, sizes: '512x512', type: 'image/svg+xml' }
-      ]
-    };
-    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    const link = document.createElement('link');
-    link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
-    document.head.appendChild(link);
-  } catch(e) {}
-})();
-
 /* ═══ INIT ═══ */
-isOwner = readAdminSession();
-renderAll();
-updateSpeakBtn();
-startAutoSync();
-if (Date.now() - state.updatedAt > 5 * 60 * 1000) {
-  setTimeout(() => syncLiveRates(false), 1200);
-} else {
-  pushHistory(); saveHistory();
+async function initPinAndRender() {
+  await ensurePinHash();
+  renderAll();
 }
-console.log('%c🌾 किसान मंडी भाव — वर्ज़न ' + DATA_VERSION + ' चालू है', 'color:#15803d;font-weight:bold;font-size:13px');
+
+(async function init() {
+  isOwner = readAdminSession();
+  await initPinAndRender();
+  if (isOwner) startAdminTimer();
+  updateSpeakBtn();
+  startAutoSync();
+  if (Date.now() - state.updatedAt > 5 * 60 * 1000) {
+    setTimeout(() => syncLiveRates(false), 1200);
+  } else {
+    pushHistory(); saveHistory();
+  }
+  console.log('%c🔒 किसान मंडी भाव — v' + DATA_VERSION + ' (SECURE) चालू', 'color:#15803d;font-weight:bold;font-size:13px');
+})();
 </script>
 
 </body>
