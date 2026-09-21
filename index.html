@@ -477,7 +477,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
    • CSP, input validation, all security fixes
    ═══════════════════════════════════════════════════════════════════ */
 
-const DATA_VERSION = 8;
+const DATA_VERSION = 9;
 const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -661,7 +661,7 @@ function loadState() {
       };
     }
   } catch(e) {}
-  return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: Date.now() };
+return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: 0 };
 }
 function saveState() { state.version = DATA_VERSION; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
 function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { return {}; } }
@@ -1454,9 +1454,24 @@ $('cloudTestNow').addEventListener('click', async () => {
   if (!isOwner) return;
   if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
   toast('Testing connection…');
-  const ok = await cloudLoad();
-  fillCloudForm();
-  toast(ok ? '✅ Cloud connected ✓' : '❌ Cloud fail: ' + (cloudStatus.lastError || 'unknown'));
+  /* Test के लिए cloudLoad की बजाय direct fetch करो */
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + CLOUD.binId + '/latest', {
+      headers: { 'X-Master-Key': CLOUD.apiKey, 'X-Bin-Meta': 'false' }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    cloudStatus.connected = true;
+    cloudStatus.lastError = '';
+    updateCloudStatusUI();
+    fillCloudForm();
+    toast('✅ Cloud connected ✓');
+  } catch(err) {
+    cloudStatus.connected = false;
+    cloudStatus.lastError = err.message;
+    updateCloudStatusUI();
+    fillCloudForm();
+    toast('❌ Cloud fail: ' + err.message);
+  }
 });
 $('cloudPushNow').addEventListener('click', async () => {
   if (!isOwner) return;
