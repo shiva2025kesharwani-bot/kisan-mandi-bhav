@@ -22,9 +22,10 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .admin-ribbon .left{display:flex;align-items:center;gap:9px}
 .admin-ribbon .dot{width:9px;height:9px;border-radius:50%;background:#fbbf24;animation:pulse 1.8s infinite}
 .admin-ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:9px;padding:6px 14px;font-weight:800;font-size:.8rem}
-.cloud-status{background:#1e40af;color:#fff;padding:5px 12px;border-radius:99px;font-size:.75rem;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-left:8px}
+.cloud-status{padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-left:8px;color:#fff}
 .cloud-status.off{background:#64748b}
 .cloud-status.on{background:#16a34a}
+.cloud-status.busy{background:#d97706}
 .stale-banner{background:#fef3c7;border-bottom:2px solid #fcd34d;color:#92400e;padding:11px 16px;font-size:.88rem;font-weight:800;text-align:center}
 .stale-banner button{margin-left:10px;background:#92400e;color:#fff;border-radius:9px;padding:5px 14px;font-weight:800;font-size:.78rem}
 .site-header{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#15803d 0%,#166534 100%);color:#fff;box-shadow:0 2px 12px rgba(20,83,45,.25)}
@@ -174,6 +175,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .info-box{background:#fef3c7;border:2px solid #fcd34d;border-radius:13px;padding:12px 15px;font-size:.83rem;font-weight:700;color:#92400e;margin-bottom:14px;line-height:1.6}
 .info-box .ico{font-size:1.1rem;margin-right:6px}
 .info-box.blue{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
+.info-box.green{background:#dcfce7;border-color:#86efac;color:#166534}
 .bulk-area{width:100%;min-height:170px;padding:13px;border:2px solid var(--border);border-radius:13px;font-family:monospace;font-size:.88rem;font-weight:600;background:var(--bg);outline:none;resize:vertical;line-height:1.7}
 .lead-item{background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:12px 14px;margin-bottom:9px;font-size:.88rem}
 .lead-item .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
@@ -401,14 +403,14 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         <p class="section-title">☁️ Cloud Sync (सब devices के लिए)</p>
         <div class="info-box blue">
           <span class="ico">💡</span>
-          <b>क्यों चाहिए?</b> अभी rate सिर्फ़ तुम्हारे फ़ोन में save होता है। Cloud जोड़ने पर <b>सब devices में same rate</b> दिखेगा।
+          <b>क्यों चाहिए?</b> Cloud जोड़ने पर <b>सब devices में same rate</b> दिखेगा — तुरंत।
         </div>
         <p class="hint">
           📖 <b>Setup:</b><br>
           1. <b>jsonbin.io</b> पर free account बनाओ<br>
           2. नया Bin बनाओ → Bin ID copy करो<br>
           3. API Key copy करो<br>
-          4. नीचे दोनों paste करो → Save करो
+          4. नीचे paste करो → Save करो
         </p>
         <div class="field"><label>Bin ID</label><input id="inCloudBinId" type="text" maxlength="50" placeholder="65f8a3b2..."></div>
         <div class="field"><label>API Key</label><input id="inCloudApiKey" type="text" maxlength="200" placeholder="$2b$10$..."></div>
@@ -418,7 +420,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
           <button class="btn btn-ghost" id="cloudPushNow">⬆️ अभी Push करो</button>
           <button class="btn btn-ghost" id="cloudPullNow">⬇️ अभी Pull करो</button>
         </div>
-        <p class="hint" id="cloudMsg" style="margin-top:12px"></p>
+        <div class="info-box green" id="cloudMsg" style="margin-top:14px;display:none"></div>
       </div>
       <div id="tab-leads" class="hidden">
         <p class="section-title" data-i18n="leadTitle">📥 किसानों की पूछताछ</p>
@@ -467,28 +469,14 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   🌾 किसान मंडी भाव — v8
-   ═══════════════════════════════════════════════════════════════════
-   🔒 Features:
-   • 24-hour lock on manually-changed crops
-   • Cloud sync (JSONBin.io) — OPTIONAL, fill CLOUD block
-   • PIN SHA-256 hashing + rate limiting
-   • Session auto-timeout (30 min)
-   • CSP, input validation, all security fixes
+   🌾 किसान मंडी भाव — v9 FINAL
    ═══════════════════════════════════════════════════════════════════ */
-
 const DATA_VERSION = 9;
 const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
-/* ═══════════════════════════════════════════════════════════════════
-   ☁️ CLOUD CONFIG — अभी खाली है, बाद में भरो
-   ═══════════════════════════════════════════════════════════════════
-   Setup के लिए admin panel → "☁️ Cloud" tab खोलो।
-   वहीं से settings save कर सकते हो।
-   ═══════════════════════════════════════════════════════════════════ */
 const CLOUD = {
-  binId:   '',                        /* JSONBin.io Bin ID */
-  apiKey:  '',                        /* JSONBin.io X-Master-Key */
+  binId:   '',
+  apiKey:  '',
   enabled: true,
   syncIntervalMs: 5 * 60 * 1000
 };
@@ -557,12 +545,12 @@ const LANGS = [
 ];
 
 const I18N = {
-  hi:{tagline:'आज के ताज़ा मंडी भाव',todayRates:'आज के भाव',updatedAt:'अंतिम अपडेट',search:'फसल खोजें…',all:'सभी',catCereal:'अनाज',catMillet:'मोटे अनाज',catPulse:'दालें',perQuintal:'प्रति क्विंटल',perKg:'प्रति किलो',up:'बढ़त',down:'गिरावट',same:'स्थिर',fixed:'फिक्स',callNow:'कॉल करें',whatsapp:'व्हाट्सएप',listen:'सुनें',stopSpeaking:'रोकें',noResults:'कोई फसल नहीं मिली',contactTitle:'हमसे संपर्क करें',adminLogin:'दुकानदार लॉगिन',enterPin:'पिन दर्ज करें',login:'लॉगिन',loginTitle:'सिर्फ़ दुकानदार के लिए',loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',wrongPin:'गलत पिन',cancel:'रद्द करें',save:'सेव करें',shopName:'दुकान का नाम',ownerName:'मालिक का नाम',phone:'मोबाइल नंबर',address:'पता',editRates:'भाव बदलें',addCrop:'नई फसल जोड़ें',cropName:'फसल का नाम',price:'भाव',unit:'इकाई',remove:'हटाएं',logout:'लॉगआउट',saved:'सेव हो गया ✓',print:'प्रिंट करें',shopSettings:'दुकान',adminPanel:'दुकानदार पैनल',reset:'रीसेट',changePin:'लॉगिन पिन',footerNote:'किसानों के लिए समर्पित',editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',fillAll:'कृपया सारी जानकारी भरें',confirmReset:'सारा डेटा रीसेट हो जाएगा?',resetDone:'रीसेट हो गया',noCrops:'कोई फसल नहीं है',syncNow:'लाइव भाव लाएँ',syncing:'लोड हो रहे हैं…',synced:'अपडेट हुए ✓',syncFail:'डेटा नहीं मिला',liveNote:'स्रोत: डेमो सिमुलेशन',liveNoteApi:'स्रोत: लाइव API',adminModeOn:'एडमिन मोड चालू',openPanel:'पैनल खोलें',loggedIn:'लॉगिन हो गया ✓',loggedOut:'लॉगआउट हो गया',pinWarn:'⚠️ पिन याद रखें।',speechUnsupported:'आवाज़ नहीं चल सकती',speechStarted:'भाव सुनाए जा रहे हैं…',staleWarning:'भाव पुराने हैं',refreshNow:'अपडेट करें',calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',calcSub:'फसल और मात्रा चुनें।',calcCrop:'फसल चुनें',calcQty:'मात्रा',calcUnit:'इकाई',calcTotal:'अनुमानित कुल मूल्य',calcHint:'* अनुमानित राशि है।',quintal:'क्विंटल',kg:'किलो',nearbyTitle:'📍 आसपास की मंडियाँ',nearbySub:'तुलना करें।',enquiryTitle:'📝 बेचना है? पूछताछ भेजें',enquirySub:'जानकारी भरें।',yourName:'आपका नाम',yourPhone:'मोबाइल नंबर',yourCrop:'फसल',yourQty:'मात्रा (क्विंटल)',yourMsg:'अतिरिक्त जानकारी',sendWhatsApp:'व्हाट्सएप पर भेजें',enqNeedName:'कृपया नाम लिखें',enqNeedPhone:'सही 10 अंकों का नंबर लिखें',enqNeedQty:'मात्रा लिखें',enqSent:'व्हाट्सएप खुल रहा है…',qrShow:'QR कोड',qrTitle:'📱 QR कोड',qrSub:'दुकान पर लगाएँ।',copyLink:'लिंक कॉपी करें',linkCopied:'कॉपी हो गया ✓',close:'बंद करें',bulkTab:'बल्क अपडेट',cloudTab:'☁️ Cloud',leadsTab:'पूछताछ',bulkTitle:'📋 बल्क अपडेट',bulkHint:'हर लाइन: फसल-आईडी, भाव',bulkApply:'लागू करें',bulkLoad:'मौजूदा भरें',bulkDone:'अपडेट ✓',bulkError:'कुछ लाइनें गलत',leadTitle:'📥 पूछताछ',leadEmpty:'कोई पूछताछ नहीं।',leadClear:'सब हटाएँ',leadExport:'CSV',leadConfirmClear:'सब हट जाएँगी?',hist7d:'7 दिन का रुझान',disclaimer:'भाव केवल जानकारी के लिए हैं।',micUnsupported:'आवाज़ से खोज नहीं',micListening:'सुन रहे हैं… बोलिए',tooManyAttempts:'बहुत बार गलत पिन — 30 सेकंड बाद कोशिश करें',invalidName:'नाम में सिर्फ अक्षर डालें',invalidPrice:'भाव सही नहीं है',lockExpires:'में unlock होगा',cloudOff:'Cloud OFF',cloudOn:'Cloud ON'},
-  en:{tagline:'Fresh mandi rates today',todayRates:"Today's Rates",updatedAt:'Last updated',search:'Search crop…',all:'All',catCereal:'Cereals',catMillet:'Millets',catPulse:'Pulses',perQuintal:'per quintal',perKg:'per kg',up:'Up',down:'Down',same:'Stable',fixed:'FIXED',callNow:'Call Now',whatsapp:'WhatsApp',listen:'Listen',stopSpeaking:'Stop',noResults:'No crop found',contactTitle:'Contact Us',adminLogin:'Shop Owner Login',enterPin:'Enter PIN',login:'Login',loginTitle:'For shop owner only',loginSub:'Farmers do not need to login.',wrongPin:'Wrong PIN',cancel:'Cancel',save:'Save',shopName:'Shop Name',ownerName:'Owner Name',phone:'Mobile Number',address:'Address',editRates:'Edit Rates',addCrop:'Add New Crop',cropName:'Crop Name',price:'Price',unit:'Unit',remove:'Remove',logout:'Logout',saved:'Saved ✓',print:'Print',shopSettings:'Shop',adminPanel:'Owner Panel',reset:'Reset',changePin:'Login PIN',footerNote:'Dedicated to farmers',editRatesHint:'Change prices below and press Save.',fillAll:'Please fill all fields',confirmReset:'All data will be reset?',resetDone:'Reset done',noCrops:'No crops added',syncNow:'Sync Live Rates',syncing:'Fetching…',synced:'Updated ✓',syncFail:'Live data unavailable',liveNote:'Source: demo simulation',liveNoteApi:'Source: live API',adminModeOn:'Admin mode ON',openPanel:'Open Panel',loggedIn:'Logged in ✓',loggedOut:'Logged out',pinWarn:'⚠️ Remember PIN.',speechUnsupported:'Speech not supported',speechStarted:'Reading rates aloud…',staleWarning:'Rates are old',refreshNow:'Refresh now',calcTitle:'🧮 Estimated Value of My Crop',calcSub:'Pick crop and quantity.',calcCrop:'Choose crop',calcQty:'Quantity',calcUnit:'Unit',calcTotal:'Estimated Total Value',calcHint:'* Estimate only.',quintal:'Quintal',kg:'Kilogram',nearbyTitle:'📍 Nearby Mandi Rates',nearbySub:'Compare.',enquiryTitle:'📝 Want to sell? Send an enquiry',enquirySub:'Fill your crop details.',yourName:'Your Name',yourPhone:'Mobile Number',yourCrop:'Crop',yourQty:'Quantity (quintal)',yourMsg:'Additional details',sendWhatsApp:'Send on WhatsApp',enqNeedName:'Please enter your name',enqNeedPhone:'Please enter a valid 10-digit mobile number',enqNeedQty:'Please enter quantity',enqSent:'Opening WhatsApp…',qrShow:'QR Code',qrTitle:'📱 QR Code',qrSub:'Print at your shop.',copyLink:'Copy link',linkCopied:'Link copied ✓',close:'Close',bulkTab:'Bulk Update',cloudTab:'☁️ Cloud',leadsTab:'Enquiries',bulkTitle:'📋 Bulk Update',bulkHint:'Line: crop-id, price',bulkApply:'Apply',bulkLoad:'Fill current',bulkDone:'Updated ✓',bulkError:'Some lines wrong',leadTitle:'📥 Enquiries',leadEmpty:'No enquiries yet.',leadClear:'Clear all',leadExport:'CSV',leadConfirmClear:'All enquiries will be deleted?',hist7d:'7-day trend',disclaimer:'Rates are for information only.',micUnsupported:'Voice search not supported',micListening:'Listening… speak now',tooManyAttempts:'Too many wrong PINs — try again in 30 seconds',invalidName:'Only letters allowed in name',invalidPrice:'Price is not valid',lockExpires:'unlock in',cloudOff:'Cloud OFF',cloudOn:'Cloud ON'},
+  hi:{tagline:'आज के ताज़ा मंडी भाव',todayRates:'आज के भाव',updatedAt:'अंतिम अपडेट',search:'फसल खोजें…',all:'सभी',catCereal:'अनाज',catMillet:'मोटे अनाज',catPulse:'दालें',perQuintal:'प्रति क्विंटल',perKg:'प्रति किलो',up:'बढ़त',down:'गिरावट',same:'स्थिर',fixed:'फिक्स',callNow:'कॉल करें',whatsapp:'व्हाट्सएप',listen:'सुनें',stopSpeaking:'रोकें',noResults:'कोई फसल नहीं मिली',contactTitle:'हमसे संपर्क करें',adminLogin:'दुकानदार लॉगिन',enterPin:'पिन दर्ज करें',login:'लॉगिन',loginTitle:'सिर्फ़ दुकानदार के लिए',loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',wrongPin:'गलत पिन',cancel:'रद्द करें',save:'सेव करें',shopName:'दुकान का नाम',ownerName:'मालिक का नाम',phone:'मोबाइल नंबर',address:'पता',editRates:'भाव बदलें',addCrop:'नई फसल जोड़ें',cropName:'फसल का नाम',price:'भाव',unit:'इकाई',remove:'हटाएं',logout:'लॉगआउट',saved:'सेव हो गया ✓',print:'प्रिंट करें',shopSettings:'दुकान',adminPanel:'दुकानदार पैनल',reset:'रीसेट',changePin:'लॉगिन पिन',footerNote:'किसानों के लिए समर्पित',editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',fillAll:'कृपया सारी जानकारी भरें',confirmReset:'सारा डेटा रीसेट हो जाएगा?',resetDone:'रीसेट हो गया',noCrops:'कोई फसल नहीं है',syncNow:'लाइव भाव लाएँ',syncing:'लोड हो रहे हैं…',synced:'अपडेट हुए ✓',syncFail:'डेटा नहीं मिला',liveNote:'स्रोत: डेमो सिमुलेशन',liveNoteApi:'स्रोत: लाइव API',adminModeOn:'एडमिन मोड चालू',openPanel:'पैनल खोलें',loggedIn:'लॉगिन हो गया ✓',loggedOut:'लॉगआउट हो गया',pinWarn:'⚠️ पिन याद रखें।',speechUnsupported:'आवाज़ नहीं चल सकती',speechStarted:'भाव सुनाए जा रहे हैं…',staleWarning:'भाव पुराने हैं',refreshNow:'अपडेट करें',calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',calcSub:'फसल और मात्रा चुनें।',calcCrop:'फसल चुनें',calcQty:'मात्रा',calcUnit:'इकाई',calcTotal:'अनुमानित कुल मूल्य',calcHint:'* अनुमानित राशि है।',quintal:'क्विंटल',kg:'किलो',nearbyTitle:'📍 आसपास की मंडियाँ',nearbySub:'तुलना करें।',enquiryTitle:'📝 बेचना है? पूछताछ भेजें',enquirySub:'जानकारी भरें।',yourName:'आपका नाम',yourPhone:'मोबाइल नंबर',yourCrop:'फसल',yourQty:'मात्रा (क्विंटल)',yourMsg:'अतिरिक्त जानकारी',sendWhatsApp:'व्हाट्सएप पर भेजें',enqNeedName:'कृपया नाम लिखें',enqNeedPhone:'सही 10 अंकों का नंबर लिखें',enqNeedQty:'मात्रा लिखें',enqSent:'व्हाट्सएप खुल रहा है…',qrShow:'QR कोड',qrTitle:'📱 QR कोड',qrSub:'दुकान पर लगाएँ।',copyLink:'लिंक कॉपी करें',linkCopied:'कॉपी हो गया ✓',close:'बंद करें',bulkTab:'बल्क अपडेट',cloudTab:'☁️ Cloud',leadsTab:'पूछताछ',bulkTitle:'📋 बल्क अपडेट',bulkHint:'हर लाइन: फसल-आईडी, भाव',bulkApply:'लागू करें',bulkLoad:'मौजूदा भरें',bulkDone:'अपडेट ✓',bulkError:'कुछ लाइनें गलत',leadTitle:'📥 पूछताछ',leadEmpty:'कोई पूछताछ नहीं।',leadClear:'सब हटाएँ',leadExport:'CSV',leadConfirmClear:'सब हट जाएँगी?',hist7d:'7 दिन का रुझान',disclaimer:'भाव केवल जानकारी के लिए हैं।',micUnsupported:'आवाज़ से खोज नहीं',micListening:'सुन रहे हैं… बोलिए',tooManyAttempts:'बहुत बार गलत पिन — 30 सेकंड बाद',invalidName:'नाम में सिर्फ अक्षर डालें',invalidPrice:'भाव सही नहीं',lockExpires:'में unlock होगा'},
+  en:{tagline:'Fresh mandi rates today',todayRates:"Today's Rates",updatedAt:'Last updated',search:'Search crop…',all:'All',catCereal:'Cereals',catMillet:'Millets',catPulse:'Pulses',perQuintal:'per quintal',perKg:'per kg',up:'Up',down:'Down',same:'Stable',fixed:'FIXED',callNow:'Call Now',whatsapp:'WhatsApp',listen:'Listen',stopSpeaking:'Stop',noResults:'No crop found',contactTitle:'Contact Us',adminLogin:'Shop Owner Login',enterPin:'Enter PIN',login:'Login',loginTitle:'For shop owner only',loginSub:'Farmers do not need to login.',wrongPin:'Wrong PIN',cancel:'Cancel',save:'Save',shopName:'Shop Name',ownerName:'Owner Name',phone:'Mobile Number',address:'Address',editRates:'Edit Rates',addCrop:'Add New Crop',cropName:'Crop Name',price:'Price',unit:'Unit',remove:'Remove',logout:'Logout',saved:'Saved ✓',print:'Print',shopSettings:'Shop',adminPanel:'Owner Panel',reset:'Reset',changePin:'Login PIN',footerNote:'Dedicated to farmers',editRatesHint:'Change prices below and press Save.',fillAll:'Please fill all fields',confirmReset:'All data will be reset?',resetDone:'Reset done',noCrops:'No crops added',syncNow:'Sync Live Rates',syncing:'Fetching…',synced:'Updated ✓',syncFail:'Live data unavailable',liveNote:'Source: demo simulation',liveNoteApi:'Source: live API',adminModeOn:'Admin mode ON',openPanel:'Open Panel',loggedIn:'Logged in ✓',loggedOut:'Logged out',pinWarn:'⚠️ Remember PIN.',speechUnsupported:'Speech not supported',speechStarted:'Reading rates aloud…',staleWarning:'Rates are old',refreshNow:'Refresh now',calcTitle:'🧮 Estimated Value of My Crop',calcSub:'Pick crop and quantity.',calcCrop:'Choose crop',calcQty:'Quantity',calcUnit:'Unit',calcTotal:'Estimated Total Value',calcHint:'* Estimate only.',quintal:'Quintal',kg:'Kilogram',nearbyTitle:'📍 Nearby Mandi Rates',nearbySub:'Compare.',enquiryTitle:'📝 Want to sell? Send an enquiry',enquirySub:'Fill your crop details.',yourName:'Your Name',yourPhone:'Mobile Number',yourCrop:'Crop',yourQty:'Quantity (quintal)',yourMsg:'Additional details',sendWhatsApp:'Send on WhatsApp',enqNeedName:'Please enter your name',enqNeedPhone:'Please enter a valid 10-digit mobile number',enqNeedQty:'Please enter quantity',enqSent:'Opening WhatsApp…',qrShow:'QR Code',qrTitle:'📱 QR Code',qrSub:'Print at your shop.',copyLink:'Copy link',linkCopied:'Link copied ✓',close:'Close',bulkTab:'Bulk Update',cloudTab:'☁️ Cloud',leadsTab:'Enquiries',bulkTitle:'📋 Bulk Update',bulkHint:'Line: crop-id, price',bulkApply:'Apply',bulkLoad:'Fill current',bulkDone:'Updated ✓',bulkError:'Some lines wrong',leadTitle:'📥 Enquiries',leadEmpty:'No enquiries yet.',leadClear:'Clear all',leadExport:'CSV',leadConfirmClear:'All enquiries will be deleted?',hist7d:'7-day trend',disclaimer:'Rates are for information only.',micUnsupported:'Voice search not supported',micListening:'Listening… speak now',tooManyAttempts:'Too many wrong PINs — try again in 30 seconds',invalidName:'Only letters allowed in name',invalidPrice:'Price is not valid',lockExpires:'unlock in'},
   mr:{},pa:{},gu:{},bn:{},ta:{},te:{}
 };
 
-const STORAGE_KEY = 'kisan_mandi_v11';
+const STORAGE_KEY = 'kisan_mandi_v12_final';
 const CLOUD_KEY   = 'kisan_mandi_cloud';
 const SESSION_KEY = 'kisan_mandi_admin_session_secure';
 const LEADS_KEY   = 'kisan_mandi_leads';
@@ -585,7 +573,6 @@ let adminTimer = null;
 let cloudTimer = null;
 let cloudStatus = { connected: false, lastSync: 0, lastError: '' };
 
-/* Load cloud config from localStorage */
 (function loadCloudConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CLOUD_KEY) || '{}');
@@ -623,6 +610,7 @@ function getLockRemaining(crop) {
   return { hours, minutes, text: hours + 'h ' + minutes + 'm' };
 }
 
+/* 🎯 FIX: पहली बार खोलने पर updatedAt = 0 → cloud डेटा हमेशा नया लगेगा */
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -657,11 +645,12 @@ function loadState() {
         lang: validLangs.includes(saved.lang) ? saved.lang : 'hi',
         fs: Math.max(13, Math.min(24, parseInt(saved.fs) || 17)),
         hc: !!saved.hc,
-        updatedAt: (typeof saved.updatedAt === 'number' && saved.updatedAt > 0) ? saved.updatedAt : Date.now()
+        updatedAt: (typeof saved.updatedAt === 'number' && saved.updatedAt > 0) ? saved.updatedAt : 0
       };
     }
   } catch(e) {}
-return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: 0 };
+  /* पहली बार खोला → updatedAt = 0, ताकि cloud का data हमेशा जीते */
+  return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: 0 };
 }
 function saveState() { state.version = DATA_VERSION; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
 function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { return {}; } }
@@ -714,7 +703,7 @@ document.addEventListener('click', resetAdminTimer);
 document.addEventListener('keydown', resetAdminTimer);
 
 /* ═══════════════════════════════════════════════════════════════════
-   ☁️ CLOUD SYNC FUNCTIONS
+   ☁️ CLOUD SYNC
    ═══════════════════════════════════════════════════════════════════ */
 function cloudConfigured() {
   return !!(CLOUD.enabled && CLOUD.binId && CLOUD.apiKey && CLOUD.binId.length > 5 && CLOUD.apiKey.length > 10);
@@ -723,7 +712,7 @@ function cloudConfigured() {
 function updateCloudStatusUI() {
   const el = $('cloudStatus');
   if (!el) return;
-  el.classList.remove('off','on');
+  el.classList.remove('off','on','busy');
   if (!cloudConfigured()) {
     el.classList.add('off');
     el.textContent = '☁️ Cloud: OFF';
@@ -732,24 +721,27 @@ function updateCloudStatusUI() {
     el.textContent = '☁️ Cloud: ON';
   } else {
     el.classList.add('off');
-    el.textContent = '☁️ Cloud: ?';
+    el.textContent = '☁️ Cloud: ...';
   }
 }
 
+/* cloudLoad returns: {ok, updated, error} */
 async function cloudLoad() {
-  if (!cloudConfigured()) return false;
+  if (!cloudConfigured()) return { ok: false, updated: false, error: 'not-configured' };
   try {
     const res = await fetch('https://api.jsonbin.io/v3/b/' + CLOUD.binId + '/latest', {
       headers: { 'X-Master-Key': CLOUD.apiKey, 'X-Bin-Meta': 'false' }
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (!data || typeof data !== 'object') return false;
+    if (!data || typeof data !== 'object') throw new Error('empty');
+
     cloudStatus.connected = true;
     cloudStatus.lastSync = Date.now();
     cloudStatus.lastError = '';
     updateCloudStatusUI();
 
+    /* अगर cloud का data नया है → local update करो */
     if (data.updatedAt && data.updatedAt > (state.updatedAt || 0)) {
       if (Array.isArray(data.crops)) {
         data.crops.forEach(cloudCrop => {
@@ -775,20 +767,21 @@ async function cloudLoad() {
       renderCrops(); renderShopInfo();
       if (isOwner) renderEditList();
       console.log('☁️ Cloud से नया data लोड हुआ');
-      return true;
+      return { ok: true, updated: true, error: '' };
     }
-    return false;
+    /* Cloud का data नया नहीं है → updated: false */
+    return { ok: true, updated: false, error: '' };
   } catch(err) {
     cloudStatus.connected = false;
     cloudStatus.lastError = err.message;
     updateCloudStatusUI();
     console.warn('Cloud load error:', err.message);
-    return false;
+    return { ok: false, updated: false, error: err.message };
   }
 }
 
 async function cloudSave() {
-  if (!cloudConfigured()) return false;
+  if (!cloudConfigured()) return { ok: false, error: 'not-configured' };
   try {
     const payload = {
       crops: state.crops.map(c => ({
@@ -808,18 +801,20 @@ async function cloudSave() {
       body: JSON.stringify(payload)
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    state.updatedAt = payload.updatedAt;
+    saveState();
     cloudStatus.connected = true;
     cloudStatus.lastSync = Date.now();
     cloudStatus.lastError = '';
     updateCloudStatusUI();
     console.log('☁️ Cloud पर save हो गया');
-    return true;
+    return { ok: true, error: '' };
   } catch(err) {
     cloudStatus.connected = false;
     cloudStatus.lastError = err.message;
     updateCloudStatusUI();
     console.warn('Cloud save error:', err.message);
-    return false;
+    return { ok: false, error: err.message };
   }
 }
 
@@ -827,13 +822,11 @@ function startCloudSync() {
   if (cloudTimer) clearInterval(cloudTimer);
   if (!cloudConfigured()) { updateCloudStatusUI(); return; }
   updateCloudStatusUI();
-  setTimeout(() => cloudLoad(), 2000);
+  setTimeout(() => cloudLoad(), 1500);
   cloudTimer = setInterval(() => { if (!document.hidden) cloudLoad(); }, CLOUD.syncIntervalMs);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   LIVE MARKET
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════ */
 function matchCropByApiName(rawName) {
   if (!rawName) return null;
   const name = String(rawName).toLowerCase().trim().slice(0, 100);
@@ -924,6 +917,7 @@ function startAutoSync() {
   syncTimer = setInterval(() => { if (!document.hidden) syncLiveRates(false); }, LIVE.refreshMs);
 }
 function checkStale() {
+  if (!state.updatedAt) { $('staleBanner').classList.add('hidden'); return; }
   const ageHours = (Date.now() - state.updatedAt) / 3600000;
   $('staleBanner').classList.toggle('hidden', ageHours < LIVE.staleHours);
 }
@@ -977,7 +971,11 @@ function renderShopInfo() {
     else { a.removeAttribute('href'); a.style.opacity = '.5'; a.style.pointerEvents = 'none'; }
   });
   $('dateLine').textContent = formatDate(new Date());
-  $('updatedAt').textContent = formatDate(state.updatedAt) + ' • ' + formatTime(state.updatedAt);
+  if (state.updatedAt) {
+    $('updatedAt').textContent = formatDate(state.updatedAt) + ' • ' + formatTime(state.updatedAt);
+  } else {
+    $('updatedAt').textContent = formatDate(new Date()) + ' • ' + formatTime(new Date());
+  }
   $('yearEl').textContent = new Date().getFullYear();
 }
 function renderChips() {
@@ -1133,14 +1131,19 @@ function fillCloudForm() {
   $('inCloudBinId').value = CLOUD.binId || '';
   $('inCloudApiKey').value = CLOUD.apiKey || '';
   const msg = $('cloudMsg');
-  if (msg) {
-    if (cloudConfigured()) {
-      msg.textContent = '✅ Cloud configured. Last sync: ' + (cloudStatus.lastSync ? new Date(cloudStatus.lastSync).toLocaleString('en-IN') : 'never');
-      msg.style.color = '#15803d';
+  if (!msg) return;
+  msg.style.display = 'block';
+  if (cloudConfigured()) {
+    if (cloudStatus.connected) {
+      msg.className = 'info-box green';
+      msg.textContent = '✅ Cloud connected. Last sync: ' + (cloudStatus.lastSync ? new Date(cloudStatus.lastSync).toLocaleString('en-IN') : 'never');
     } else {
-      msg.textContent = '⚪ Cloud not configured. Fill Bin ID and API Key above.';
-      msg.style.color = '#92400e';
+      msg.className = 'info-box';
+      msg.textContent = '⏳ Cloud configured. Waiting for first sync...';
     }
+  } else {
+    msg.className = 'info-box';
+    msg.textContent = '⚪ Cloud not configured. Bin ID और API Key भरो, फिर Save करो।';
   }
 }
 
@@ -1424,28 +1427,28 @@ $('bulkApply').addEventListener('click', async () => {
   pushHistory(); saveState();
   renderCrops(); renderEditList(); renderCalc(); renderNearby(); renderBulkIds(); checkStale();
   let msg = done + ' ' + t('bulkDone') + (bad ? ' • ' + bad + ' ' + t('bulkError') : '');
+  toast(msg);
   if (cloudConfigured()) {
-    toast(msg + ' • ☁️ syncing...');
-    const ok = await cloudSave();
-    toast(msg + (ok ? ' ☁️' : ' (cloud fail)'));
-  } else {
-    toast(msg);
+    const r = await cloudSave();
+    if (r.ok) toast(msg + ' ☁️');
   }
 });
 
-/* Cloud settings buttons */
 $('cloudSaveSettings').addEventListener('click', () => {
   if (!isOwner) return;
-  const binId = $('inCloudBinId').value.trim().slice(0, 50);
-  const apiKey = $('inCloudApiKey').value.trim().slice(0, 200);
-  CLOUD.binId = binId;
-  CLOUD.apiKey = apiKey;
+  CLOUD.binId = $('inCloudBinId').value.trim().slice(0, 50);
+  CLOUD.apiKey = $('inCloudApiKey').value.trim().slice(0, 200);
   saveCloudConfig();
   updateCloudStatusUI();
   fillCloudForm();
   if (cloudConfigured()) {
     startCloudSync();
     toast('☁️ Cloud settings saved ✓');
+    /* पहली बार settings save करते ही push करो */
+    setTimeout(async () => {
+      const r = await cloudSave();
+      if (r.ok) toast('☁️ Data pushed to cloud ✓');
+    }, 1000);
   } else {
     toast('Cloud settings saved (incomplete)');
   }
@@ -1454,40 +1457,33 @@ $('cloudTestNow').addEventListener('click', async () => {
   if (!isOwner) return;
   if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
   toast('Testing connection…');
-  /* Test के लिए cloudLoad की बजाय direct fetch करो */
-  try {
-    const res = await fetch('https://api.jsonbin.io/v3/b/' + CLOUD.binId + '/latest', {
-      headers: { 'X-Master-Key': CLOUD.apiKey, 'X-Bin-Meta': 'false' }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    cloudStatus.connected = true;
-    cloudStatus.lastError = '';
-    updateCloudStatusUI();
-    fillCloudForm();
-    toast('✅ Cloud connected ✓');
-  } catch(err) {
-    cloudStatus.connected = false;
-    cloudStatus.lastError = err.message;
-    updateCloudStatusUI();
-    fillCloudForm();
-    toast('❌ Cloud fail: ' + err.message);
+  const r = await cloudLoad();
+  fillCloudForm();
+  if (r.ok) {
+    toast(r.updated ? '✅ Cloud connected ✓ (data updated)' : '✅ Cloud connected ✓');
+  } else {
+    toast('❌ ' + r.error);
   }
 });
 $('cloudPushNow').addEventListener('click', async () => {
   if (!isOwner) return;
   if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
   toast('Pushing to cloud…');
-  const ok = await cloudSave();
+  const r = await cloudSave();
   fillCloudForm();
-  toast(ok ? '⬆️ Pushed ✓' : '❌ Push fail: ' + (cloudStatus.lastError || 'unknown'));
+  toast(r.ok ? '⬆️ Pushed ✓' : '❌ Push fail: ' + r.error);
 });
 $('cloudPullNow').addEventListener('click', async () => {
   if (!isOwner) return;
   if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
   toast('Pulling from cloud…');
-  const ok = await cloudLoad();
+  const r = await cloudLoad();
   fillCloudForm();
-  toast(ok ? '⬇️ Pulled ✓' : '⚠️ No newer data on cloud');
+  if (r.ok) {
+    toast(r.updated ? '⬇️ नया data मिला ✓' : '⬇️ Cloud data already up to date');
+  } else {
+    toast('❌ ' + r.error);
+  }
 });
 
 $('clearLeads').addEventListener('click', () => {
@@ -1510,10 +1506,8 @@ $('exportLeads').addEventListener('click', () => {
 
 $('saveBtn').addEventListener('click', async () => {
   if (!isOwner) return;
-
   const now = Date.now();
   let lockedCount = 0;
-
   document.querySelectorAll('#rateEditList .edit-row').forEach(row => {
     const crop = state.crops.find(c => c.id === row.dataset.id);
     if (!crop) return;
@@ -1556,13 +1550,12 @@ $('saveBtn').addEventListener('click', async () => {
   pushHistory(); saveState(); renderAll();
 
   const baseMsg = t('saved') + (lockedCount ? ' • 🔒 ' + lockedCount + ' ' + t('fixed') : '');
+  toast(baseMsg);
 
   if (cloudConfigured()) {
-    toast(baseMsg + ' • ☁️ syncing...');
-    const ok = await cloudSave();
-    toast(ok ? baseMsg + ' ☁️' : baseMsg + ' (cloud fail)');
-  } else {
-    toast(baseMsg);
+    const r = await cloudSave();
+    if (r.ok) toast(baseMsg + ' ☁️');
+    else toast(baseMsg + ' (cloud fail)');
   }
 });
 
@@ -1572,7 +1565,7 @@ $('resetBtn').addEventListener('click', () => {
   state.crops = copyObject(CROPS);
   state.shop = copyObject(SHOP);
   state.version = DATA_VERSION;
-  state.updatedAt = Date.now();
+  state.updatedAt = 0;
   history = {}; saveHistory(); saveState();
   initPinAndRender();
 });
@@ -1589,13 +1582,12 @@ async function initPinAndRender() {
   updateSpeakBtn();
   startAutoSync();
   startCloudSync();
-  if (Date.now() - state.updatedAt > 5 * 60 * 1000) {
+  if (state.updatedAt && Date.now() - state.updatedAt > 5 * 60 * 1000) {
     setTimeout(() => syncLiveRates(false), 1200);
   } else {
     pushHistory(); saveHistory();
   }
   console.log('%c🌾 किसान मंडी भाव — v' + DATA_VERSION + ' चालू', 'color:#15803d;font-weight:bold;font-size:13px');
-  console.log('%c☁️ Cloud: ' + (cloudConfigured() ? 'Configured ✓' : 'Not configured (admin panel → ☁️ Cloud)'), 'color:#1e40af;font-weight:bold');
 })();
 </script>
 
