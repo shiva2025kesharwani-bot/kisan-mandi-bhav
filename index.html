@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#15803d">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://api.data.gov.in https://api.qrserver.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://api.data.gov.in https://api.qrserver.com https://api.jsonbin.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>किसान मंडी भाव | Kisan Mandi Bhav</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -22,6 +22,9 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .admin-ribbon .left{display:flex;align-items:center;gap:9px}
 .admin-ribbon .dot{width:9px;height:9px;border-radius:50%;background:#fbbf24;animation:pulse 1.8s infinite}
 .admin-ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:9px;padding:6px 14px;font-weight:800;font-size:.8rem}
+.cloud-status{background:#1e40af;color:#fff;padding:5px 12px;border-radius:99px;font-size:.75rem;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-left:8px}
+.cloud-status.off{background:#64748b}
+.cloud-status.on{background:#16a34a}
 .stale-banner{background:#fef3c7;border-bottom:2px solid #fcd34d;color:#92400e;padding:11px 16px;font-size:.88rem;font-weight:800;text-align:center}
 .stale-banner button{margin-left:10px;background:#92400e;color:#fff;border-radius:9px;padding:5px 14px;font-weight:800;font-size:.78rem}
 .site-header{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#15803d 0%,#166534 100%);color:#fff;box-shadow:0 2px 12px rgba(20,83,45,.25)}
@@ -78,6 +81,7 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .crop-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--green-soft)}
 .crop-card.up::before{background:#22c55e}
 .crop-card.down::before{background:#f87171}
+.crop-card.locked::before{background:#fbbf24}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
 .crop-emoji{font-size:1.75rem;line-height:1}
 .crop-name{font-size:1.08rem;font-weight:800}
@@ -86,12 +90,14 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .badge.up{background:#dcfce7;color:#15803d}
 .badge.down{background:#fee2e2;color:#b91c1c}
 .badge.same{background:#f1f5f9;color:#64748b}
+.badge.locked{background:#fef3c7;color:#92400e}
 .price-row{display:flex;align-items:baseline;gap:6px}
 .price{font-size:1.85rem;font-weight:800;color:var(--green-dark)}
 .unit{font-size:.85rem;color:var(--muted);font-weight:700}
 .change-line{margin-top:8px;font-size:.82rem;font-weight:700;color:var(--muted)}
 .change-line.up{color:#15803d}
 .change-line.down{color:#b91c1c}
+.change-line.locked{color:#92400e}
 .card-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:8px}
 .spark{color:var(--green-mid);opacity:.85}
 .crop-card.down .spark{color:#f87171}
@@ -149,9 +155,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:10px 15px;border-radius:12px 12px 0 0;font-weight:800;font-size:.87rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
 .tab.active{color:var(--green-dark);border-bottom-color:var(--green);background:#f3faf5}
-.edit-row{display:grid;grid-template-columns:34px 1fr 112px 100px 42px;align-items:center;gap:9px;padding:10px;border-radius:13px;background:var(--bg);margin-bottom:9px}
+.edit-row{display:grid;grid-template-columns:34px 1fr 112px 100px 42px;align-items:center;gap:9px;padding:10px;border-radius:13px;background:var(--bg);margin-bottom:9px;position:relative}
+.edit-row.locked{background:#fef9e7;border:2px solid #fcd34d}
 .edit-emoji{font-size:1.3rem;text-align:center}
 .edit-name{font-weight:700;font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-name small{display:block;font-size:.68rem;color:#92400e;font-weight:800;margin-top:2px}
 .edit-price{display:flex;align-items:center;gap:4px;background:var(--card);border:2px solid var(--border);border-radius:11px;padding:0 9px}
 .edit-price span{color:var(--muted);font-weight:800;font-size:.9rem}
 .edit-price input{width:100%;border:none;outline:none;padding:9px 0;font-weight:800;font-size:.95rem;background:transparent}
@@ -163,6 +171,9 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .add-grid .full{grid-column:1/-1}
 .section-title{font-size:.95rem;font-weight:800;color:var(--green-dark);margin:6px 0 12px}
 .hint{font-size:.82rem;color:var(--muted);font-weight:600;margin-bottom:12px;line-height:1.55}
+.info-box{background:#fef3c7;border:2px solid #fcd34d;border-radius:13px;padding:12px 15px;font-size:.83rem;font-weight:700;color:#92400e;margin-bottom:14px;line-height:1.6}
+.info-box .ico{font-size:1.1rem;margin-right:6px}
+.info-box.blue{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
 .bulk-area{width:100%;min-height:170px;padding:13px;border:2px solid var(--border);border-radius:13px;font-family:monospace;font-size:.88rem;font-weight:600;background:var(--bg);outline:none;resize:vertical;line-height:1.7}
 .lead-item{background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:12px 14px;margin-bottom:9px;font-size:.88rem}
 .lead-item .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
@@ -196,7 +207,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 <body>
 
 <div class="admin-ribbon hidden" id="adminRibbon">
-  <span class="left"><span class="dot"></span><span data-i18n="adminModeOn">एडमिन मोड चालू</span></span>
+  <span class="left"><span class="dot"></span><span data-i18n="adminModeOn">एडमिन मोड चालू</span><span class="cloud-status off" id="cloudStatus">☁️ Cloud: OFF</span></span>
   <button id="openAdminFromRibbon">⚙️ <span data-i18n="openPanel">पैनल खोलें</span></button>
 </div>
 
@@ -349,11 +360,16 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
     <div class="tabs">
       <button class="tab active" data-tab="rates" data-i18n="editRates">भाव बदलें</button>
       <button class="tab" data-tab="bulk" data-i18n="bulkTab">बल्क अपडेट</button>
+      <button class="tab" data-tab="cloud" data-i18n="cloudTab">☁️ Cloud</button>
       <button class="tab" data-tab="leads" data-i18n="leadsTab">पूछताछ</button>
       <button class="tab" data-tab="shop" data-i18n="shopSettings">दुकान</button>
     </div>
     <div class="modal-body">
       <div id="tab-rates">
+        <div class="info-box">
+          <span class="ico">🔒</span>
+          जिस फसल का भाव बदलोगे, वो <b>24 घंटे तक fixed</b> रहेगा। बाकी फसलें market के हिसाब से चलती रहेंगी।
+        </div>
         <p class="section-title" data-i18n="editRatesHint">नीचे भाव बदलें और सेव दबाएँ।</p>
         <div id="rateEditList"></div>
         <div class="add-box">
@@ -368,6 +384,10 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         </div>
       </div>
       <div id="tab-bulk" class="hidden">
+        <div class="info-box">
+          <span class="ico">🔒</span>
+          जो फसलें यहाँ बदलोगे, वो <b>24 घंटे तक fixed</b> रहेंगी।
+        </div>
         <p class="section-title" data-i18n="bulkTitle">📋 बल्क भाव अपडेट (CSV)</p>
         <p class="hint" data-i18n="bulkHint">हर लाइन में: फसल-आईडी, भाव</p>
         <div id="bulkIds" class="hint" style="background:var(--bg);padding:10px 13px;border-radius:11px;font-family:monospace"></div>
@@ -376,6 +396,29 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
           <button class="btn btn-primary" id="bulkApply" data-i18n="bulkApply">लागू करें</button>
           <button class="btn btn-ghost" id="bulkLoadCurrent" data-i18n="bulkLoad">मौजूदा भाव भरें</button>
         </div>
+      </div>
+      <div id="tab-cloud" class="hidden">
+        <p class="section-title">☁️ Cloud Sync (सब devices के लिए)</p>
+        <div class="info-box blue">
+          <span class="ico">💡</span>
+          <b>क्यों चाहिए?</b> अभी rate सिर्फ़ तुम्हारे फ़ोन में save होता है। Cloud जोड़ने पर <b>सब devices में same rate</b> दिखेगा।
+        </div>
+        <p class="hint">
+          📖 <b>Setup:</b><br>
+          1. <b>jsonbin.io</b> पर free account बनाओ<br>
+          2. नया Bin बनाओ → Bin ID copy करो<br>
+          3. API Key copy करो<br>
+          4. नीचे दोनों paste करो → Save करो
+        </p>
+        <div class="field"><label>Bin ID</label><input id="inCloudBinId" type="text" maxlength="50" placeholder="65f8a3b2..."></div>
+        <div class="field"><label>API Key</label><input id="inCloudApiKey" type="text" maxlength="200" placeholder="$2b$10$..."></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn btn-primary" id="cloudSaveSettings">💾 Save Cloud Settings</button>
+          <button class="btn btn-ghost" id="cloudTestNow">🔍 Test Connection</button>
+          <button class="btn btn-ghost" id="cloudPushNow">⬆️ अभी Push करो</button>
+          <button class="btn btn-ghost" id="cloudPullNow">⬇️ अभी Pull करो</button>
+        </div>
+        <p class="hint" id="cloudMsg" style="margin-top:12px"></p>
       </div>
       <div id="tab-leads" class="hidden">
         <p class="section-title" data-i18n="leadTitle">📥 किसानों की पूछताछ</p>
@@ -391,7 +434,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
         <div class="field"><label data-i18n="phone">मोबाइल नंबर</label><input id="inPhone" type="tel" inputmode="numeric" maxlength="15"></div>
         <div class="field"><label data-i18n="whatsapp">व्हाट्सएप नंबर</label><input id="inWhatsapp" type="tel" inputmode="numeric" maxlength="15"></div>
         <div class="field"><label data-i18n="address">पता</label><input id="inAddress" type="text" maxlength="200"></div>
-        <div class="field"><label data-i18n="changePin">लॉगिन पिन (4-6 अंक)</label><input id="inPin" type="text" inputmode="numeric" maxlength="6"></div>
+        <div class="field"><label data-i18n="changePin">लॉगिन पिन (4-6 अंक)</label><input id="inPin" type="text" inputmode="numeric" maxlength="6" placeholder="⬅️ बदलने के लिए नया पिन"></div>
         <p class="hint" data-i18n="pinWarn">⚠️ पिन याद रखें।</p>
       </div>
     </div>
@@ -424,73 +467,82 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   🌾 किसान मंडी भाव — v6 (SECURE EDITION)
+   🌾 किसान मंडी भाव — v8
    ═══════════════════════════════════════════════════════════════════
-   🔒 Security features:
-   • PIN SHA-256 hashing (plain PIN in source used only once)
-   • Login rate limiting (5 attempts → 30s lockout)
-   • Session auto-timeout (30 minutes)
-   • Input validation & max length
-   • localStorage validation
-   • CSP (Content Security Policy)
-   • External links: rel="noopener noreferrer"
+   🔒 Features:
+   • 24-hour lock on manually-changed crops
+   • Cloud sync (JSONBin.io) — OPTIONAL, fill CLOUD block
+   • PIN SHA-256 hashing + rate limiting
+   • Session auto-timeout (30 min)
+   • CSP, input validation, all security fixes
    ═══════════════════════════════════════════════════════════════════ */
 
-const DATA_VERSION = 6;
+const DATA_VERSION = 8;
+const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
-/* 📌 STEP 1: दुकान की जानकारी */
+/* ═══════════════════════════════════════════════════════════════════
+   ☁️ CLOUD CONFIG — अभी खाली है, बाद में भरो
+   ═══════════════════════════════════════════════════════════════════
+   Setup के लिए admin panel → "☁️ Cloud" tab खोलो।
+   वहीं से settings save कर सकते हो।
+   ═══════════════════════════════════════════════════════════════════ */
+const CLOUD = {
+  binId:   '',                        /* JSONBin.io Bin ID */
+  apiKey:  '',                        /* JSONBin.io X-Master-Key */
+  enabled: true,
+  syncIntervalMs: 5 * 60 * 1000
+};
+
 const SHOP = {
   name:     'नवीन मंडी खागा फतेहपुर',
-  owner:    'दिनेश केशरवानी',
+  owner:    'dinesh kesharwani',
   phone:    '7380849700',
   whatsapp: '7380849700',
   address:  'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)',
-  pin:      '2008',    /* ⬅️ यह प्लेन पिन सिर्फ पहली बार hash बनाने के लिए */
-  pinHash:  ''         /* ⬅️ पहली बार खुद भर जाएगा */
+  pin:      '2008',
+  pinHash:  ''
 };
 
-/* 📌 STEP 2: लाइव API */
 const LIVE = {
   endpoint: '', apiKey: '', refreshMs: 5*60*1000,
   volatility: 0.012, district: 'Fatehpur', market: 'Khaga', staleHours: 24
 };
 
-/* 📌 STEP 3: फसलें और भाव */
 const CROPS = [
-  { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50,
+  { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50, lockedUntil:0,
     apiKeys:['wheat','gehun','गेहूं'],
     names:{hi:'गेहूं',en:'Wheat',mr:'गहू',pa:'ਕਣਕ',gu:'ઘઉં',bn:'গম',ta:'கோதுமை',te:'గోధుమ'} },
-  { id:'paddy', emoji:'🌾', cat:'cereal', unit:'kg', price:23.00, prev:23.10, base:23.00,
+  { id:'paddy', emoji:'🌾', cat:'cereal', unit:'kg', price:23.00, prev:23.10, base:23.00, lockedUntil:0,
     apiKeys:['paddy','dhan','धान'],
     names:{hi:'धान (मोटा)',en:'Paddy',mr:'भात',pa:'ਝੋਨਾ',gu:'ડાંગર',bn:'ধান',ta:'நெல்',te:'వరి'} },
-  { id:'maize', emoji:'🌽', cat:'cereal', unit:'kg', price:21.20, prev:21.20, base:21.20,
+  { id:'maize', emoji:'🌽', cat:'cereal', unit:'kg', price:21.20, prev:21.20, base:21.20, lockedUntil:0,
     apiKeys:['maize','makka','मक्का'],
     names:{hi:'मक्का',en:'Maize',mr:'मका',pa:'ਮੱਕੀ',gu:'મકાઈ',bn:'ভুট্টা',ta:'மக்காச்சோளம்',te:'మొక్కజొన్న'} },
-  { id:'bajra', emoji:'🌾', cat:'millet', unit:'kg', price:25.00, prev:24.60, base:25.00,
+  { id:'bajra', emoji:'🌾', cat:'millet', unit:'kg', price:25.00, prev:24.60, base:25.00, lockedUntil:0,
     apiKeys:['bajra','बाजरा'],
     names:{hi:'बाजरा',en:'Pearl Millet (Bajra)',mr:'बाजरी',pa:'ਬਾਜਰਾ',gu:'બાજરી',bn:'বাজরা',ta:'கம்பு',te:'సజ్జలు'} },
-  { id:'jowar', emoji:'🌾', cat:'millet', unit:'kg', price:29.00, prev:29.00, base:29.00,
+  { id:'jowar', emoji:'🌾', cat:'millet', unit:'kg', price:29.00, prev:29.00, base:29.00, lockedUntil:0,
     apiKeys:['jowar','ज्वार'],
     names:{hi:'ज्वार',en:'Sorghum (Jowar)',mr:'ज्वारी',pa:'ਜਵਾਰ',gu:'જુવાર',bn:'জোয়ার',ta:'சோளம்',te:'జొన్నలు'} },
-  { id:'ragi', emoji:'🌾', cat:'millet', unit:'kg', price:32.00, prev:31.40, base:32.00,
+  { id:'ragi', emoji:'🌾', cat:'millet', unit:'kg', price:32.00, prev:31.40, base:32.00, lockedUntil:0,
     apiKeys:['ragi','रागी'],
     names:{hi:'रागी (मंडुआ)',en:'Finger Millet (Ragi)',mr:'नाचणी',pa:'ਰਾਗੀ',gu:'રાગી',bn:'রাগি',ta:'ராகி',te:'రాగి'} },
-  { id:'kangni', emoji:'🌾', cat:'millet', unit:'kg', price:35.00, prev:35.00, base:35.00,
+  { id:'kangni', emoji:'🌾', cat:'millet', unit:'kg', price:35.00, prev:35.00, base:35.00, lockedUntil:0,
     apiKeys:['kangni','कंगनी'],
     names:{hi:'कंगनी (काकुन)',en:'Foxtail Millet',mr:'कांग',pa:'ਕੰਗਣੀ',gu:'કાંગ',bn:'কাঙ্গনি',ta:'தினை',te:'కొర్రలు'} },
-  { id:'chana', emoji:'🫘', cat:'pulse', unit:'kg', price:54.00, prev:53.50, base:54.00,
+  { id:'chana', emoji:'🫘', cat:'pulse', unit:'kg', price:54.00, prev:53.50, base:54.00, lockedUntil:0,
     apiKeys:['chana','चना'],
     names:{hi:'चना',en:'Chickpea (Chana)',mr:'हरभरा',pa:'ਛੋਲੇ',gu:'ચણા',bn:'ছোলা',ta:'கொண்டைக்கடலை',te:'శనగ'} },
-  { id:'tur', emoji:'🫘', cat:'pulse', unit:'kg', price:70.00, prev:71.50, base:70.00,
+  { id:'tur', emoji:'🫘', cat:'pulse', unit:'kg', price:70.00, prev:71.50, base:70.00, lockedUntil:0,
     apiKeys:['tur','arhar','तूर'],
     names:{hi:'अरहर (तूर)',en:'Pigeon Pea (Tur)',mr:'तूर',pa:'ਅਰਹਰ',gu:'તુવેર',bn:'অড়হর',ta:'துவரை',te:'కంది'} },
-  { id:'moong', emoji:'🫘', cat:'pulse', unit:'kg', price:75.00, prev:75.00, base:75.00,
+  { id:'moong', emoji:'🫘', cat:'pulse', unit:'kg', price:75.00, prev:75.00, base:75.00, lockedUntil:0,
     apiKeys:['moong','मूंग'],
     names:{hi:'मूंग',en:'Green Gram (Moong)',mr:'मूग',pa:'ਮੂੰਗ',gu:'મગ',bn:'মুগ',ta:'பாசிப்பயறு',te:'పెసర'} },
-  { id:'urad', emoji:'🫘', cat:'pulse', unit:'kg', price:72.00, prev:70.50, base:72.00,
+  { id:'urad', emoji:'🫘', cat:'pulse', unit:'kg', price:72.00, prev:70.50, base:72.00, lockedUntil:0,
     apiKeys:['urad','उड़द'],
     names:{hi:'उड़द',en:'Black Gram (Urad)',mr:'उडीद',pa:'ਮਾਸ਼',gu:'અડદ',bn:'মাসকলাই',ta:'உளுந்து',te:'మినుము'} },
-  { id:'masoor', emoji:'🫘', cat:'pulse', unit:'kg', price:60.00, prev:60.00, base:60.00,
+  { id:'masoor', emoji:'🫘', cat:'pulse', unit:'kg', price:60.00, prev:60.00, base:60.00, lockedUntil:0,
     apiKeys:['masoor','मसूर'],
     names:{hi:'मसूर',en:'Lentil (Masoor)',mr:'मसूर',pa:'ਮਸਰ',gu:'મસૂર',bn:'মসুর',ta:'மைசூர்ப் பருப்பு',te:'మసూర్'} }
 ];
@@ -505,13 +557,13 @@ const LANGS = [
 ];
 
 const I18N = {
-  hi:{tagline:'आज के ताज़ा मंडी भाव',todayRates:'आज के भाव',updatedAt:'अंतिम अपडेट',search:'फसल खोजें…',all:'सभी',catCereal:'अनाज',catMillet:'मोटे अनाज',catPulse:'दालें',perQuintal:'प्रति क्विंटल',perKg:'प्रति किलो',up:'बढ़त',down:'गिरावट',same:'स्थिर',callNow:'कॉल करें',whatsapp:'व्हाट्सएप',listen:'सुनें',stopSpeaking:'रोकें',noResults:'कोई फसल नहीं मिली',contactTitle:'हमसे संपर्क करें',adminLogin:'दुकानदार लॉगिन',enterPin:'पिन दर्ज करें',login:'लॉगिन',loginTitle:'सिर्फ़ दुकानदार के लिए',loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',wrongPin:'गलत पिन',cancel:'रद्द करें',save:'सेव करें',shopName:'दुकान का नाम',ownerName:'मालिक का नाम',phone:'मोबाइल नंबर',address:'पता',editRates:'भाव बदलें',addCrop:'नई फसल जोड़ें',cropName:'फसल का नाम',price:'भाव',unit:'इकाई',remove:'हटाएं',logout:'लॉगआउट',saved:'सेव हो गया ✓',print:'प्रिंट करें',shopSettings:'दुकान',adminPanel:'दुकानदार पैनल',reset:'रीसेट',changePin:'लॉगिन पिन',footerNote:'किसानों के लिए समर्पित',editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',fillAll:'कृपया सारी जानकारी भरें',confirmReset:'सारा डेटा रीसेट हो जाएगा?',resetDone:'रीसेट हो गया',noCrops:'कोई फसल नहीं है',syncNow:'लाइव भाव लाएँ',syncing:'लोड हो रहे हैं…',synced:'अपडेट हुए ✓',syncFail:'डेटा नहीं मिला',liveNote:'स्रोत: डेमो सिमुलेशन',liveNoteApi:'स्रोत: लाइव API',adminModeOn:'एडमिन मोड चालू',openPanel:'पैनल खोलें',loggedIn:'लॉगिन हो गया ✓',loggedOut:'लॉगआउट हो गया',pinWarn:'⚠️ पिन याद रखें।',speechUnsupported:'आवाज़ नहीं चल सकती',speechStarted:'भाव सुनाए जा रहे हैं…',staleWarning:'भाव पुराने हैं',refreshNow:'अपडेट करें',calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',calcSub:'फसल और मात्रा चुनें।',calcCrop:'फसल चुनें',calcQty:'मात्रा',calcUnit:'इकाई',calcTotal:'अनुमानित कुल मूल्य',calcHint:'* अनुमानित राशि है।',quintal:'क्विंटल',kg:'किलो',nearbyTitle:'📍 आसपास की मंडियाँ',nearbySub:'तुलना करें।',enquiryTitle:'📝 बेचना है? पूछताछ भेजें',enquirySub:'जानकारी भरें।',yourName:'आपका नाम',yourPhone:'मोबाइल नंबर',yourCrop:'फसल',yourQty:'मात्रा (क्विंटल)',yourMsg:'अतिरिक्त जानकारी',sendWhatsApp:'व्हाट्सएप पर भेजें',enqNeedName:'कृपया नाम लिखें',enqNeedPhone:'सही 10 अंकों का नंबर लिखें',enqNeedQty:'मात्रा लिखें',enqSent:'व्हाट्सएप खुल रहा है…',qrShow:'QR कोड',qrTitle:'📱 QR कोड',qrSub:'दुकान पर लगाएँ।',copyLink:'लिंक कॉपी करें',linkCopied:'कॉपी हो गया ✓',close:'बंद करें',bulkTab:'बल्क अपडेट',leadsTab:'पूछताछ',bulkTitle:'📋 बल्क अपडेट',bulkHint:'हर लाइन: फसल-आईडी, भाव',bulkApply:'लागू करें',bulkLoad:'मौजूदा भरें',bulkDone:'अपडेट ✓',bulkError:'कुछ लाइनें गलत',leadTitle:'📥 पूछताछ',leadEmpty:'कोई पूछताछ नहीं।',leadClear:'सब हटाएँ',leadExport:'CSV',leadConfirmClear:'सब हट जाएँगी?',hist7d:'7 दिन का रुझान',disclaimer:'भाव केवल जानकारी के लिए हैं।',micUnsupported:'आवाज़ से खोज नहीं',micListening:'सुन रहे हैं… बोलिए',tooManyAttempts:'बहुत बार गलत पिन — 30 सेकंड बाद कोशिश करें',invalidName:'नाम में सिर्फ अक्षर डालें',invalidPrice:'भाव सही नहीं है'},
-  en:{tagline:'Fresh mandi rates today',todayRates:"Today's Rates",updatedAt:'Last updated',search:'Search crop…',all:'All',catCereal:'Cereals',catMillet:'Millets',catPulse:'Pulses',perQuintal:'per quintal',perKg:'per kg',up:'Up',down:'Down',same:'Stable',callNow:'Call Now',whatsapp:'WhatsApp',listen:'Listen',stopSpeaking:'Stop',noResults:'No crop found',contactTitle:'Contact Us',adminLogin:'Shop Owner Login',enterPin:'Enter PIN',login:'Login',loginTitle:'For shop owner only',loginSub:'Farmers do not need to login.',wrongPin:'Wrong PIN',cancel:'Cancel',save:'Save',shopName:'Shop Name',ownerName:'Owner Name',phone:'Mobile Number',address:'Address',editRates:'Edit Rates',addCrop:'Add New Crop',cropName:'Crop Name',price:'Price',unit:'Unit',remove:'Remove',logout:'Logout',saved:'Saved ✓',print:'Print',shopSettings:'Shop',adminPanel:'Owner Panel',reset:'Reset',changePin:'Login PIN',footerNote:'Dedicated to farmers',editRatesHint:'Change prices below and press Save.',fillAll:'Please fill all fields',confirmReset:'All data will be reset?',resetDone:'Reset done',noCrops:'No crops added',syncNow:'Sync Live Rates',syncing:'Fetching…',synced:'Updated ✓',syncFail:'Live data unavailable',liveNote:'Source: demo simulation',liveNoteApi:'Source: live API',adminModeOn:'Admin mode ON',openPanel:'Open Panel',loggedIn:'Logged in ✓',loggedOut:'Logged out',pinWarn:'⚠️ Remember PIN.',speechUnsupported:'Speech not supported',speechStarted:'Reading rates aloud…',staleWarning:'Rates are old',refreshNow:'Refresh now',calcTitle:'🧮 Estimated Value of My Crop',calcSub:'Pick crop and quantity.',calcCrop:'Choose crop',calcQty:'Quantity',calcUnit:'Unit',calcTotal:'Estimated Total Value',calcHint:'* Estimate only.',quintal:'Quintal',kg:'Kilogram',nearbyTitle:'📍 Nearby Mandi Rates',nearbySub:'Compare.',enquiryTitle:'📝 Want to sell? Send an enquiry',enquirySub:'Fill your crop details.',yourName:'Your Name',yourPhone:'Mobile Number',yourCrop:'Crop',yourQty:'Quantity (quintal)',yourMsg:'Additional details',sendWhatsApp:'Send on WhatsApp',enqNeedName:'Please enter your name',enqNeedPhone:'Please enter a valid 10-digit mobile number',enqNeedQty:'Please enter quantity',enqSent:'Opening WhatsApp…',qrShow:'QR Code',qrTitle:'📱 QR Code',qrSub:'Print at your shop.',copyLink:'Copy link',linkCopied:'Link copied ✓',close:'Close',bulkTab:'Bulk Update',leadsTab:'Enquiries',bulkTitle:'📋 Bulk Update',bulkHint:'Line: crop-id, price',bulkApply:'Apply',bulkLoad:'Fill current',bulkDone:'Updated ✓',bulkError:'Some lines wrong',leadTitle:'📥 Enquiries',leadEmpty:'No enquiries yet.',leadClear:'Clear all',leadExport:'CSV',leadConfirmClear:'All enquiries will be deleted?',hist7d:'7-day trend',disclaimer:'Rates are for information only.',micUnsupported:'Voice search not supported',micListening:'Listening… speak now',tooManyAttempts:'Too many wrong PINs — try again in 30 seconds',invalidName:'Only letters allowed in name',invalidPrice:'Price is not valid'},
+  hi:{tagline:'आज के ताज़ा मंडी भाव',todayRates:'आज के भाव',updatedAt:'अंतिम अपडेट',search:'फसल खोजें…',all:'सभी',catCereal:'अनाज',catMillet:'मोटे अनाज',catPulse:'दालें',perQuintal:'प्रति क्विंटल',perKg:'प्रति किलो',up:'बढ़त',down:'गिरावट',same:'स्थिर',fixed:'फिक्स',callNow:'कॉल करें',whatsapp:'व्हाट्सएप',listen:'सुनें',stopSpeaking:'रोकें',noResults:'कोई फसल नहीं मिली',contactTitle:'हमसे संपर्क करें',adminLogin:'दुकानदार लॉगिन',enterPin:'पिन दर्ज करें',login:'लॉगिन',loginTitle:'सिर्फ़ दुकानदार के लिए',loginSub:'किसानों को लॉगिन की ज़रूरत नहीं।',wrongPin:'गलत पिन',cancel:'रद्द करें',save:'सेव करें',shopName:'दुकान का नाम',ownerName:'मालिक का नाम',phone:'मोबाइल नंबर',address:'पता',editRates:'भाव बदलें',addCrop:'नई फसल जोड़ें',cropName:'फसल का नाम',price:'भाव',unit:'इकाई',remove:'हटाएं',logout:'लॉगआउट',saved:'सेव हो गया ✓',print:'प्रिंट करें',shopSettings:'दुकान',adminPanel:'दुकानदार पैनल',reset:'रीसेट',changePin:'लॉगिन पिन',footerNote:'किसानों के लिए समर्पित',editRatesHint:'नीचे भाव बदलें और सेव दबाएँ।',fillAll:'कृपया सारी जानकारी भरें',confirmReset:'सारा डेटा रीसेट हो जाएगा?',resetDone:'रीसेट हो गया',noCrops:'कोई फसल नहीं है',syncNow:'लाइव भाव लाएँ',syncing:'लोड हो रहे हैं…',synced:'अपडेट हुए ✓',syncFail:'डेटा नहीं मिला',liveNote:'स्रोत: डेमो सिमुलेशन',liveNoteApi:'स्रोत: लाइव API',adminModeOn:'एडमिन मोड चालू',openPanel:'पैनल खोलें',loggedIn:'लॉगिन हो गया ✓',loggedOut:'लॉगआउट हो गया',pinWarn:'⚠️ पिन याद रखें।',speechUnsupported:'आवाज़ नहीं चल सकती',speechStarted:'भाव सुनाए जा रहे हैं…',staleWarning:'भाव पुराने हैं',refreshNow:'अपडेट करें',calcTitle:'🧮 मेरी फसल का अनुमानित मूल्य',calcSub:'फसल और मात्रा चुनें।',calcCrop:'फसल चुनें',calcQty:'मात्रा',calcUnit:'इकाई',calcTotal:'अनुमानित कुल मूल्य',calcHint:'* अनुमानित राशि है।',quintal:'क्विंटल',kg:'किलो',nearbyTitle:'📍 आसपास की मंडियाँ',nearbySub:'तुलना करें।',enquiryTitle:'📝 बेचना है? पूछताछ भेजें',enquirySub:'जानकारी भरें।',yourName:'आपका नाम',yourPhone:'मोबाइल नंबर',yourCrop:'फसल',yourQty:'मात्रा (क्विंटल)',yourMsg:'अतिरिक्त जानकारी',sendWhatsApp:'व्हाट्सएप पर भेजें',enqNeedName:'कृपया नाम लिखें',enqNeedPhone:'सही 10 अंकों का नंबर लिखें',enqNeedQty:'मात्रा लिखें',enqSent:'व्हाट्सएप खुल रहा है…',qrShow:'QR कोड',qrTitle:'📱 QR कोड',qrSub:'दुकान पर लगाएँ।',copyLink:'लिंक कॉपी करें',linkCopied:'कॉपी हो गया ✓',close:'बंद करें',bulkTab:'बल्क अपडेट',cloudTab:'☁️ Cloud',leadsTab:'पूछताछ',bulkTitle:'📋 बल्क अपडेट',bulkHint:'हर लाइन: फसल-आईडी, भाव',bulkApply:'लागू करें',bulkLoad:'मौजूदा भरें',bulkDone:'अपडेट ✓',bulkError:'कुछ लाइनें गलत',leadTitle:'📥 पूछताछ',leadEmpty:'कोई पूछताछ नहीं।',leadClear:'सब हटाएँ',leadExport:'CSV',leadConfirmClear:'सब हट जाएँगी?',hist7d:'7 दिन का रुझान',disclaimer:'भाव केवल जानकारी के लिए हैं।',micUnsupported:'आवाज़ से खोज नहीं',micListening:'सुन रहे हैं… बोलिए',tooManyAttempts:'बहुत बार गलत पिन — 30 सेकंड बाद कोशिश करें',invalidName:'नाम में सिर्फ अक्षर डालें',invalidPrice:'भाव सही नहीं है',lockExpires:'में unlock होगा',cloudOff:'Cloud OFF',cloudOn:'Cloud ON'},
+  en:{tagline:'Fresh mandi rates today',todayRates:"Today's Rates",updatedAt:'Last updated',search:'Search crop…',all:'All',catCereal:'Cereals',catMillet:'Millets',catPulse:'Pulses',perQuintal:'per quintal',perKg:'per kg',up:'Up',down:'Down',same:'Stable',fixed:'FIXED',callNow:'Call Now',whatsapp:'WhatsApp',listen:'Listen',stopSpeaking:'Stop',noResults:'No crop found',contactTitle:'Contact Us',adminLogin:'Shop Owner Login',enterPin:'Enter PIN',login:'Login',loginTitle:'For shop owner only',loginSub:'Farmers do not need to login.',wrongPin:'Wrong PIN',cancel:'Cancel',save:'Save',shopName:'Shop Name',ownerName:'Owner Name',phone:'Mobile Number',address:'Address',editRates:'Edit Rates',addCrop:'Add New Crop',cropName:'Crop Name',price:'Price',unit:'Unit',remove:'Remove',logout:'Logout',saved:'Saved ✓',print:'Print',shopSettings:'Shop',adminPanel:'Owner Panel',reset:'Reset',changePin:'Login PIN',footerNote:'Dedicated to farmers',editRatesHint:'Change prices below and press Save.',fillAll:'Please fill all fields',confirmReset:'All data will be reset?',resetDone:'Reset done',noCrops:'No crops added',syncNow:'Sync Live Rates',syncing:'Fetching…',synced:'Updated ✓',syncFail:'Live data unavailable',liveNote:'Source: demo simulation',liveNoteApi:'Source: live API',adminModeOn:'Admin mode ON',openPanel:'Open Panel',loggedIn:'Logged in ✓',loggedOut:'Logged out',pinWarn:'⚠️ Remember PIN.',speechUnsupported:'Speech not supported',speechStarted:'Reading rates aloud…',staleWarning:'Rates are old',refreshNow:'Refresh now',calcTitle:'🧮 Estimated Value of My Crop',calcSub:'Pick crop and quantity.',calcCrop:'Choose crop',calcQty:'Quantity',calcUnit:'Unit',calcTotal:'Estimated Total Value',calcHint:'* Estimate only.',quintal:'Quintal',kg:'Kilogram',nearbyTitle:'📍 Nearby Mandi Rates',nearbySub:'Compare.',enquiryTitle:'📝 Want to sell? Send an enquiry',enquirySub:'Fill your crop details.',yourName:'Your Name',yourPhone:'Mobile Number',yourCrop:'Crop',yourQty:'Quantity (quintal)',yourMsg:'Additional details',sendWhatsApp:'Send on WhatsApp',enqNeedName:'Please enter your name',enqNeedPhone:'Please enter a valid 10-digit mobile number',enqNeedQty:'Please enter quantity',enqSent:'Opening WhatsApp…',qrShow:'QR Code',qrTitle:'📱 QR Code',qrSub:'Print at your shop.',copyLink:'Copy link',linkCopied:'Link copied ✓',close:'Close',bulkTab:'Bulk Update',cloudTab:'☁️ Cloud',leadsTab:'Enquiries',bulkTitle:'📋 Bulk Update',bulkHint:'Line: crop-id, price',bulkApply:'Apply',bulkLoad:'Fill current',bulkDone:'Updated ✓',bulkError:'Some lines wrong',leadTitle:'📥 Enquiries',leadEmpty:'No enquiries yet.',leadClear:'Clear all',leadExport:'CSV',leadConfirmClear:'All enquiries will be deleted?',hist7d:'7-day trend',disclaimer:'Rates are for information only.',micUnsupported:'Voice search not supported',micListening:'Listening… speak now',tooManyAttempts:'Too many wrong PINs — try again in 30 seconds',invalidName:'Only letters allowed in name',invalidPrice:'Price is not valid',lockExpires:'unlock in',cloudOff:'Cloud OFF',cloudOn:'Cloud ON'},
   mr:{},pa:{},gu:{},bn:{},ta:{},te:{}
 };
 
-/* ═══ STATE + STORAGE ═══ */
-const STORAGE_KEY = 'kisan_mandi_v9_secure';
+const STORAGE_KEY = 'kisan_mandi_v11';
+const CLOUD_KEY   = 'kisan_mandi_cloud';
 const SESSION_KEY = 'kisan_mandi_admin_session_secure';
 const LEADS_KEY   = 'kisan_mandi_leads';
 const HISTORY_KEY = 'kisan_mandi_history';
@@ -530,14 +582,27 @@ let micListening = false;
 let loginAttempts = 0;
 let loginLockUntil = 0;
 let adminTimer = null;
+let cloudTimer = null;
+let cloudStatus = { connected: false, lastSync: 0, lastError: '' };
 
-/* 🔐 SHA-256 hash function */
+/* Load cloud config from localStorage */
+(function loadCloudConfig() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CLOUD_KEY) || '{}');
+    if (saved.binId) CLOUD.binId = saved.binId;
+    if (saved.apiKey) CLOUD.apiKey = saved.apiKey;
+    if (typeof saved.enabled === 'boolean') CLOUD.enabled = saved.enabled;
+  } catch(e) {}
+})();
+
+function saveCloudConfig() {
+  try { localStorage.setItem(CLOUD_KEY, JSON.stringify(CLOUD)); } catch(e) {}
+}
+
 async function hashString(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
-/* 🔐 Ensure PIN hash is generated (first run only) */
 async function ensurePinHash() {
   if (state.shop.pinHash) return;
   const plain = state.shop.pin || SHOP.pin;
@@ -547,15 +612,23 @@ async function ensurePinHash() {
   saveState();
 }
 
-/* ═══ LOAD STATE — WITH VALIDATION ═══ */
+function isCropLocked(crop) {
+  return !!(crop.lockedUntil && crop.lockedUntil > Date.now());
+}
+function getLockRemaining(crop) {
+  if (!isCropLocked(crop)) return null;
+  const ms = crop.lockedUntil - Date.now();
+  const hours = Math.floor(ms / 3600000);
+  const minutes = Math.floor((ms % 3600000) / 60000);
+  return { hours, minutes, text: hours + 'h ' + minutes + 'm' };
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
       const sameVersion = (saved.version === DATA_VERSION);
-
-      /* Validate crops array */
       let crops = copyObject(CROPS);
       if (sameVersion && Array.isArray(saved.crops)) {
         const validated = saved.crops.filter(c =>
@@ -567,8 +640,6 @@ function loadState() {
         );
         if (validated.length) crops = validated;
       }
-
-      /* Validate shop object */
       let shop = copyObject(SHOP);
       if (sameVersion && saved.shop && typeof saved.shop === 'object') {
         shop = Object.assign(shop, {
@@ -580,26 +651,19 @@ function loadState() {
           pinHash:  String(saved.shop.pinHash || '').slice(0, 128)
         });
       }
-
       const validLangs = LANGS.map(l => l.code);
       return {
-        version: DATA_VERSION,
-        shop: shop,
-        crops: crops,
+        version: DATA_VERSION, shop, crops,
         lang: validLangs.includes(saved.lang) ? saved.lang : 'hi',
         fs: Math.max(13, Math.min(24, parseInt(saved.fs) || 17)),
         hc: !!saved.hc,
         updatedAt: (typeof saved.updatedAt === 'number' && saved.updatedAt > 0) ? saved.updatedAt : Date.now()
       };
     }
-  } catch(e) { console.warn('Load error:', e); }
+  } catch(e) {}
   return { version: DATA_VERSION, shop: copyObject(SHOP), crops: copyObject(CROPS), lang:'hi', fs:17, hc:false, updatedAt: Date.now() };
 }
-
-function saveState() {
-  state.version = DATA_VERSION;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-}
+function saveState() { state.version = DATA_VERSION; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
 function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}'); } catch(e) { return {}; } }
 function saveHistory() { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {} }
 function pushHistory() {
@@ -617,16 +681,13 @@ function pushHistory() {
 function loadLeads() {
   try {
     const raw = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
-    return Array.isArray(raw) ? raw.filter(l =>
-      l && typeof l.name === 'string' && typeof l.phone === 'string'
-    ).slice(0, 200) : [];
+    return Array.isArray(raw) ? raw.filter(l => l && typeof l.name === 'string' && typeof l.phone === 'string').slice(0, 200) : [];
   } catch(e) { return []; }
 }
 function saveLeads() { try { localStorage.setItem(LEADS_KEY, JSON.stringify(leads)); } catch(e) {} }
 function saveAdminSession(on) { try { on ? sessionStorage.setItem(SESSION_KEY, '1') : sessionStorage.removeItem(SESSION_KEY); } catch(e) {} }
 function readAdminSession() { try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch(e) { return false; } }
 
-/* ═══ HELPERS ═══ */
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function t(key) { const lang = I18N[state.lang] || {}; return lang[key] || I18N.hi[key] || key; }
@@ -641,22 +702,138 @@ function money(n) {
 function round2(n) { return Math.round(n * 100) / 100; }
 function formatDate(d) { try { return new Date(d).toLocaleDateString(currentLang().speech, { weekday:'long', day:'numeric', month:'long', year:'numeric' }); } catch(e) { return new Date(d).toLocaleDateString(); } }
 function formatTime(d) { try { return new Date(d).toLocaleTimeString(currentLang().speech, { hour:'2-digit', minute:'2-digit' }); } catch(e) { return ''; } }
-
 let toastTimer;
 function toast(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600); }
 
-/* ═══ SESSION TIMEOUT (30 min) ═══ */
 function startAdminTimer() {
   if (adminTimer) clearTimeout(adminTimer);
-  adminTimer = setTimeout(() => {
-    if (isOwner) { doLogout(); toast('30 मिनट बाद लॉगआउट हो गया'); }
-  }, 30 * 60 * 1000);
+  adminTimer = setTimeout(() => { if (isOwner) { doLogout(); toast('30 मिनट बाद लॉगआउट'); } }, 30 * 60 * 1000);
 }
 function resetAdminTimer() { if (isOwner) startAdminTimer(); }
 document.addEventListener('click', resetAdminTimer);
 document.addEventListener('keydown', resetAdminTimer);
 
-/* ═══ LIVE MARKET ═══ */
+/* ═══════════════════════════════════════════════════════════════════
+   ☁️ CLOUD SYNC FUNCTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+function cloudConfigured() {
+  return !!(CLOUD.enabled && CLOUD.binId && CLOUD.apiKey && CLOUD.binId.length > 5 && CLOUD.apiKey.length > 10);
+}
+
+function updateCloudStatusUI() {
+  const el = $('cloudStatus');
+  if (!el) return;
+  el.classList.remove('off','on');
+  if (!cloudConfigured()) {
+    el.classList.add('off');
+    el.textContent = '☁️ Cloud: OFF';
+  } else if (cloudStatus.connected) {
+    el.classList.add('on');
+    el.textContent = '☁️ Cloud: ON';
+  } else {
+    el.classList.add('off');
+    el.textContent = '☁️ Cloud: ?';
+  }
+}
+
+async function cloudLoad() {
+  if (!cloudConfigured()) return false;
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + CLOUD.binId + '/latest', {
+      headers: { 'X-Master-Key': CLOUD.apiKey, 'X-Bin-Meta': 'false' }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data || typeof data !== 'object') return false;
+    cloudStatus.connected = true;
+    cloudStatus.lastSync = Date.now();
+    cloudStatus.lastError = '';
+    updateCloudStatusUI();
+
+    if (data.updatedAt && data.updatedAt > (state.updatedAt || 0)) {
+      if (Array.isArray(data.crops)) {
+        data.crops.forEach(cloudCrop => {
+          const local = state.crops.find(c => c.id === cloudCrop.id);
+          if (local) {
+            if (typeof cloudCrop.price === 'number') local.price = cloudCrop.price;
+            if (typeof cloudCrop.prev === 'number') local.prev = cloudCrop.prev;
+            if (typeof cloudCrop.base === 'number') local.base = cloudCrop.base;
+            if (typeof cloudCrop.lockedUntil === 'number') local.lockedUntil = cloudCrop.lockedUntil;
+            if (cloudCrop.unit) local.unit = cloudCrop.unit;
+          }
+        });
+      }
+      if (data.shop && typeof data.shop === 'object') {
+        if (data.shop.name) state.shop.name = data.shop.name;
+        if (data.shop.owner) state.shop.owner = data.shop.owner;
+        if (data.shop.phone) state.shop.phone = data.shop.phone;
+        if (data.shop.whatsapp) state.shop.whatsapp = data.shop.whatsapp;
+        if (data.shop.address) state.shop.address = data.shop.address;
+      }
+      state.updatedAt = data.updatedAt;
+      saveState();
+      renderCrops(); renderShopInfo();
+      if (isOwner) renderEditList();
+      console.log('☁️ Cloud से नया data लोड हुआ');
+      return true;
+    }
+    return false;
+  } catch(err) {
+    cloudStatus.connected = false;
+    cloudStatus.lastError = err.message;
+    updateCloudStatusUI();
+    console.warn('Cloud load error:', err.message);
+    return false;
+  }
+}
+
+async function cloudSave() {
+  if (!cloudConfigured()) return false;
+  try {
+    const payload = {
+      crops: state.crops.map(c => ({
+        id: c.id, price: c.price, prev: c.prev, base: c.base,
+        unit: c.unit, lockedUntil: c.lockedUntil || 0
+      })),
+      shop: {
+        name: state.shop.name, owner: state.shop.owner,
+        phone: state.shop.phone, whatsapp: state.shop.whatsapp,
+        address: state.shop.address
+      },
+      updatedAt: Date.now()
+    };
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + CLOUD.binId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD.apiKey },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    cloudStatus.connected = true;
+    cloudStatus.lastSync = Date.now();
+    cloudStatus.lastError = '';
+    updateCloudStatusUI();
+    console.log('☁️ Cloud पर save हो गया');
+    return true;
+  } catch(err) {
+    cloudStatus.connected = false;
+    cloudStatus.lastError = err.message;
+    updateCloudStatusUI();
+    console.warn('Cloud save error:', err.message);
+    return false;
+  }
+}
+
+function startCloudSync() {
+  if (cloudTimer) clearInterval(cloudTimer);
+  if (!cloudConfigured()) { updateCloudStatusUI(); return; }
+  updateCloudStatusUI();
+  setTimeout(() => cloudLoad(), 2000);
+  cloudTimer = setInterval(() => { if (!document.hidden) cloudLoad(); }, CLOUD.syncIntervalMs);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LIVE MARKET
+   ═══════════════════════════════════════════════════════════════════ */
 function matchCropByApiName(rawName) {
   if (!rawName) return null;
   const name = String(rawName).toLowerCase().trim().slice(0, 100);
@@ -686,6 +863,7 @@ function mapApiRecord(rec) {
 }
 function simulateLiveRates() {
   state.crops.forEach(c => {
+    if (isCropLocked(c)) return;
     const anchor = Number(c.base) || Number(c.price) || 1;
     const drift = 1 + (Math.random() - 0.5) * 2 * LIVE.volatility;
     let next = round2(anchor * drift);
@@ -712,7 +890,8 @@ async function fetchFromApi() {
   mapped.forEach(m => { latest[m.id] = m.price; });
   Object.keys(latest).forEach(id => {
     const crop = state.crops.find(c => c.id === id);
-    if (crop && latest[id] !== crop.price) { crop.prev = crop.price; crop.price = latest[id]; }
+    if (!crop || isCropLocked(crop)) return;
+    if (latest[id] !== crop.price) { crop.prev = crop.price; crop.price = latest[id]; }
   });
 }
 async function syncLiveRates(manual) {
@@ -749,7 +928,6 @@ function checkStale() {
   $('staleBanner').classList.toggle('hidden', ageHours < LIVE.staleHours);
 }
 
-/* ═══ ROLE ═══ */
 function applyRole() {
   $('adminRibbon').classList.toggle('hidden', !isOwner);
   $('syncBtn').classList.toggle('hidden', !isOwner);
@@ -758,7 +936,6 @@ function applyRole() {
   if (!isOwner) { closeModal('adminModal'); closeModal('pinModal'); }
 }
 
-/* ═══ RENDER ═══ */
 function renderAll() {
   document.documentElement.lang = state.lang;
   document.documentElement.style.setProperty('--fs', state.fs + 'px');
@@ -766,8 +943,9 @@ function renderAll() {
   $('hcBtn').classList.toggle('on', !!state.hc);
   applyTranslations(); renderShopInfo(); renderChips(); renderCrops();
   renderCalc(); renderNearby();
-  if (isOwner) { renderEditList(); renderBulkIds(); renderLeads(); }
+  if (isOwner) { renderEditList(); renderBulkIds(); renderLeads(); fillCloudForm(); }
   fillAdminForm(); renderLiveBadge(); applyRole(); updateSpeakBtn(); checkStale();
+  updateCloudStatusUI();
 }
 function renderLiveBadge() {
   const pill = $('livePill');
@@ -831,29 +1009,34 @@ function renderCrops() {
   const grid = $('ratesGrid');
   if (!list.length) { grid.innerHTML = '<div class="empty"><span class="big">🌱</span>' + esc(t('noResults')) + '</div>'; return; }
   grid.innerHTML = list.map(c => {
+    const locked = isCropLocked(c);
     const prev = (typeof c.prev === 'number') ? c.prev : c.price;
     const diff = round2(c.price - prev);
     let trend = 'same', icon = '➖', label = t('same');
-    if (diff > 0) { trend = 'up'; icon = '▲'; label = t('up'); }
+    if (locked) { trend = 'locked'; icon = '🔒'; label = t('fixed'); }
+    else if (diff > 0) { trend = 'up'; icon = '▲'; label = t('up'); }
     else if (diff < 0) { trend = 'down'; icon = '▼'; label = t('down'); }
     const diffText = diff === 0 ? '—' : (diff > 0 ? '+' : '−') + money(Math.abs(diff));
     const spark = sparkline(c.id, 68, 22);
     const hasHistory = (history[c.id] || []).length >= 2;
+    const lockInfo = locked && getLockRemaining(c);
     return '<article class="crop-card ' + trend + '">' +
       '<div class="card-top"><div style="display:flex;gap:11px;align-items:flex-start;min-width:0">' +
       '<span class="crop-emoji">' + (c.emoji || '🌾') + '</span>' +
       '<div style="min-width:0"><div class="crop-name">' + esc(cropName(c)) + '</div>' +
       '<div class="crop-sub">' + esc(t('cat' + c.cat.charAt(0).toUpperCase() + c.cat.slice(1))) + '</div></div></div>' +
-      '<span class="badge ' + trend + '">' + icon + ' ' + esc(label) + '</span></div>' +
+      '<span class="badge ' + (locked ? 'locked' : trend) + '">' + icon + ' ' + esc(label) + '</span></div>' +
       '<div class="price-row"><span class="price">' + money(c.price) + '</span>' +
       '<span class="unit">/ ' + esc(unitLabel(c)) + '</span></div>' +
-      '<div class="change-line ' + trend + '">' + esc(diff === 0 ? t('same') : diffText + ' ' + (diff > 0 ? '▲' : '▼')) + '</div>' +
-      (hasHistory ? '<div class="card-bottom"><span class="hist-lbl">' + esc(t('hist7d')) + '</span>' + spark + '</div>' : '') +
+      '<div class="change-line ' + (locked ? 'locked' : trend) + '">' +
+        (locked && lockInfo ? esc('🔒 ' + lockInfo.text + ' ' + t('lockExpires'))
+          : esc(diff === 0 ? t('same') : diffText + ' ' + (diff > 0 ? '▲' : '▼'))) +
+      '</div>' +
+      (hasHistory && !locked ? '<div class="card-bottom"><span class="hist-lbl">' + esc(t('hist7d')) + '</span>' + spark + '</div>' : '') +
       '</article>';
   }).join('');
 }
 
-/* ═══ CALCULATOR ═══ */
 function renderCalc() {
   const calcSel = $('calcCrop');
   const prevCalc = calcSel.value;
@@ -880,7 +1063,6 @@ function calcUpdate() {
   $('calcBreakdown').textContent = qtyText + ' × ' + money(crop.price) + ' / ' + unitText;
 }
 
-/* ═══ NEARBY ═══ */
 function renderNearby() {
   const sec = $('nearbySec');
   if (!NEARBY.length) { sec.classList.add('hidden'); return; }
@@ -899,25 +1081,31 @@ function renderNearby() {
   }).join('');
 }
 
-/* ═══ ADMIN ═══ */
 function openModal(id) { $(id).classList.remove('hidden'); }
 function closeModal(id) { $(id).classList.add('hidden'); }
 
 function renderEditList() {
   const box = $('rateEditList');
   if (!state.crops.length) { box.innerHTML = '<p class="section-title">' + esc(t('noCrops')) + '</p>'; return; }
-  box.innerHTML = state.crops.map(c =>
-    '<div class="edit-row" data-id="' + esc(c.id) + '">' +
-    '<span class="edit-emoji">' + (c.emoji || '🌾') + '</span>' +
-    '<span class="edit-name">' + esc(cropName(c)) + '</span>' +
-    '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="' + (Number(c.price) || 0) + '" min="0" max="100000" step="0.01" inputmode="decimal"></div>' +
-    '<select class="unit-select"><option value="kg" ' + (c.unit === 'kg' ? 'selected' : '') + '>' + esc(t('perKg')) + '</option><option value="quintal" ' + (c.unit !== 'kg' ? 'selected' : '') + '>' + esc(t('perQuintal')) + '</option></select>' +
-    '<button class="del-btn" data-del="' + esc(c.id) + '">🗑️</button>' +
-    '</div>'
-  ).join('');
+  box.innerHTML = state.crops.map(c => {
+    const locked = isCropLocked(c);
+    const lockInfo = locked ? getLockRemaining(c) : null;
+    return '<div class="edit-row ' + (locked ? 'locked' : '') + '" data-id="' + esc(c.id) + '">' +
+      '<span class="edit-emoji">' + (c.emoji || '🌾') + '</span>' +
+      '<span class="edit-name">' + esc(cropName(c)) +
+        (locked ? '<small>🔒 ' + esc(t('fixed')) + ' • ' + esc(lockInfo.text) + '</small>' : '') +
+      '</span>' +
+      '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="' + (Number(c.price) || 0) + '" min="0" max="100000" step="0.01" inputmode="decimal"></div>' +
+      '<select class="unit-select"><option value="kg" ' + (c.unit === 'kg' ? 'selected' : '') + '>' + esc(t('perKg')) + '</option><option value="quintal" ' + (c.unit !== 'kg' ? 'selected' : '') + '>' + esc(t('perQuintal')) + '</option></select>' +
+      '<button class="del-btn" data-del="' + esc(c.id) + '">🗑️</button>' +
+      '</div>';
+  }).join('');
 }
 function renderBulkIds() {
-  $('bulkIds').innerHTML = state.crops.map(c => '<b>' + esc(c.id) + '</b> = ' + esc(cropName(c)) + ' (' + money(c.price) + ')').join('<br>');
+  $('bulkIds').innerHTML = state.crops.map(c => {
+    const locked = isCropLocked(c) ? ' 🔒' : '';
+    return '<b>' + esc(c.id) + '</b> = ' + esc(cropName(c)) + ' (' + money(c.price) + ')' + locked;
+  }).join('<br>');
 }
 function renderLeads() {
   const box = $('leadList');
@@ -941,8 +1129,21 @@ function fillAdminForm() {
   $('inPin').value = '';
   $('inPin').placeholder = '⬅️ बदलने के लिए नया पिन';
 }
+function fillCloudForm() {
+  $('inCloudBinId').value = CLOUD.binId || '';
+  $('inCloudApiKey').value = CLOUD.apiKey || '';
+  const msg = $('cloudMsg');
+  if (msg) {
+    if (cloudConfigured()) {
+      msg.textContent = '✅ Cloud configured. Last sync: ' + (cloudStatus.lastSync ? new Date(cloudStatus.lastSync).toLocaleString('en-IN') : 'never');
+      msg.style.color = '#15803d';
+    } else {
+      msg.textContent = '⚪ Cloud not configured. Fill Bin ID and API Key above.';
+      msg.style.color = '#92400e';
+    }
+  }
+}
 
-/* ═══ INTERACTIONS ═══ */
 $('langSelect').innerHTML = LANGS.map(l => '<option value="' + l.code + '" ' + (l.code === state.lang ? 'selected' : '') + '>' + l.label + '</option>').join('');
 $('langSelect').addEventListener('change', e => { state.lang = e.target.value; saveState(); renderAll(); });
 $('searchInput').addEventListener('input', e => { searchQuery = String(e.target.value).slice(0, 40); renderCrops(); });
@@ -956,7 +1157,6 @@ $('staleRefresh').addEventListener('click', () => syncLiveRates(true));
 document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
 document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click', e => { if (e.target === bd) bd.classList.add('hidden'); }));
 
-/* ═══ VOICE SEARCH ═══ */
 (function setupVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { $('micBtn').style.opacity = '.45'; return; }
@@ -975,7 +1175,6 @@ $('micBtn').addEventListener('click', () => {
   try { recognition.start(); } catch(e) {}
 });
 
-/* ═══ SPEECH ═══ */
 function getBestVoice(langCode) {
   if (!('speechSynthesis' in window)) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -993,7 +1192,8 @@ function buildSpeechText() {
     const name = cropName(c);
     const priceText = isHindi ? (c.price + ' रुपये') : (c.price + ' rupees');
     const unitText = c.unit === 'kg' ? (isHindi ? 'प्रति किलो' : 'per kilogram') : (isHindi ? 'प्रति क्विंटल' : 'per quintal');
-    return name + ' — ' + priceText + ', ' + unitText;
+    const lockText = isCropLocked(c) ? (isHindi ? ' फिक्स' : ' fixed') : '';
+    return name + ' — ' + priceText + ', ' + unitText + lockText;
   }).join('. ');
 }
 (function warmUpVoices() {
@@ -1038,9 +1238,7 @@ $('speakBtn').addEventListener('click', function() {
   u.lang = targetLang;
   const voice = getBestVoice(targetLang);
   if (voice) u.voice = voice;
-  u.rate = 0.85;
-  u.pitch = 1;
-  u.volume = 1;
+  u.rate = 0.85; u.pitch = 1; u.volume = 1;
   u.onend = function() { speechPlaying = false; updateSpeakBtn(); };
   u.onerror = function() { speechPlaying = false; updateSpeakBtn(); };
   speechPlaying = true;
@@ -1051,16 +1249,17 @@ $('speakBtn').addEventListener('click', function() {
 window.addEventListener('beforeunload', stopSpeech);
 document.addEventListener('visibilitychange', () => { if (document.hidden && speechPlaying) stopSpeech(); });
 
-/* ═══ SHARE / PRINT ═══ */
 $('shareBtn').addEventListener('click', () => {
   const lines = ['*' + state.shop.name + '*', t('todayRates') + ' — ' + formatDate(new Date()), ''];
-  state.crops.forEach(c => lines.push((c.emoji || '🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + unitLabel(c)));
+  state.crops.forEach(c => {
+    const lock = isCropLocked(c) ? ' 🔒' : '';
+    lines.push((c.emoji || '🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + unitLabel(c) + lock);
+  });
   lines.push('', '👤 ' + state.shop.owner, '📞 ' + state.shop.phone, '📍 ' + state.shop.address);
   window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener,noreferrer');
 });
 $('printBtn').addEventListener('click', () => window.print());
 
-/* ═══ QR CODE ═══ */
 $('qrBtn').addEventListener('click', () => {
   const url = location.href.split('#')[0].slice(0, 500);
   $('qrLink').textContent = url;
@@ -1077,46 +1276,24 @@ $('copyLinkBtn').addEventListener('click', async () => {
   }
 });
 
-/* ═══ ENQUIRY — WITH VALIDATION ═══ */
 $('enqSubmit').addEventListener('click', () => {
   let name = $('enqName').value.trim().slice(0, 50);
   const phoneRaw = $('enqPhone').value.replace(/\D/g, '').slice(0, 10);
   const cropId = $('enqCrop').value;
   const qty = parseFloat($('enqQty').value) || 0;
   const msg = $('enqMsg').value.trim().slice(0, 200);
-
-  /* Name validation */
   if (!name) { toast(t('enqNeedName')); $('enqName').focus(); return; }
-  if (!/^[a-zA-Z\u0900-\u097F\s.'-]{2,50}$/.test(name)) {
-    toast(t('invalidName')); $('enqName').focus(); return;
-  }
-
-  /* Phone validation */
-  if (phoneRaw.length !== 10 || !/^[6-9]\d{9}$/.test(phoneRaw)) {
-    toast(t('enqNeedPhone')); $('enqPhone').focus(); return;
-  }
-
-  /* Qty validation */
+  if (!/^[a-zA-Z\u0900-\u097F\s.'-]{2,50}$/.test(name)) { toast(t('invalidName')); $('enqName').focus(); return; }
+  if (phoneRaw.length !== 10 || !/^[6-9]\d{9}$/.test(phoneRaw)) { toast(t('enqNeedPhone')); $('enqPhone').focus(); return; }
   if (qty <= 0 || qty > 1000000) { toast(t('enqNeedQty')); $('enqQty').focus(); return; }
-
   const crop = state.crops.find(c => c.id === cropId);
   const cropLabel = crop ? cropName(crop) : cropId;
-
-  /* Estimate */
   let est = 0;
-  if (crop) {
-    const qtyKg = qty * 100;
-    est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price;
-    est = Math.round(est);
-  }
-
+  if (crop) { const qtyKg = qty * 100; est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price; est = Math.round(est); }
   const text = '*नई पूछताछ — ' + state.shop.name + '*\n\n👤 नाम: ' + name + '\n📞 मोबाइल: ' + phoneRaw + '\n🌾 फसल: ' + cropLabel + '\n⚖️ मात्रा: ' + qty + ' क्विंटल\n' + (est ? '💰 अनुमानित मूल्य: ₹' + est.toLocaleString('en-IN') + '\n' : '') + (msg ? '📝 जानकारी: ' + msg + '\n' : '') + '\n_भेजा गया: ' + formatDate(new Date()) + ' ' + formatTime(new Date()) + '_';
-
-  /* Save lead */
   leads.unshift({ name, phone: phoneRaw, crop: cropLabel, qty, msg, ts: Date.now() });
   if (leads.length > 200) leads.length = 200;
   saveLeads();
-
   const waDigits = String(state.shop.whatsapp || '').replace(/\D/g, '');
   const target = waDigits.length >= 10 ? '91' + waDigits.slice(-10) : '';
   const url = target ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text) : 'https://wa.me/?text=' + encodeURIComponent(text);
@@ -1125,7 +1302,6 @@ $('enqSubmit').addEventListener('click', () => {
   $('enqQty').value = ''; $('enqMsg').value = '';
 });
 
-/* ═══ ADMIN LOGIN — WITH RATE LIMITING + HASHING ═══ */
 $('ownerLoginBtn').addEventListener('click', () => {
   $('pinInput').value = ''; $('pinErr').textContent = '';
   openModal('pinModal');
@@ -1135,7 +1311,6 @@ $('pinSubmit').addEventListener('click', tryLogin);
 $('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
 
 async function tryLogin() {
-  /* Rate limiting */
   if (Date.now() < loginLockUntil) {
     const secs = Math.ceil((loginLockUntil - Date.now()) / 1000);
     $('pinErr').textContent = t('tooManyAttempts') + ' (' + secs + 's)';
@@ -1144,30 +1319,23 @@ async function tryLogin() {
   const val = $('pinInput').value.trim();
   if (!val || val.length > 6 || !/^\d+$/.test(val)) {
     $('pinErr').textContent = t('wrongPin');
-    $('pinInput').value = ''; $('pinInput').focus();
-    return;
+    $('pinInput').value = ''; $('pinInput').focus(); return;
   }
-
-  /* Hash the input */
   const inputHash = await hashString(val);
   const storedHash = state.shop.pinHash || '';
-
   if (storedHash && inputHash === storedHash) {
-    /* ✅ Success */
     loginAttempts = 0;
     isOwner = true;
     saveAdminSession(true);
     startAdminTimer();
     closeModal('pinModal');
-    renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm();
+    renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm(); fillCloudForm();
     applyRole(); toast(t('loggedIn'));
     setTimeout(() => openModal('adminModal'), 300);
   } else {
-    /* ❌ Fail */
     loginAttempts++;
     $('pinErr').textContent = t('wrongPin');
     $('pinInput').value = ''; $('pinInput').focus();
-
     if (loginAttempts >= 5) {
       loginLockUntil = Date.now() + 30000;
       loginAttempts = 0;
@@ -1187,7 +1355,7 @@ $('ownerLogoutBtn').addEventListener('click', doLogout);
 $('logoutBtn2').addEventListener('click', () => { closeModal('adminModal'); doLogout(); });
 $('openAdminFromRibbon').addEventListener('click', () => {
   if (!isOwner) return;
-  renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm();
+  renderEditList(); renderBulkIds(); renderLeads(); fillAdminForm(); fillCloudForm();
   openModal('adminModal');
 });
 
@@ -1196,7 +1364,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     tab.classList.add('active');
     const which = tab.dataset.tab;
-    ['rates','bulk','leads','shop'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== which));
+    ['rates','bulk','cloud','leads','shop'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== which));
   });
 });
 
@@ -1218,20 +1386,26 @@ $('addCropBtn').addEventListener('click', () => {
   const cat = $('newCropCat').value;
   if (!CATEGORIES.includes(cat)) return;
   const names = {}; LANGS.forEach(l => names[l.code] = name);
-  state.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat, unit, price: round2(price), prev: round2(price), base: round2(price), apiKeys: [name.toLowerCase()], names });
+  state.crops.push({
+    id: 'custom_' + Date.now(), emoji: '🌿', cat, unit,
+    price: round2(price), prev: round2(price), base: round2(price),
+    lockedUntil: Date.now() + LOCK_DURATION,
+    apiKeys: [name.toLowerCase()], names
+  });
   $('newCropName').value = ''; $('newCropPrice').value = '';
   renderEditList(); renderCrops(); renderCalc(); renderBulkIds();
-  toast(t('saved'));
+  toast(t('saved') + ' 🔒');
 });
 
 $('bulkLoadCurrent').addEventListener('click', () => {
   $('bulkArea').value = state.crops.map(c => c.id + ',' + c.price).join('\n');
 });
-$('bulkApply').addEventListener('click', () => {
+$('bulkApply').addEventListener('click', async () => {
   if (!isOwner) return;
   const raw = $('bulkArea').value.trim().slice(0, 5000);
   if (!raw) { toast(t('bulkError')); return; }
   let done = 0, bad = 0;
+  const now = Date.now();
   raw.split(/\r?\n/).forEach(line => {
     const ln = line.trim(); if (!ln) return;
     const parts = ln.split(/[,\t;]+/).map(s => s.trim());
@@ -1240,13 +1414,65 @@ $('bulkApply').addEventListener('click', () => {
     const crop = state.crops.find(c => c.id === id);
     if (!crop || isNaN(price) || price < 0 || price > 100000) { bad++; return; }
     const newPrice = round2(price);
-    if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
+    if (newPrice !== crop.price) {
+      crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice;
+      crop.lockedUntil = now + LOCK_DURATION;
+    }
     done++;
   });
   state.updatedAt = Date.now();
   pushHistory(); saveState();
   renderCrops(); renderEditList(); renderCalc(); renderNearby(); renderBulkIds(); checkStale();
-  toast(done + ' ' + t('bulkDone') + (bad ? ' • ' + bad + ' ' + t('bulkError') : ''));
+  let msg = done + ' ' + t('bulkDone') + (bad ? ' • ' + bad + ' ' + t('bulkError') : '');
+  if (cloudConfigured()) {
+    toast(msg + ' • ☁️ syncing...');
+    const ok = await cloudSave();
+    toast(msg + (ok ? ' ☁️' : ' (cloud fail)'));
+  } else {
+    toast(msg);
+  }
+});
+
+/* Cloud settings buttons */
+$('cloudSaveSettings').addEventListener('click', () => {
+  if (!isOwner) return;
+  const binId = $('inCloudBinId').value.trim().slice(0, 50);
+  const apiKey = $('inCloudApiKey').value.trim().slice(0, 200);
+  CLOUD.binId = binId;
+  CLOUD.apiKey = apiKey;
+  saveCloudConfig();
+  updateCloudStatusUI();
+  fillCloudForm();
+  if (cloudConfigured()) {
+    startCloudSync();
+    toast('☁️ Cloud settings saved ✓');
+  } else {
+    toast('Cloud settings saved (incomplete)');
+  }
+});
+$('cloudTestNow').addEventListener('click', async () => {
+  if (!isOwner) return;
+  if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
+  toast('Testing connection…');
+  const ok = await cloudLoad();
+  fillCloudForm();
+  toast(ok ? '✅ Cloud connected ✓' : '❌ Cloud fail: ' + (cloudStatus.lastError || 'unknown'));
+});
+$('cloudPushNow').addEventListener('click', async () => {
+  if (!isOwner) return;
+  if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
+  toast('Pushing to cloud…');
+  const ok = await cloudSave();
+  fillCloudForm();
+  toast(ok ? '⬆️ Pushed ✓' : '❌ Push fail: ' + (cloudStatus.lastError || 'unknown'));
+});
+$('cloudPullNow').addEventListener('click', async () => {
+  if (!isOwner) return;
+  if (!cloudConfigured()) { toast('पहले settings save करो'); return; }
+  toast('Pulling from cloud…');
+  const ok = await cloudLoad();
+  fillCloudForm();
+  toast(ok ? '⬇️ Pulled ✓' : '⚠️ No newer data on cloud');
 });
 
 $('clearLeads').addEventListener('click', () => {
@@ -1270,7 +1496,9 @@ $('exportLeads').addEventListener('click', () => {
 $('saveBtn').addEventListener('click', async () => {
   if (!isOwner) return;
 
-  /* Prices */
+  const now = Date.now();
+  let lockedCount = 0;
+
   document.querySelectorAll('#rateEditList .edit-row').forEach(row => {
     const crop = state.crops.find(c => c.id === row.dataset.id);
     if (!crop) return;
@@ -1279,17 +1507,21 @@ $('saveBtn').addEventListener('click', async () => {
     const newPrice = round2(rawPrice);
     const newUnit = row.querySelector('.unit-select').value;
     if (!['kg','quintal'].includes(newUnit)) return;
-    if (newPrice !== crop.price) { crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; }
+    if (newPrice !== crop.price) {
+      crop.prev = crop.price;
+      crop.price = newPrice;
+      crop.base = newPrice;
+      crop.lockedUntil = now + LOCK_DURATION;
+      lockedCount++;
+    }
     crop.unit = newUnit;
   });
 
-  /* Shop details with validation */
   const shopName = $('inShopName').value.trim().slice(0, 80);
   const owner = $('inOwner').value.trim().slice(0, 50);
   const phone = $('inPhone').value.trim().slice(0, 15);
   const whatsapp = $('inWhatsapp').value.trim().slice(0, 15);
   const address = $('inAddress').value.trim().slice(0, 200);
-
   if (!shopName || !owner || !address) { toast(t('fillAll')); return; }
 
   state.shop.name = shopName;
@@ -1298,21 +1530,25 @@ $('saveBtn').addEventListener('click', async () => {
   state.shop.whatsapp = whatsapp || phone;
   state.shop.address = address;
 
-  /* PIN change (optional) */
   const newPin = $('inPin').value.trim();
   if (newPin) {
-    if (!/^\d{4,6}$/.test(newPin)) {
-      $('pinErr') && ($('pinErr').textContent = '');
-      toast('पिन 4-6 अंकों का होना चाहिए');
-      return;
-    }
+    if (!/^\d{4,6}$/.test(newPin)) { toast('पिन 4-6 अंकों का होना चाहिए'); return; }
     state.shop.pinHash = await hashString(newPin);
     state.shop.pin = '';
   }
 
   state.updatedAt = Date.now();
   pushHistory(); saveState(); renderAll();
-  toast(t('saved'));
+
+  const baseMsg = t('saved') + (lockedCount ? ' • 🔒 ' + lockedCount + ' ' + t('fixed') : '');
+
+  if (cloudConfigured()) {
+    toast(baseMsg + ' • ☁️ syncing...');
+    const ok = await cloudSave();
+    toast(ok ? baseMsg + ' ☁️' : baseMsg + ' (cloud fail)');
+  } else {
+    toast(baseMsg);
+  }
 });
 
 $('resetBtn').addEventListener('click', () => {
@@ -1326,7 +1562,6 @@ $('resetBtn').addEventListener('click', () => {
   initPinAndRender();
 });
 
-/* ═══ INIT ═══ */
 async function initPinAndRender() {
   await ensurePinHash();
   renderAll();
@@ -1338,12 +1573,14 @@ async function initPinAndRender() {
   if (isOwner) startAdminTimer();
   updateSpeakBtn();
   startAutoSync();
+  startCloudSync();
   if (Date.now() - state.updatedAt > 5 * 60 * 1000) {
     setTimeout(() => syncLiveRates(false), 1200);
   } else {
     pushHistory(); saveHistory();
   }
-  console.log('%c🔒 किसान मंडी भाव — v' + DATA_VERSION + ' (SECURE) चालू', 'color:#15803d;font-weight:bold;font-size:13px');
+  console.log('%c🌾 किसान मंडी भाव — v' + DATA_VERSION + ' चालू', 'color:#15803d;font-weight:bold;font-size:13px');
+  console.log('%c☁️ Cloud: ' + (cloudConfigured() ? 'Configured ✓' : 'Not configured (admin panel → ☁️ Cloud)'), 'color:#1e40af;font-weight:bold');
 })();
 </script>
 
