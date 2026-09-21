@@ -467,7 +467,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
    ✅ सभी fixes
    ═══════════════════════════════════════════════════════════════════ */
 
-const DATA_VERSION = 12;
+const DATA_VERSION = 13;
 const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
 /* ⭐ CLOUD CONFIG — Hardcoded, all devices पर auto-connect */
@@ -475,7 +475,7 @@ const CLOUD = {
   binId:   '6ab14de2ffd5d160531fc462',
   apiKey:  '$2a$10$lB2CvJMhrSanwCuX6wc5W.t0CnFzwrx7/5V5pjqFS3WVtgDqy063i',
   enabled: true,
-  syncIntervalMs: 5 * 60 * 1000
+    syncIntervalMs: 30 * 1000
 };
 
 const SHOP = {
@@ -1245,7 +1245,21 @@ $('speakBtn').addEventListener('click', function() {
   window.speechSynthesis.speak(u);
 });
 window.addEventListener('beforeunload', stopSpeech);
-document.addEventListener('visibilitychange', () => { if (document.hidden && speechPlaying) stopSpeech(); });
+/* ⚡ Speech + Cloud sync — जब user tab/focus बदले */
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    /* Tab background में है → speech बंद करो */
+    if (speechPlaying) stopSpeech();
+  } else {
+    /* Tab वापस foreground में आया → तुरंत cloud sync */
+    if (cloudConfigured()) cloudLoad();
+  }
+});
+
+/* ⚡ जब user window पर focus करे → तुरंत sync */
+window.addEventListener('focus', function() {
+  if (cloudConfigured()) cloudLoad();
+});
 
 $('shareBtn').addEventListener('click', () => {
   const lines = ['*' + state.shop.name + '*', t('todayRates') + ' — ' + formatDate(new Date()), ''];
