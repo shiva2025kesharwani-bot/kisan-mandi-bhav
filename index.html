@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#15803d">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://api.qrserver.com https://raw.githubusercontent.com wss://*.firebaseio.com; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://api.qrserver.com wss://*.firebaseio.com; frame-ancestors 'none';">
 <title>किसान मंडी भाव | Kisan Mandi Bhav</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -20,7 +20,7 @@ button{cursor:pointer;border:none;background:none}
 h2.sec{font-size:1.35rem;font-weight:800;color:var(--green-dark);margin-bottom:6px}
 p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .loading-screen{position:fixed;inset:0;background:linear-gradient(135deg,#15803d,#166534);color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:9999}
-.loading-screen .spin{font-size:3rem;animation:spin 1.2s linear infinite}
+.loading-screen .spin{font-size:3rem;animation:spin 1.2s linear infinite;display:inline-block}
 .loading-screen p{font-weight:700;font-size:1.1rem}
 @keyframes spin{to{transform:rotate(360deg)}}
 .admin-ribbon{background:linear-gradient(90deg,#78350f,#92400e);color:#fff;padding:9px 16px;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -29,7 +29,6 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .admin-ribbon .dot{width:9px;height:9px;border-radius:50%;background:#fbbf24;animation:pulse 1.8s infinite}
 .admin-ribbon button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.32);color:#fff;border-radius:9px;padding:6px 14px;font-weight:800;font-size:.8rem}
 .cloud-status{padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-left:8px;color:#fff}
-.cloud-status.off{background:#64748b}
 .cloud-status.on{background:#16a34a}
 .site-header{position:sticky;top:0;z-index:60;background:linear-gradient(135deg,#15803d 0%,#166534 100%);color:#fff;box-shadow:0 2px 12px rgba(20,83,45,.25)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;flex-wrap:wrap}
@@ -49,12 +48,8 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .hero .date{color:var(--muted);font-size:.95rem;margin-top:2px;font-weight:600}
 .hero .updated{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:var(--green-soft);color:#166534;border-radius:999px;padding:5px 14px;font-size:.83rem;font-weight:700}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-.live-pill{display:inline-flex;align-items:center;gap:7px;margin-left:8px;background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:800}
-.live-pill.demo{background:#fef3c7;color:#92400e}
-.live-pill.api{background:#dbeafe;color:#1e40af}
-.live-dot{width:9px;height:9px;border-radius:50%;background:#16a34a;animation:pulse 1.8s infinite}
-.live-pill.demo .live-dot{background:#d97706}
-.live-pill.api .live-dot{background:#1d4ed8}
+.live-pill{display:inline-flex;align-items:center;gap:7px;margin-left:8px;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 13px;font-size:.78rem;font-weight:800}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#1d4ed8;animation:pulse 1.8s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
 .spin{display:inline-block;animation:spin .9s linear infinite}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:11px 18px;font-weight:700;font-size:.94rem;transition:.15s;border:2px solid transparent;white-space:nowrap;text-decoration:none}
@@ -101,8 +96,6 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .change-line.up{color:#15803d}
 .change-line.down{color:#b91c1c}
 .change-line.locked{color:#92400e}
-.card-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:8px}
-.hist-lbl{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase}
 .empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--muted);background:var(--card);border-radius:var(--radius);border:2px dashed var(--border)}
 .empty .big{font-size:2.6rem;display:block;margin-bottom:10px}
 .sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
@@ -132,17 +125,18 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .site-footer{background:var(--green-dark);color:#cbe8d4;padding:26px 0;text-align:center;font-size:.86rem}
 .disclaimer{max-width:760px;margin:0 auto 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:13px;padding:12px 16px;font-size:.8rem;line-height:1.6;color:#e5f3ea;font-weight:600}
 .footer-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
-.owner-link{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.85rem;cursor:pointer}
-.owner-link.purple{background:rgba(196,181,253,.2);border-color:rgba(196,181,253,.4)}
+.owner-link{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit}
+.owner-link.purple{background:rgba(196,181,253,.25);border-color:rgba(196,181,253,.5)}
 .mobile-bar{position:fixed;bottom:0;left:0;right:0;z-index:55;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid var(--border);backdrop-filter:blur(10px)}
 .mobile-bar .btn{flex:1}
 .backdrop{position:fixed;inset:0;z-index:100;background:rgba(10,30,18,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
 .modal{background:var(--card);border-radius:22px;width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:pop .22s ease}
 .modal.small{max-width:420px}
 .modal.large{max-width:800px}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border)}
 .modal-head h3{font-size:1.15rem;font-weight:800;color:var(--green-dark)}
-.close-x{width:38px;height:38px;border-radius:11px;background:var(--bg);font-size:1.1rem;font-weight:700;color:var(--muted);display:grid;place-items:center}
+.close-x{width:38px;height:38px;border-radius:11px;background:var(--bg);font-size:1.1rem;font-weight:700;color:var(--muted);display:grid;place-items:center;cursor:pointer}
 .modal-body{padding:20px 22px;overflow-y:auto;flex:1}
 .modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .field{margin-bottom:15px}
@@ -156,7 +150,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .lock-hero p{font-size:.85rem;color:var(--muted);margin-top:4px}
 .tabs{display:flex;gap:6px;padding:14px 18px 0;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{padding:10px 15px;border-radius:12px 12px 0 0;font-weight:800;font-size:.87rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab{padding:10px 15px;border-radius:12px 12px 0 0;font-weight:800;font-size:.87rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;font-family:inherit}
 .tab.active{color:var(--green-dark);border-bottom-color:var(--green);background:#f3faf5}
 .edit-row{display:grid;grid-template-columns:34px 1fr 112px 100px 42px;align-items:center;gap:9px;padding:10px;border-radius:13px;background:var(--bg);margin-bottom:9px;position:relative}
 .edit-row.locked{background:#fef9e7;border:2px solid #fcd34d}
@@ -167,7 +161,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 .edit-price span{color:var(--muted);font-weight:800;font-size:.9rem}
 .edit-price input{width:100%;border:none;outline:none;padding:9px 0;font-weight:800;font-size:.95rem;background:transparent}
 .edit-row select{border:2px solid var(--border);border-radius:11px;padding:9px 7px;font-size:.82rem;font-weight:700;background:var(--card);outline:none;width:100%}
-.del-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:2px solid var(--border);font-size:1rem;display:grid;place-items:center}
+.del-btn{width:38px;height:38px;border-radius:11px;background:var(--card);border:2px solid var(--border);font-size:1rem;display:grid;place-items:center;cursor:pointer}
 .add-box{background:#f3faf5;border:2px dashed #b9dfc4;border-radius:16px;padding:16px;margin-top:16px}
 .add-box h4{font-size:.95rem;font-weight:800;color:var(--green-dark);margin-bottom:12px}
 .add-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -215,13 +209,11 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 </head>
 <body>
 
-<!-- Loading Screen -->
 <div class="loading-screen" id="loadingScreen">
   <div class="spin">🌾</div>
   <p>लोड हो रहा है...</p>
 </div>
 
-<!-- Admin Ribbon -->
 <div class="admin-ribbon hidden" id="adminRibbon">
   <span class="left">
     <span class="dot"></span>
@@ -231,14 +223,13 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   <button id="openAdminFromRibbon">⚙️ पैनल खोलें</button>
 </div>
 
-<!-- Header -->
 <header class="site-header">
   <div class="wrap header-inner">
     <div class="brand">
       <div class="logo">🌾</div>
       <div>
         <h1 id="shopNameEl">लोड हो रहा है...</h1>
-        <p class="tagline" data-i18n="tagline">आज के ताज़ा मंडी भाव</p>
+        <p class="tagline">आज के ताज़ा मंडी भाव</p>
       </div>
     </div>
     <div class="header-tools">
@@ -250,40 +241,36 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <h2 data-i18n="todayRates">आज के भाव</h2>
+      <h2>आज के भाव</h2>
       <p class="date" id="dateLine">—</p>
-      <span class="updated">🕒 <span data-i18n="updatedAt">अंतिम अपडेट</span>: <span id="updatedAt">—</span></span>
-      <span class="live-pill api" id="livePill"><span class="live-dot"></span><span>LIVE</span></span>
+      <span class="updated">🕒 अंतिम अपडेट: <span id="updatedAt">—</span></span>
+      <span class="live-pill"><span class="live-dot"></span><span>LIVE</span></span>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-amber hidden" id="syncBtn">🔄 <span data-i18n="syncNow">लाइव भाव लाएँ</span></button>
-      <button class="btn btn-ghost" id="speakBtn">🔊 <span id="speakBtnLabel" data-i18n="listen">सुनें</span></button>
+      <button class="btn btn-amber hidden" id="syncBtn">🔄 लाइव भाव लाएँ</button>
+      <button class="btn btn-ghost" id="speakBtn">🔊 <span id="speakBtnLabel">सुनें</span></button>
       <button class="btn btn-ghost" id="shareBtn">📤 WhatsApp</button>
-      <button class="btn btn-ghost" id="printBtn">🖨️ <span data-i18n="print">प्रिंट</span></button>
+      <button class="btn btn-ghost" id="printBtn">🖨️ प्रिंट</button>
     </div>
   </div>
 </section>
 
-<!-- Toolbar -->
 <div class="wrap toolbar">
   <div class="search-box">
     <span>🔍</span>
-    <input type="search" id="searchInput" maxlength="40" placeholder="फसल खोजें…" autocomplete="off">
+    <input type="search" id="searchInput" maxlength="40" placeholder="फसल खोजें…">
     <button class="mic-btn" id="micBtn">🎤</button>
   </div>
   <div class="chips" id="categoryChips"></div>
 </div>
 
-<!-- Rates Grid -->
 <main class="wrap grid-section">
   <div class="rates-grid" id="ratesGrid"></div>
 </main>
 
-<!-- Calculator -->
 <section class="band alt">
   <div class="wrap">
     <div class="sec-card">
@@ -303,7 +290,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </section>
 
-<!-- Enquiry -->
 <section class="band">
   <div class="wrap">
     <div class="sec-card">
@@ -321,7 +307,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </section>
 
-<!-- Contact -->
 <section class="contact">
   <div class="wrap">
     <h2 class="sec">हमसे संपर्क करें</h2>
@@ -338,7 +323,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </section>
 
-<!-- Footer -->
 <footer class="site-footer">
   <div class="wrap">
     <div class="disclaimer">भाव केवल जानकारी के लिए हैं। अंतिम भाव दुकान पर तय होगा।</div>
@@ -357,13 +341,12 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   <a class="btn btn-ghost" id="waBtnM" href="#" target="_blank" rel="noopener noreferrer">💬 व्हाट्सएप</a>
 </div>
 
-<!-- ============ PIN MODAL ============ -->
 <div class="backdrop hidden" id="pinModal">
   <div class="modal small">
     <div class="modal-head"><h3>दुकानदार लॉगिन</h3><button class="close-x" data-close="pinModal">✕</button></div>
     <div class="modal-body">
-      <div class="lock-hero"><div class="big-lock">🔒</div><h4>सिर्फ़ दुकानदार के लिए</h4><p>अपना PIN दर्ज करें।</p></div>
-      <div class="field"><label>PIN दर्ज करें</label><input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="6" placeholder="••••"></div>
+      <div class="lock-hero"><div class="big-lock">🔒</div><h4>सिर्फ़ दुकानदार के लिए</h4><p>किसानों को लॉगिन की ज़रूरत नहीं।</p></div>
+      <div class="field"><label>पिन दर्ज करें</label><input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="6" placeholder="••••"></div>
       <p class="err" id="pinErr"></p>
     </div>
     <div class="modal-foot">
@@ -373,7 +356,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </div>
 
-<!-- ============ ADMIN MODAL ============ -->
 <div class="backdrop hidden" id="adminModal">
   <div class="modal">
     <div class="modal-head"><h3 id="adminPanelTitle">दुकानदार पैनल</h3><button class="close-x" data-close="adminModal">✕</button></div>
@@ -423,7 +405,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </div>
 
-<!-- ============ REGISTER MODAL ============ -->
 <div class="backdrop hidden" id="registerModal">
   <div class="modal large">
     <div class="modal-head"><h3>➕ नई दुकान रजिस्टर करें</h3><button class="close-x" data-close="registerModal">✕</button></div>
@@ -445,16 +426,13 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </div>
 
-<!-- ============ SUCCESS MODAL ============ -->
 <div class="backdrop hidden" id="successModal">
   <div class="modal small">
     <div class="modal-head"><h3>🎉 दुकान रजिस्टर हो गई!</h3><button class="close-x" data-close="successModal">✕</button></div>
     <div class="modal-body">
       <div class="info-box green"><span class="ico">✅</span>अब आप अपनी दुकान का भाव manage कर सकते हैं।</div>
       <p class="section-title">📌 आपका दुकान लिंक:</p>
-      <div class="qr-box">
-        <div class="lnk" id="successUrl" style="margin-top:0"></div>
-      </div>
+      <div class="qr-box"><div class="lnk" id="successUrl" style="margin-top:0"></div></div>
       <p class="hint" style="margin-top:14px">इस लिंक को WhatsApp पर save करो। किसान इसे खोलकर आपके भाव देखेंगे।</p>
     </div>
     <div class="modal-foot">
@@ -464,7 +442,6 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
   </div>
 </div>
 
-<!-- ============ QR MODAL ============ -->
 <div class="backdrop hidden" id="qrModal">
   <div class="modal small">
     <div class="modal-head"><h3>📱 QR कोड</h3><button class="close-x" data-close="qrModal">✕</button></div>
@@ -483,15 +460,10 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   🌾 किसान मंडी भाव — v16.1 (Multi-Shop with Firebase)
-   ═══════════════════════════════════════════════════════════════════ */
-
 const firebaseConfig = {
   apiKey: "AIzaSyBufktfGJSNPE3M6iu4VMr5C1R0xDzEkw8",
   authDomain: "kisan-mandi-47622.firebaseapp.com",
@@ -505,12 +477,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const DATA_VERSION = 16;
-const LOCK_DURATION = 24 * 60 * 60 * 1000;
-
-/* Default shop — Dinesh's shop */
 const DEFAULT_SHOP_SLUG = 'naveen-mandi-khaga';
-const SUPER_ADMIN_PIN = '9999';   /* Super Admin ka PIN — change kar sakte ho */
+const SUPER_ADMIN_PIN = '9999';
+const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
 const DEFAULT_CROPS = [
   { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50, lockedUntil:0,
@@ -537,8 +506,6 @@ const DEFAULT_CROPS = [
     names:{hi:'मसूर',en:'Lentil (Masoor)',mr:'मसूर',pa:'ਮਸਰ',gu:'મસૂર',bn:'মসুর',ta:'மைசூர்ப் பருப்பு',te:'మసూర్'} }
 ];
 
-const CATEGORIES = ['cereal','millet','pulse'];
-
 const LANGS = [
   { code:'hi', label:'हिंदी', speech:'hi-IN' },
   { code:'en', label:'English', speech:'en-IN' },
@@ -550,7 +517,6 @@ const LANGS = [
   { code:'te', label:'తెలుగు', speech:'te-IN' }
 ];
 
-/* State */
 let currentShop = null;
 let currentShopId = null;
 let allShops = [];
@@ -563,19 +529,19 @@ let recognition = null;
 let micListening = false;
 let loginAttempts = 0;
 let loginLockUntil = 0;
-let adminTimer = null;
 let unsubShop = null;
 
-const LS_LANG = 'km_lang';
-const LS_FS = 'km_fs';
-const LS_HC = 'km_hc';
-const LS_SHOP = 'km_last_shop';
+const LS_LANG='km_lang', LS_FS='km_fs', LS_HC='km_hc', LS_SHOP='km_last_shop';
 const LS_LEADS = 'km_leads_';
 
-/* Helpers */
+const state = {
+  lang: localStorage.getItem(LS_LANG) || 'hi',
+  fs: parseInt(localStorage.getItem(LS_FS)) || 17,
+  hc: localStorage.getItem(LS_HC) === '1'
+};
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function t(key){ return key; }
 function currentLang(){ return LANGS.find(l => l.code === state.lang) || LANGS[0]; }
 function cropName(c){ return c.names?.[state.lang] || c.names?.en || c.names?.hi || c.id; }
 function money(n){ const num = Number(n)||0; return '₹' + num.toLocaleString('en-IN', Number.isInteger(num)?{maximumFractionDigits:0}:{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -584,138 +550,57 @@ function formatDate(d){ try{ return new Date(d).toLocaleDateString(currentLang()
 function formatTime(d){ try{ return new Date(d).toLocaleTimeString(currentLang().speech, {hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
 let toastTimer;
 function toast(msg){ const el=$('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2600); }
-function slugify(str){
-  return String(str||'').toLowerCase()
-    .replace(/[^a-z0-9\s-]/g,'')
-    .replace(/\s+/g,'-')
-    .replace(/-+/g,'-')
-    .replace(/^-|-$/g,'')
-    .slice(0,40);
-}
-async function hashString(str){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-/* State object for language, font size, contrast */
-const state = {
-  lang: localStorage.getItem(LS_LANG) || 'hi',
-  fs: parseInt(localStorage.getItem(LS_FS)) || 17,
-  hc: localStorage.getItem(LS_HC) === '1'
-};
+function slugify(str){ return String(str||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,40); }
+async function hashString(str){ const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
 function isCropLocked(c){ return !!(c.lockedUntil && c.lockedUntil > Date.now()); }
-function getLockRemaining(c){
-  if(!isCropLocked(c)) return null;
-  const ms = c.lockedUntil - Date.now();
-  const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
-  return { hours:h, minutes:m, text:h+'h '+m+'m' };
-}
+function getLockRemaining(c){ if(!isCropLocked(c)) return null; const ms = c.lockedUntil - Date.now(); const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000); return {text:h+'h '+m+'m'}; }
 
-/* ═══════════════ FIREBASE FUNCTIONS ═══════════════ */
-async function loadShopFromFirebase(slug){
-  try{
-    const doc = await db.collection('shops').doc(slug).get();
-    if(doc.exists) return doc.data();
-    return null;
-  }catch(e){ console.warn('Load shop error:', e); return null; }
-}
+async function loadShopFromFirebase(slug){ try{ const doc = await db.collection('shops').doc(slug).get(); return doc.exists ? doc.data() : null; }catch(e){ console.warn(e); return null; } }
+async function saveShopToFirebase(slug, data){ try{ data.updatedAt = Date.now(); await db.collection('shops').doc(slug).set(data, { merge: true }); return true; }catch(e){ console.warn(e); return false; } }
+async function listAllShops(){ try{ const snap = await db.collection('shops').limit(100).get(); const list=[]; snap.forEach(d=>list.push({slug:d.id, ...d.data()})); return list; }catch(e){ console.warn(e); return []; } }
+function listenToShop(slug, cb){ if(unsubShop) unsubShop(); unsubShop = db.collection('shops').doc(slug).onSnapshot(doc => { if(doc.exists) cb(doc.data()); }, err => console.warn(err)); }
 
-async function saveShopToFirebase(slug, data){
-  try{
-    data.updatedAt = Date.now();
-    await db.collection('shops').doc(slug).set(data, { merge: true });
-    return true;
-  }catch(e){ console.warn('Save shop error:', e); return false; }
-}
-
-async function listAllShops(){
-  try{
-    const snap = await db.collection('shops').orderBy('createdAt','desc').limit(100).get();
-    const list = [];
-    snap.forEach(d => list.push({ slug: d.id, ...d.data() }));
-    return list;
-  }catch(e){ console.warn('List shops error:', e); return []; }
-}
-
-function listenToShop(slug, callback){
-  if(unsubShop) unsubShop();
-  unsubShop = db.collection('shops').doc(slug).onSnapshot(doc => {
-    if(doc.exists) callback(doc.data());
-  }, err => console.warn('Listen error:', err));
-}
-
-/* ═══════════════ SHOP INIT ═══════════════ */
 async function initShop(){
   const params = new URLSearchParams(location.search);
   let slug = params.get('shop') || localStorage.getItem(LS_SHOP) || DEFAULT_SHOP_SLUG;
-
-  /* Try to load from Firebase */
   let shop = await loadShopFromFirebase(slug);
 
-  /* If not found and it's the default, create it */
   if(!shop && slug === DEFAULT_SHOP_SLUG){
-    shop = {
-      slug: DEFAULT_SHOP_SLUG,
-      name: 'नवीन मंडी खागा फतेहपुर',
-      owner: 'dinesh kesharwani',
-      phone: '7380849700',
-      whatsapp: '7380849700',
-      address: 'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)',
-      pinHash: await hashString('2008'),
-      crops: DEFAULT_CROPS,
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
+    shop = { slug, name:'नवीन मंडी खागा फतेहपुर', owner:'dinesh kesharwani', phone:'7380849700', whatsapp:'7380849700', address:'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)', pinHash: await hashString('2008'), crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)), createdAt: Date.now(), updatedAt: Date.now() };
     await saveShopToFirebase(slug, shop);
   }
 
-  /* If still not found — show error */
   if(!shop){
-    $('loadingScreen').innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:3rem">😕</div><h2 style="margin-top:14px">दुकान नहीं मिली</h2><p style="margin-top:10px;opacity:.85">यह लिंक गलत है या दुकान हटा दी गई है।</p></div>';
+    $('loadingScreen').innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:3rem">😕</div><h2 style="margin-top:14px">दुकान नहीं मिली</h2><p style="margin-top:10px;opacity:.85">यह लिंक गलत है।</p></div>';
     return;
   }
 
   currentShop = shop;
   currentShopId = slug;
   localStorage.setItem(LS_SHOP, slug);
-
-  /* Hide loading, show app */
   $('loadingScreen').classList.add('hidden');
-
-  /* Render everything */
   renderAll();
 
-  /* Listen for live updates */
   listenToShop(slug, data => {
     if(!currentShop) return;
-    /* Skip updates if I'm the one who just saved */
     if(Date.now() - (window._lastLocalSave || 0) < 5000) return;
     currentShop = data;
-    renderCrops();
-    renderShopInfo();
+    renderCrops(); renderShopInfo();
     if(isOwner) renderEditList();
   });
 
-  /* Set page title */
   document.title = shop.name + ' | किसान मंडी भाव';
 }
 
-/* ═══════════════ RENDER ═══════════════ */
 function renderAll(){
   document.documentElement.lang = state.lang;
   document.documentElement.style.setProperty('--fs', state.fs + 'px');
   document.body.classList.toggle('hc', !!state.hc);
   $('hcBtn').classList.toggle('on', !!state.hc);
-
-  renderShopInfo();
-  renderChips();
-  renderCrops();
-  renderCalc();
-  renderFooter();
-  applyRole();
-  updateSpeakBtn();
+  renderShopInfo(); renderChips(); renderCrops(); renderCalc(); applyRole(); updateSpeakBtn();
   $('yearEl').textContent = new Date().getFullYear();
+  $('langSelect').value = state.lang;
 }
 
 function renderShopInfo(){
@@ -729,32 +614,17 @@ function renderShopInfo(){
   $('cAddress').textContent = currentShop.address;
   $('callBtn').href = 'tel:' + phoneClean;
   $('callBtnM').href = 'tel:' + phoneClean;
-
   const waDigits = String(currentShop.whatsapp || currentShop.phone).replace(/\D/g,'');
   const waUrl = waDigits.length >= 10 ? 'https://wa.me/91' + waDigits.slice(-10) : null;
-  [$('waBtn'), $('waBtnM')].forEach(a => {
-    if(waUrl){ a.href = waUrl; a.style.opacity='1'; a.style.pointerEvents='auto'; }
-    else { a.removeAttribute('href'); a.style.opacity='.5'; a.style.pointerEvents='none'; }
-  });
-
+  [$('waBtn'), $('waBtnM')].forEach(a => { if(waUrl){ a.href = waUrl; a.style.opacity='1'; a.style.pointerEvents='auto'; } else { a.removeAttribute('href'); a.style.opacity='.5'; a.style.pointerEvents='none'; } });
   $('dateLine').textContent = formatDate(new Date());
-  if(currentShop.updatedAt){
-    $('updatedAt').textContent = formatDate(currentShop.updatedAt) + ' • ' + formatTime(currentShop.updatedAt);
-  } else {
-    $('updatedAt').textContent = formatDate(new Date()) + ' • ' + formatTime(new Date());
-  }
+  if(currentShop.updatedAt){ $('updatedAt').textContent = formatDate(currentShop.updatedAt) + ' • ' + formatTime(currentShop.updatedAt); }
+  else { $('updatedAt').textContent = formatDate(new Date()) + ' • ' + formatTime(new Date()); }
 }
 
 function renderChips(){
-  const chips = [
-    {k:'all', label:'सभी'},
-    {k:'cereal', label:'अनाज'},
-    {k:'millet', label:'मोटे अनाज'},
-    {k:'pulse', label:'दालें'}
-  ];
-  $('categoryChips').innerHTML = chips.map(c =>
-    '<button class="chip ' + (filterCat===c.k?'active':'') + '" data-cat="'+c.k+'">' + esc(c.label) + '</button>'
-  ).join('');
+  const chips = [{k:'all',label:'सभी'},{k:'cereal',label:'अनाज'},{k:'millet',label:'मोटे अनाज'},{k:'pulse',label:'दालें'}];
+  $('categoryChips').innerHTML = chips.map(c => '<button class="chip ' + (filterCat===c.k?'active':'') + '" data-cat="'+c.k+'">' + esc(c.label) + '</button>').join('');
 }
 
 function visibleCrops(){
@@ -771,10 +641,7 @@ function visibleCrops(){
 function renderCrops(){
   const list = visibleCrops();
   const grid = $('ratesGrid');
-  if(!list.length){
-    grid.innerHTML = '<div class="empty"><span class="big">🌱</span>कोई फसल नहीं मिली</div>';
-    return;
-  }
+  if(!list.length){ grid.innerHTML = '<div class="empty"><span class="big">🌱</span>कोई फसल नहीं मिली</div>'; return; }
   grid.innerHTML = list.map(c => {
     const locked = isCropLocked(c);
     const prev = (typeof c.prev === 'number') ? c.prev : c.price;
@@ -785,42 +652,23 @@ function renderCrops(){
     else if(diff<0){ trend='down'; icon='▼'; label='गिरावट'; }
     const diffText = diff===0 ? '—' : (diff>0?'+':'−') + money(Math.abs(diff));
     const lockInfo = locked && getLockRemaining(c);
-    return '<article class="crop-card ' + trend + '">' +
-      '<div class="card-top"><div style="display:flex;gap:11px;align-items:flex-start;min-width:0">' +
-      '<span class="crop-emoji">' + (c.emoji||'🌾') + '</span>' +
-      '<div style="min-width:0"><div class="crop-name">' + esc(cropName(c)) + '</div>' +
-      '<div class="crop-sub">' + esc(c.cat==='cereal'?'अनाज':c.cat==='millet'?'मोटे अनाज':'दालें') + '</div></div></div>' +
-      '<span class="badge ' + (locked?'locked':trend) + '">' + icon + ' ' + esc(label) + '</span></div>' +
-      '<div class="price-row"><span class="price">' + money(c.price) + '</span>' +
-      '<span class="unit">/ ' + (c.unit==='kg'?'प्रति किलो':'प्रति क्विंटल') + '</span></div>' +
-      '<div class="change-line ' + (locked?'locked':trend) + '">' +
-        (locked && lockInfo ? esc('🔒 '+lockInfo.text+' में unlock होगा')
-          : esc(diff===0?'स्थिर':diffText+' '+(diff>0?'▲':'▼'))) + '</div>' +
-      '</article>';
+    return '<article class="crop-card ' + trend + '"><div class="card-top"><div style="display:flex;gap:11px;align-items:flex-start;min-width:0"><span class="crop-emoji">' + (c.emoji||'🌾') + '</span><div style="min-width:0"><div class="crop-name">' + esc(cropName(c)) + '</div><div class="crop-sub">' + esc(c.cat==='cereal'?'अनाज':c.cat==='millet'?'मोटे अनाज':'दालें') + '</div></div></div><span class="badge ' + (locked?'locked':trend) + '">' + icon + ' ' + esc(label) + '</span></div><div class="price-row"><span class="price">' + money(c.price) + '</span><span class="unit">/ ' + (c.unit==='kg'?'प्रति किलो':'प्रति क्विंटल') + '</span></div><div class="change-line ' + (locked?'locked':trend) + '">' + (locked && lockInfo ? esc('🔒 '+lockInfo.text+' में unlock होगा') : esc(diff===0?'स्थिर':diffText+' '+(diff>0?'▲':'▼'))) + '</div></article>';
   }).join('');
 }
 
 function renderCalc(){
   if(!currentShop || !currentShop.crops) return;
-  const calcSel = $('calcCrop');
-  const prev = calcSel.value;
-  calcSel.innerHTML = currentShop.crops.map(c =>
-    '<option value="'+esc(c.id)+'">'+esc(c.emoji||'🌾')+' '+esc(cropName(c))+'</option>'
-  ).join('');
+  const calcSel = $('calcCrop'); const prev = calcSel.value;
+  calcSel.innerHTML = currentShop.crops.map(c => '<option value="'+esc(c.id)+'">'+esc(c.emoji||'🌾')+' '+esc(cropName(c))+'</option>').join('');
   if(prev && currentShop.crops.some(c=>c.id===prev)) calcSel.value = prev;
-  const enqSel = $('enqCrop');
-  const prevE = enqSel.value;
-  enqSel.innerHTML = currentShop.crops.map(c =>
-    '<option value="'+esc(c.id)+'">'+esc(cropName(c))+'</option>'
-  ).join('');
+  const enqSel = $('enqCrop'); const prevE = enqSel.value;
+  enqSel.innerHTML = currentShop.crops.map(c => '<option value="'+esc(c.id)+'">'+esc(cropName(c))+'</option>').join('');
   if(prevE && currentShop.crops.some(c=>c.id===prevE)) enqSel.value = prevE;
   calcUpdate();
 }
 
 function calcUpdate(){
-  const id = $('calcCrop').value;
-  const qty = parseFloat($('calcQty').value) || 0;
-  const unit = $('calcUnit').value;
+  const id = $('calcCrop').value; const qty = parseFloat($('calcQty').value) || 0; const unit = $('calcUnit').value;
   const crop = (currentShop.crops||[]).find(c=>c.id===id);
   if(!crop || qty<=0){ $('calcTotal').textContent = money(0); $('calcBreakdown').textContent=''; return; }
   const qtyKg = unit==='quintal' ? qty*100 : qty;
@@ -832,12 +680,6 @@ function calcUpdate(){
   $('calcBreakdown').textContent = qtyText + ' × ' + money(crop.price) + ' / ' + unitText;
 }
 
-function renderFooter(){
-  $('ownerLoginBtn').classList.toggle('hidden', isOwner);
-  $('ownerLogoutBtn').classList.toggle('hidden', !isOwner);
-}
-
-/* ═══════════════ ADMIN PANEL ═══════════════ */
 function applyRole(){
   $('adminRibbon').classList.toggle('hidden', !isOwner);
   $('syncBtn').classList.toggle('hidden', !isOwner);
@@ -845,23 +687,16 @@ function applyRole(){
   $('adminPanelTitle').textContent = isSuperAdmin ? '👑 Super Admin Panel' : 'दुकानदार पैनल';
   document.querySelectorAll('.super-only').forEach(el => el.classList.toggle('hidden', !isSuperAdmin));
   $('adminRibbonText').textContent = isSuperAdmin ? '👑 Super Admin मोड' : 'एडमिन मोड चालू';
+  $('ownerLoginBtn').classList.toggle('hidden', isOwner);
+  $('ownerLogoutBtn').classList.toggle('hidden', !isOwner);
 }
 
 function renderEditList(){
   if(!currentShop || !currentShop.crops) return;
   const box = $('rateEditList');
   box.innerHTML = currentShop.crops.map(c => {
-    const locked = isCropLocked(c);
-    const lockInfo = locked ? getLockRemaining(c) : null;
-    return '<div class="edit-row ' + (locked?'locked':'') + '" data-id="'+esc(c.id)+'">' +
-      '<span class="edit-emoji">' + (c.emoji||'🌾') + '</span>' +
-      '<span class="edit-name">' + esc(cropName(c)) +
-        (locked ? '<small>🔒 '+esc(lockInfo.text)+'</small>' : '') +
-      '</span>' +
-      '<div class="edit-price"><span>₹</span><input type="number" class="price-input" value="'+(Number(c.price)||0)+'" min="0" max="100000" step="0.01" inputmode="decimal"></div>' +
-      '<select class="unit-select"><option value="kg" '+(c.unit==='kg'?'selected':'')+'>किलो</option><option value="quintal" '+(c.unit!=='kg'?'selected':'')+'>क्विंटल</option></select>' +
-      '<button class="del-btn" data-del="'+esc(c.id)+'">🗑️</button>' +
-      '</div>';
+    const locked = isCropLocked(c); const lockInfo = locked ? getLockRemaining(c) : null;
+    return '<div class="edit-row ' + (locked?'locked':'') + '" data-id="'+esc(c.id)+'"><span class="edit-emoji">' + (c.emoji||'🌾') + '</span><span class="edit-name">' + esc(cropName(c)) + (locked ? '<small>🔒 '+esc(lockInfo.text)+'</small>' : '') + '</span><div class="edit-price"><span>₹</span><input type="number" class="price-input" value="'+(Number(c.price)||0)+'" min="0" max="100000" step="0.01" inputmode="decimal"></div><select class="unit-select"><option value="kg" '+(c.unit==='kg'?'selected':'')+'>किलो</option><option value="quintal" '+(c.unit!=='kg'?'selected':'')+'>क्विंटल</option></select><button class="del-btn" data-del="'+esc(c.id)+'">🗑️</button></div>';
   }).join('');
 }
 
@@ -871,10 +706,7 @@ function renderLeads(){
   if(!leads.length){ box.innerHTML = '<p class="hint">कोई पूछताछ नहीं।</p>'; return; }
   box.innerHTML = leads.slice(0,60).map(l => {
     const when = new Date(l.ts).toLocaleString('en-IN');
-    return '<div class="lead-item"><div class="top"><span class="nm">👤 '+esc(l.name)+'</span><span class="tm">'+esc(when)+'</span></div>' +
-      '<div class="mt">📞 '+esc(l.phone)+'<br>🌾 '+esc(l.crop)+' — '+esc(l.qty)+' क्विंटल'+(l.msg?'<br>📝 '+esc(l.msg):'')+'</div>' +
-      '<div class="acts"><a class="btn btn-ghost btn-sm" href="tel:'+esc(l.phone)+'">📞 कॉल</a>' +
-      '<a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="https://wa.me/91'+esc(String(l.phone).slice(-10))+'">💬 WhatsApp</a></div></div>';
+    return '<div class="lead-item"><div class="top"><span class="nm">👤 '+esc(l.name)+'</span><span class="tm">'+esc(when)+'</span></div><div class="mt">📞 '+esc(l.phone)+'<br>🌾 '+esc(l.crop)+' — '+esc(l.qty)+' क्विंटल'+(l.msg?'<br>📝 '+esc(l.msg):'')+'</div><div class="acts"><a class="btn btn-ghost btn-sm" href="tel:'+esc(l.phone)+'">📞 कॉल</a><a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="https://wa.me/91'+esc(String(l.phone).slice(-10))+'">💬 WhatsApp</a></div></div>';
   }).join('');
 }
 
@@ -895,72 +727,42 @@ async function renderShopList(){
   if(!allShops.length){ $('shopList').innerHTML = '<p class="hint">कोई दुकान नहीं।</p>'; return; }
   $('shopList').innerHTML = allShops.map(s => {
     const url = location.origin + location.pathname + '?shop=' + s.slug;
-    return '<div class="shop-list-item"><div class="top">' +
-      '<span class="nm">🏬 '+esc(s.name)+'</span>' +
-      '<span class="slug">'+esc(s.slug)+'</span></div>' +
-      '<div class="row">👤 '+esc(s.owner||'—')+' • 📞 '+esc(s.phone||'—')+'<br>📍 '+esc(s.address||'—')+'</div>' +
-      '<div class="acts"><button class="btn btn-ghost btn-sm" onclick="window.open(\''+url+'\',\'_blank\')">🔗 खोलें</button>' +
-      '<button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(\''+url+'\');alert(\'लिंक कॉपी हो गया\')">📋 कॉपी</button></div></div>';
+    return '<div class="shop-list-item"><div class="top"><span class="nm">🏬 '+esc(s.name)+'</span><span class="slug">'+esc(s.slug)+'</span></div><div class="row">👤 '+esc(s.owner||'—')+' • 📞 '+esc(s.phone||'—')+'<br>📍 '+esc(s.address||'—')+'</div><div class="acts"><button class="btn btn-ghost btn-sm" onclick="window.open(\''+url+'\',\'_blank\')">🔗 खोलें</button><button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(\''+url+'\');alert(\'लिंक कॉपी हो गया\')">📋 कॉपी</button></div></div>';
   }).join('');
 }
 
-/* ═══════════════ LOGIN ═══════════════ */
 async function tryLogin(){
-  if(Date.now() < loginLockUntil){
-    $('pinErr').textContent = 'बहुत बार गलत PIN — थोड़ी देर रुकें';
-    return;
-  }
+  if(Date.now() < loginLockUntil){ $('pinErr').textContent = 'बहुत बार गलत PIN — थोड़ी देर रुकें'; return; }
   const val = $('pinInput').value.trim();
-  if(!val || !/^\d+$/.test(val) || val.length<4 || val.length>6){
-    $('pinErr').textContent = 'PIN 4-6 अंकों का होना चाहिए';
-    return;
-  }
+  if(!val || !/^\d+$/.test(val) || val.length<4 || val.length>6){ $('pinErr').textContent = 'PIN 4-6 अंकों का होना चाहिए'; return; }
 
-  /* Super Admin check */
   if(val === SUPER_ADMIN_PIN){
-    loginAttempts = 0;
-    isSuperAdmin = true;
-    isOwner = true;
+    loginAttempts = 0; isSuperAdmin = true; isOwner = true;
     closeModal('pinModal');
-    renderEditList(); renderLeads(); fillAdminForm();
-    applyRole();
-    renderShopList();
+    renderEditList(); renderLeads(); fillAdminForm(); applyRole();
+    await renderShopList();
     toast('👑 Super Admin लॉगिन');
     setTimeout(() => openModal('adminModal'), 250);
     return;
   }
 
-  /* Shop owner check */
   const inputHash = await hashString(val);
   if(currentShop && currentShop.pinHash && inputHash === currentShop.pinHash){
-    loginAttempts = 0;
-    isOwner = true;
-    isSuperAdmin = false;
+    loginAttempts = 0; isOwner = true; isSuperAdmin = false;
     closeModal('pinModal');
-    renderEditList(); renderLeads(); fillAdminForm();
-    applyRole();
+    renderEditList(); renderLeads(); fillAdminForm(); applyRole();
     toast('लॉगिन हो गया ✓');
     setTimeout(() => openModal('adminModal'), 250);
   } else {
     loginAttempts++;
     $('pinErr').textContent = 'गलत PIN';
     $('pinInput').value = ''; $('pinInput').focus();
-    if(loginAttempts >= 5){
-      loginLockUntil = Date.now() + 30000;
-      loginAttempts = 0;
-      setTimeout(() => { if($('pinErr')) $('pinErr').textContent=''; }, 30000);
-    }
+    if(loginAttempts >= 5){ loginLockUntil = Date.now() + 30000; loginAttempts = 0; setTimeout(() => { if($('pinErr')) $('pinErr').textContent=''; }, 30000); }
   }
 }
 
-function doLogout(){
-  isOwner = false;
-  isSuperAdmin = false;
-  applyRole();
-  toast('लॉगआउट हो गया');
-}
+function doLogout(){ isOwner = false; isSuperAdmin = false; applyRole(); toast('लॉगआउट हो गया'); }
 
-/* ═══════════════ SAVE RATES ═══════════════ */
 async function saveRates(){
   if(!isOwner || !currentShop) return;
   const now = Date.now();
@@ -973,13 +775,7 @@ async function saveRates(){
     if(isNaN(rawPrice) || rawPrice<0 || rawPrice>100000) return;
     const newPrice = round2(rawPrice);
     const newUnit = row.querySelector('.unit-select').value;
-    if(newPrice !== crop.price){
-      crop.prev = crop.price;
-      crop.price = newPrice;
-      crop.base = newPrice;
-      crop.lockedUntil = now + LOCK_DURATION;
-      lockedCount++;
-    }
+    if(newPrice !== crop.price){ crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; crop.lockedUntil = now + LOCK_DURATION; lockedCount++; }
     crop.unit = newUnit;
   });
 
@@ -989,7 +785,6 @@ async function saveRates(){
   const whatsapp = $('inWhatsapp').value.trim();
   const address = $('inAddress').value.trim();
   if(!shopName || !owner || !address){ toast('सारी जानकारी भरें'); return; }
-
   currentShop.name = shopName;
   currentShop.owner = owner;
   currentShop.phone = phone;
@@ -1004,15 +799,10 @@ async function saveRates(){
 
   toast('सेव हो रहा है...');
   const ok = await saveShopToFirebase(currentShopId, currentShop);
-  if(ok){
-    toast('सेव हो गया ✓' + (lockedCount ? ' • 🔒 '+lockedCount+' फिक्स' : ''));
-    renderCrops(); renderShopInfo();
-  } else {
-    toast('सेव नहीं हुआ — फिर try करें');
-  }
+  if(ok){ toast('सेव हो गया ✓' + (lockedCount ? ' • 🔒 '+lockedCount+' फिक्स' : '')); renderCrops(); renderShopInfo(); }
+  else { toast('सेव नहीं हुआ — फिर try करें'); }
 }
 
-/* ═══════════════ REGISTER NEW SHOP ═══════════════ */
 async function registerShop(){
   const name = $('regShopName').value.trim();
   const owner = $('regOwner').value.trim();
@@ -1022,59 +812,31 @@ async function registerShop(){
   const pin = $('regPin').value.trim();
   const pin2 = $('regPin2').value.trim();
 
-  if(!name || !owner || !phone || !address || !pin){
-    $('regErr').textContent = 'सारी जानकारी भरें';
-    return;
-  }
+  if(!name || !owner || !phone || !address || !pin){ $('regErr').textContent = 'सारी जानकारी भरें'; return; }
   if(phone.length !== 10){ $('regErr').textContent = 'मोबाइल 10 अंकों का होना चाहिए'; return; }
   if(!/^\d{4,6}$/.test(pin)){ $('regErr').textContent = 'PIN 4-6 अंकों का होना चाहिए'; return; }
   if(pin !== pin2){ $('regErr').textContent = 'दोनों PIN मेल नहीं खा रहे'; return; }
 
   let slug = slugify(name);
   if(!slug){ $('regErr').textContent = 'दुकान का नाम गलत है'; return; }
-
-  /* Check if slug already exists */
   const existing = await loadShopFromFirebase(slug);
-  if(existing){
-    slug = slug + '-' + Date.now().toString().slice(-4);
-  }
+  if(existing){ slug = slug + '-' + Date.now().toString().slice(-4); }
 
-  const shop = {
-    slug, name, owner, phone, whatsapp, address,
-    pinHash: await hashString(pin),
-    crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)),
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
+  const shop = { slug, name, owner, phone, whatsapp, address, pinHash: await hashString(pin), crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)), createdAt: Date.now(), updatedAt: Date.now() };
 
   toast('रजिस्टर हो रहा है...');
   const ok = await saveShopToFirebase(slug, shop);
-  if(!ok){
-    $('regErr').textContent = 'रजिस्टर नहीं हुआ — फिर try करें';
-    return;
-  }
+  if(!ok){ $('regErr').textContent = 'रजिस्टर नहीं हुआ — फिर try करें'; return; }
 
   const url = location.origin + location.pathname + '?shop=' + slug;
   $('successUrl').textContent = url;
   closeModal('registerModal');
   openModal('successModal');
-
-  /* Clear form */
   ['regShopName','regOwner','regPhone','regWhatsapp','regAddress','regPin','regPin2'].forEach(id => $(id).value='');
   $('regErr').textContent = '';
 }
 
-/* ═══════════════ SPEECH ═══════════════ */
-function getBestVoice(langCode){
-  if(!('speechSynthesis' in window)) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if(!voices.length) return null;
-  const prefix = langCode.split('-')[0];
-  return voices.find(v => v.lang === langCode)
-      || voices.find(v => v.lang.startsWith(prefix))
-      || voices.find(v => v.lang.startsWith('hi'))
-      || null;
-}
+function getBestVoice(langCode){ if(!('speechSynthesis' in window)) return null; const voices = window.speechSynthesis.getVoices(); if(!voices.length) return null; const prefix = langCode.split('-')[0]; return voices.find(v => v.lang === langCode) || voices.find(v => v.lang.startsWith(prefix)) || voices.find(v => v.lang.startsWith('hi')) || null; }
 
 function buildSpeechText(){
   const lang = currentLang().code;
@@ -1082,56 +844,32 @@ function buildSpeechText(){
     const name = cropName(c);
     const priceText = money(c.price);
     const unitText = c.unit==='kg'
-      ? {hi:'प्रति किलो',en:'per kilogram',mr:'प्रति किलो',pa:'ਪ੍ਰਤੀ ਕਿਲੋ',gu:'પ્રતિ કિલો',bn:'প্রতি কেজি',ta:'கிலோவுக்கு',te:'కిలోకు'}[lang]
-      : {hi:'प्रति क्विंटल',en:'per quintal',mr:'प्रति क्विंटल',pa:'ਪ੍ਰਤੀ ਕੁਇੰਟਲ',gu:'પ્રતિ ક્વિન્ટલ',bn:'প্রতি কুইন্টাল',ta:'குவிண்டாலுக்கு',te:'క్వింటాల్‌కు'}[lang];
+      ? {hi:'प्रति किलो',en:'per kilogram',mr:'प्रति किलो',pa:'ਪ੍ਰਤੀ ਕਿਲੋ',gu:'પ્રતિ કિલો',bn:'প্রতি কেজি',ta:'கிலோவுக்கு',te:'కిలోకు'}[lang] || 'per kilogram'
+      : {hi:'प्रति क्विंटल',en:'per quintal',mr:'प्रति क्विंटल',pa:'ਪ੍ਰਤੀ ਕੁਇੰਟਲ',gu:'પ્રતિ ક્વિન્ટલ',bn:'প্রতি কুইন্টাল',ta:'குவிண்டாலுக்கு',te:'క్వింటాల్‌కు'}[lang] || 'per quintal';
     return name + ' — ' + priceText + ', ' + unitText;
   }).join('. ');
 }
 
 function updateSpeakBtn(){
-  const btn = $('speakBtn');
-  const label = $('speakBtnLabel');
-  if(speechPlaying){
-    btn.firstChild.nodeValue = '⏹️ ';
-    label.textContent = 'रोकें';
-    btn.classList.add('btn-danger','speaking');
-    btn.classList.remove('btn-ghost');
-  } else {
-    btn.firstChild.nodeValue = '🔊 ';
-    label.textContent = 'सुनें';
-    btn.classList.remove('btn-danger','speaking');
-    btn.classList.add('btn-ghost');
-  }
+  const btn = $('speakBtn'); const label = $('speakBtnLabel');
+  if(speechPlaying){ btn.firstChild.nodeValue = '⏹️ '; label.textContent = 'रोकें'; btn.classList.add('btn-danger','speaking'); btn.classList.remove('btn-ghost'); }
+  else { btn.firstChild.nodeValue = '🔊 '; label.textContent = 'सुनें'; btn.classList.remove('btn-danger','speaking'); btn.classList.add('btn-ghost'); }
 }
 
-function stopSpeech(){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  speechPlaying = false;
-  updateSpeakBtn();
-}
-
-/* ═══════════════ MODALS ═══════════════ */
+function stopSpeech(){ if(!('speechSynthesis' in window)) return; window.speechSynthesis.cancel(); speechPlaying = false; updateSpeakBtn(); }
 function openModal(id){ $(id).classList.remove('hidden'); }
 function closeModal(id){ $(id).classList.add('hidden'); }
 
-/* ═══════════════ EVENT LISTENERS ═══════════════ */
 $('langSelect').innerHTML = LANGS.map(l => '<option value="'+l.code+'" '+(l.code===state.lang?'selected':'')+'>'+l.label+'</option>').join('');
 $('langSelect').addEventListener('change', e => { state.lang = e.target.value; localStorage.setItem(LS_LANG, state.lang); renderAll(); });
 $('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderCrops(); });
-$('categoryChips').addEventListener('click', e => {
-  const chip = e.target.closest('.chip'); if(!chip) return;
-  filterCat = chip.dataset.cat; renderChips(); renderCrops();
-});
+$('categoryChips').addEventListener('click', e => { const chip = e.target.closest('.chip'); if(!chip) return; filterCat = chip.dataset.cat; renderChips(); renderCrops(); });
 $('fontUp').addEventListener('click', () => { state.fs = Math.min(24, state.fs+1); localStorage.setItem(LS_FS, state.fs); document.documentElement.style.setProperty('--fs', state.fs+'px'); });
 $('fontDown').addEventListener('click', () => { state.fs = Math.max(13, state.fs-1); localStorage.setItem(LS_FS, state.fs); document.documentElement.style.setProperty('--fs', state.fs+'px'); });
 $('hcBtn').addEventListener('click', () => { state.hc = !state.hc; localStorage.setItem(LS_HC, state.hc?'1':'0'); document.body.classList.toggle('hc', state.hc); $('hcBtn').classList.toggle('on', state.hc); });
-
 ['calcCrop','calcQty','calcUnit'].forEach(id => { $(id).addEventListener('input', calcUpdate); $(id).addEventListener('change', calcUpdate); });
-
 document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
 document.querySelectorAll('.backdrop').forEach(bd => bd.addEventListener('click', e => { if(e.target === bd) bd.classList.add('hidden'); }));
-
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -1142,27 +880,16 @@ document.querySelectorAll('.tab').forEach(tab => {
     if(w==='leads') renderLeads();
   });
 });
-
-$('ownerLoginBtn').addEventListener('click', () => {
-  $('pinInput').value = ''; $('pinErr').textContent = '';
-  openModal('pinModal');
-  setTimeout(() => $('pinInput').focus(), 100);
-});
+$('ownerLoginBtn').addEventListener('click', () => { $('pinInput').value = ''; $('pinErr').textContent = ''; openModal('pinModal'); setTimeout(() => $('pinInput').focus(), 100); });
 $('pinSubmit').addEventListener('click', tryLogin);
 $('pinInput').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
 $('ownerLogoutBtn').addEventListener('click', doLogout);
-$('openAdminFromRibbon').addEventListener('click', () => {
-  if(!isOwner) return;
-  renderEditList(); renderLeads(); fillAdminForm(); applyRole();
-  openModal('adminModal');
-});
-
+$('openAdminFromRibbon').addEventListener('click', () => { if(!isOwner) return; renderEditList(); renderLeads(); fillAdminForm(); applyRole(); openModal('adminModal'); });
 $('saveBtn').addEventListener('click', saveRates);
 
 $('rateEditList').addEventListener('click', async e => {
   if(!isOwner) return;
-  const btn = e.target.closest('[data-del]');
-  if(!btn) return;
+  const btn = e.target.closest('[data-del]'); if(!btn) return;
   if(!confirm('यह फसल हट जाएगी। पक्का?')) return;
   currentShop.crops = currentShop.crops.filter(c => c.id !== btn.dataset.del);
   renderEditList(); renderCrops(); renderCalc();
@@ -1178,12 +905,7 @@ $('addCropBtn').addEventListener('click', async () => {
   if(!name || isNaN(price) || price<0){ toast('नाम और भाव भरें'); return; }
   const unit = $('newCropUnit').value;
   const names = {}; LANGS.forEach(l => names[l.code] = name);
-  currentShop.crops.push({
-    id: 'custom_' + Date.now(), emoji: '🌿', cat:'cereal', unit,
-    price: round2(price), prev: round2(price), base: round2(price),
-    lockedUntil: Date.now() + LOCK_DURATION,
-    names
-  });
+  currentShop.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat:'cereal', unit, price: round2(price), prev: round2(price), base: round2(price), lockedUntil: Date.now() + LOCK_DURATION, names });
   $('newCropName').value = ''; $('newCropPrice').value = '';
   renderEditList(); renderCrops(); renderCalc();
   window._lastLocalSave = Date.now();
@@ -1191,73 +913,34 @@ $('addCropBtn').addEventListener('click', async () => {
   toast('फसल जुड़ गई 🔒');
 });
 
-$('clearLeads').addEventListener('click', () => {
-  if(!isOwner) return;
-  if(!confirm('सब पूछताछ हट जाएँगी?')) return;
-  localStorage.removeItem(LS_LEADS + currentShopId);
-  renderLeads();
-});
-
-/* Register shop */
-$('registerShopBtn').addEventListener('click', () => {
-  ['regShopName','regOwner','regPhone','regWhatsapp','regAddress','regPin','regPin2'].forEach(id => $(id).value='');
-  $('regErr').textContent = '';
-  openModal('registerModal');
-});
+$('clearLeads').addEventListener('click', () => { if(!isOwner) return; if(!confirm('सब पूछताछ हट जाएँगी?')) return; localStorage.removeItem(LS_LEADS + currentShopId); renderLeads(); });
+$('registerShopBtn').addEventListener('click', () => { ['regShopName','regOwner','regPhone','regWhatsapp','regAddress','regPin','regPin2'].forEach(id => $(id).value=''); $('regErr').textContent = ''; openModal('registerModal'); });
 $('registerSubmit').addEventListener('click', registerShop);
-$('copySuccessUrl').addEventListener('click', () => {
-  navigator.clipboard.writeText($('successUrl').textContent);
-  toast('लिंक कॉपी हो गया ✓');
-});
-$('goToMyShop').addEventListener('click', () => {
-  const url = $('successUrl').textContent;
-  location.href = url;
-});
+$('copySuccessUrl').addEventListener('click', () => { navigator.clipboard.writeText($('successUrl').textContent); toast('लिंक कॉपी हो गया ✓'); });
+$('goToMyShop').addEventListener('click', () => { location.href = $('successUrl').textContent; });
 
-/* Sync button */
 $('syncBtn').addEventListener('click', async () => {
   if(!isOwner) return;
   toast('Firebase से load हो रहा है...');
   const shop = await loadShopFromFirebase(currentShopId);
-  if(shop){
-    currentShop = shop;
-    renderAll();
-    if(isOwner) renderEditList();
-    toast('अपडेट हो गया ✓');
-  } else {
-    toast('डेटा नहीं मिला');
-  }
+  if(shop){ currentShop = shop; renderAll(); if(isOwner) renderEditList(); toast('अपडेट हो गया ✓'); }
+  else { toast('डेटा नहीं मिला'); }
 });
 
-/* QR */
-$('qrBtn').addEventListener('click', () => {
-  const url = location.href.split('#')[0];
-  $('qrLink').textContent = url;
-  $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data=' + encodeURIComponent(url);
-  openModal('qrModal');
-});
-$('copyLinkBtn').addEventListener('click', () => {
-  navigator.clipboard.writeText(location.href.split('#')[0]);
-  toast('लिंक कॉपी हो गया ✓');
-});
+$('qrBtn').addEventListener('click', () => { const url = location.href.split('#')[0]; $('qrLink').textContent = url; $('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=8&data=' + encodeURIComponent(url); openModal('qrModal'); });
+$('copyLinkBtn').addEventListener('click', () => { navigator.clipboard.writeText(location.href.split('#')[0]); toast('लिंक कॉपी हो गया ✓'); });
 
-/* Share on WhatsApp */
 $('shareBtn').addEventListener('click', () => {
   if(!currentShop) return;
   const lines = ['*' + currentShop.name + '*', 'आज के भाव — ' + formatDate(new Date()), ''];
-  (currentShop.crops||[]).forEach(c => {
-    const lock = isCropLocked(c) ? ' 🔒' : '';
-    lines.push((c.emoji||'🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + (c.unit==='kg'?'/किलो':'/क्विंटल') + lock);
-  });
+  (currentShop.crops||[]).forEach(c => { const lock = isCropLocked(c) ? ' 🔒' : ''; lines.push((c.emoji||'🌾') + ' ' + cropName(c) + ' — ' + money(c.price) + ' ' + (c.unit==='kg'?'/किलो':'/क्विंटल') + lock); });
   lines.push('', '👤 ' + currentShop.owner, '📞 ' + currentShop.phone, '📍 ' + currentShop.address);
-  const url = location.href.split('#')[0];
-  lines.push('', '🔗 ' + url);
+  lines.push('', '🔗 ' + location.href.split('#')[0]);
   window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
 });
 
 $('printBtn').addEventListener('click', () => window.print());
 
-/* Speak */
 $('speakBtn').addEventListener('click', () => {
   if(!('speechSynthesis' in window)){ toast('आवाज़ नहीं चल सकती'); return; }
   if(speechPlaying){ stopSpeech(); return; }
@@ -1278,37 +961,19 @@ $('speakBtn').addEventListener('click', () => {
 });
 window.addEventListener('beforeunload', stopSpeech);
 document.addEventListener('visibilitychange', () => { if(document.hidden && speechPlaying) stopSpeech(); });
-(function warmUpVoices(){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.getVoices();
-  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-})();
+(function warmUpVoices(){ if(!('speechSynthesis' in window)) return; window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); })();
 
-/* Voice search */
 (function setupVoice(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ $('micBtn').style.opacity = '.45'; return; }
-  recognition = new SR();
-  recognition.continuous = false;
-  recognition.interimResults = false;
+  recognition = new SR(); recognition.continuous = false; recognition.interimResults = false;
   recognition.onstart = () => { micListening = true; $('micBtn').classList.add('listening'); toast('सुन रहे हैं… बोलिए'); };
-  recognition.onresult = ev => {
-    const text = ev.results[0][0].transcript.slice(0,40);
-    $('searchInput').value = text;
-    searchQuery = text;
-    renderCrops();
-  };
+  recognition.onresult = ev => { const text = ev.results[0][0].transcript.slice(0,40); $('searchInput').value = text; searchQuery = text; renderCrops(); };
   recognition.onerror = () => { micListening = false; $('micBtn').classList.remove('listening'); };
   recognition.onend = () => { micListening = false; $('micBtn').classList.remove('listening'); };
 })();
-$('micBtn').addEventListener('click', () => {
-  if(!recognition){ toast('आवाज़ से खोज नहीं हो सकती'); return; }
-  if(micListening){ recognition.stop(); return; }
-  recognition.lang = currentLang().speech;
-  try { recognition.start(); } catch(e) {}
-});
+$('micBtn').addEventListener('click', () => { if(!recognition){ toast('आवाज़ से खोज नहीं हो सकती'); return; } if(micListening){ recognition.stop(); return; } recognition.lang = currentLang().speech; try { recognition.start(); } catch(e) {} });
 
-/* Enquiry submit */
 $('enqSubmit').addEventListener('click', () => {
   const name = $('enqName').value.trim();
   const phone = $('enqPhone').value.replace(/\D/g,'');
@@ -1321,34 +986,22 @@ $('enqSubmit').addEventListener('click', () => {
   const crop = (currentShop.crops||[]).find(c => c.id === cropId);
   const cropLabel = crop ? cropName(crop) : cropId;
   let est = 0;
-  if(crop){
-    const qtyKg = qty * 100;
-    est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price;
-    est = Math.round(est);
-  }
+  if(crop){ const qtyKg = qty * 100; est = crop.unit === 'kg' ? qtyKg * crop.price : qty * crop.price; est = Math.round(est); }
   const text = '*नई पूछताछ — ' + currentShop.name + '*\n\n👤 नाम: ' + name + '\n📞 मोबाइल: ' + phone + '\n🌾 फसल: ' + cropLabel + '\n⚖️ मात्रा: ' + qty + ' क्विंटल\n' + (est ? '💰 अनुमानित मूल्य: ₹' + est.toLocaleString('en-IN') + '\n' : '') + (msg ? '📝 जानकारी: ' + msg + '\n' : '') + '\n_भेजा गया: ' + formatDate(new Date()) + ' ' + formatTime(new Date()) + '_';
-
-  /* Save to local storage for admin panel */
   const leadsKey = LS_LEADS + currentShopId;
   const leads = JSON.parse(localStorage.getItem(leadsKey) || '[]');
   leads.unshift({ name, phone, crop: cropLabel, qty, msg, ts: Date.now() });
   if(leads.length > 200) leads.length = 200;
   localStorage.setItem(leadsKey, JSON.stringify(leads));
-
   const waDigits = String(currentShop.whatsapp || currentShop.phone).replace(/\D/g,'');
   const target = waDigits.length >= 10 ? '91' + waDigits.slice(-10) : '';
-  const url = target
-    ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text)
-    : 'https://wa.me/?text=' + encodeURIComponent(text);
+  const url = target ? 'https://wa.me/' + target + '?text=' + encodeURIComponent(text) : 'https://wa.me/?text=' + encodeURIComponent(text);
   toast('व्हाट्सएप खुल रहा है…');
   window.open(url, '_blank', 'noopener');
   $('enqQty').value = ''; $('enqMsg').value = '';
 });
 
-/* ═══════════════ INIT ═══════════════ */
-(async function init(){
-  await initShop();
-})();
+(async function init(){ await initShop(); })();
 </script>
 
 </body>
