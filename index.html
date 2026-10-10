@@ -100,7 +100,7 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--muted);background:var(--card);border-radius:var(--radius);border:2px dashed var(--border)}
 .empty .big{font-size:2.6rem;display:block;margin-bottom:10px}
 .empty .sugg{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.empty .sugg button{background:#dcfce7;color:#15803d;padding:8px 14px;border-radius:999px;font-weight:700;font-size:.85rem}
+.empty .sugg button{background:#dcfce7;color:#15803d;padding:8px 14px;border-radius:999px;font-weight:700;font-size:.85rem;cursor:pointer}
 .sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
 section.band{padding:28px 0}
 section.band.alt{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -335,7 +335,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
       <button class="owner-link purple" id="registerShopBtn">➕ नई दुकान जोड़ें</button>
       <button class="owner-link hidden" id="ownerLogoutBtn">🚪 लॉगआउट</button>
     </div>
-    <div style="margin-top:14px;font-size:.72rem;opacity:.6">v16.2 • Firebase + Live Search</div>
+    <div style="margin-top:14px;font-size:.72rem;opacity:.6">v16.3 • Firebase + Live Search</div>
   </div>
 </footer>
 
@@ -573,7 +573,7 @@ async function hashString(str){ const buf = await crypto.subtle.digest('SHA-256'
 function isCropLocked(c){ return !!(c.lockedUntil && c.lockedUntil > Date.now()); }
 function getLockRemaining(c){ if(!isCropLocked(c)) return null; const ms = c.lockedUntil - Date.now(); const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000); return {text:h+'h '+m+'m'}; }
 
-/* ⚡ LIVE SEARCH with scoring */
+/* ⚡ LIVE SEARCH */
 function normalizeSearch(str){
   return String(str||'').toLowerCase().replace(/[^a-z0-9\u0900-\u097F]/g, '').trim();
 }
@@ -634,18 +634,46 @@ async function saveShopToFirebase(slug, data){ try{ data.updatedAt = Date.now();
 async function listAllShops(){ try{ const snap = await db.collection('shops').limit(100).get(); const list=[]; snap.forEach(d=>list.push({slug:d.id, ...d.data()})); return list; }catch(e){ console.warn(e); return []; } }
 function listenToShop(slug, cb){ if(unsubShop) unsubShop(); unsubShop = db.collection('shops').doc(slug).onSnapshot(doc => { if(doc.exists) cb(doc.data()); }, err => console.warn(err)); }
 
+/* ⚡ Migration: पुराने crops में searchKeys add करो */
+async function migrateCropsWithSearchKeys(shop){
+  if(!shop || !Array.isArray(shop.crops)) return shop;
+  let needsUpdate = false;
+  shop.crops = shop.crops.map(crop => {
+    const defaultCrop = DEFAULT_CROPS.find(d => d.id === crop.id);
+    if(defaultCrop && (!crop.searchKeys || crop.searchKeys.length === 0)){
+      needsUpdate = true;
+      console.log('✅ Adding searchKeys to:', crop.id);
+      return Object.assign({}, crop, { searchKeys: defaultCrop.searchKeys });
+    }
+    return crop;
+  });
+  if(needsUpdate){
+    console.log('✅ Migration complete — saving to Firebase');
+    await saveShopToFirebase(shop.slug, shop);
+  }
+  return shop;
+}
+
 async function initShop(){
   const params = new URLSearchParams(location.search);
   let slug = params.get('shop') || localStorage.getItem(LS_SHOP) || DEFAULT_SHOP_SLUG;
   let shop = await loadShopFromFirebase(slug);
+
   if(!shop && slug === DEFAULT_SHOP_SLUG){
     shop = { slug, name:'नवीन मंडी खागा फतेहपुर', owner:'dinesh kesharwani', phone:'7380849700', whatsapp:'7380849700', address:'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)', pinHash: await hashString('2008'), crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)), createdAt: Date.now(), updatedAt: Date.now() };
     await saveShopToFirebase(slug, shop);
   }
+
+  /* ⚡ पुराने data को migrate करो */
+  if(shop){
+    shop = await migrateCropsWithSearchKeys(shop);
+  }
+
   if(!shop){
     $('loadingScreen').innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:3rem">😕</div><h2 style="margin-top:14px">दुकान नहीं मिली</h2><p style="margin-top:10px;opacity:.85">यह लिंक गलत है।</p></div>';
     return;
   }
+
   currentShop = shop;
   currentShopId = slug;
   localStorage.setItem(LS_SHOP, slug);
@@ -991,7 +1019,7 @@ $('syncBtn').addEventListener('click', async () => {
   if(!isOwner) return;
   toast('Firebase से load हो रहा है...');
   const shop = await loadShopFromFirebase(currentShopId);
-  if(shop){ currentShop = shop; renderAll(); if(isOwner) renderEditList(); toast('अपडेट हो गया ✓'); }
+  if(shop){ currentShop = await migrateCropsWithSearchKeys(shop); renderAll(); if(isOwner) renderEditList(); toast('अपडेट हो गया ✓'); }
   else { toast('डेटा नहीं मिला'); }
 });
 
