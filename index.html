@@ -66,6 +66,7 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 @keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
 .toolbar{padding:20px 0 6px}
 .search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:8px 12px 8px 16px}
+.search-box:focus-within{border-color:var(--green-mid);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
 .search-box input{border:none;outline:none;width:100%;background:transparent;font-size:1rem;padding:6px 0}
 .mic-btn{width:40px;height:40px;flex:0 0 40px;border-radius:11px;background:var(--bg);display:grid;place-items:center;font-size:1.05rem;border:1px solid var(--border)}
 .mic-btn.listening{background:#fee2e2;border-color:#fca5a5;animation:pulse 1.2s infinite}
@@ -98,6 +99,8 @@ p.secSub{font-size:.9rem;color:var(--muted);font-weight:600;margin-bottom:18px}
 .change-line.locked{color:#92400e}
 .empty{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--muted);background:var(--card);border-radius:var(--radius);border:2px dashed var(--border)}
 .empty .big{font-size:2.6rem;display:block;margin-bottom:10px}
+.empty .sugg{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.empty .sugg button{background:#dcfce7;color:#15803d;padding:8px 14px;border-radius:999px;font-weight:700;font-size:.85rem}
 .sec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
 section.band{padding:28px 0}
 section.band.alt{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -261,7 +264,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
 <div class="wrap toolbar">
   <div class="search-box">
     <span>🔍</span>
-    <input type="search" id="searchInput" maxlength="40" placeholder="फसल खोजें…">
+    <input type="search" id="searchInput" maxlength="40" placeholder="फसल खोजें… (g, ge, gehu)" autocomplete="off">
     <button class="mic-btn" id="micBtn">🎤</button>
   </div>
   <div class="chips" id="categoryChips"></div>
@@ -332,7 +335,7 @@ section.band.alt{background:var(--card);border-top:1px solid var(--border);borde
       <button class="owner-link purple" id="registerShopBtn">➕ नई दुकान जोड़ें</button>
       <button class="owner-link hidden" id="ownerLogoutBtn">🚪 लॉगआउट</button>
     </div>
-    <div style="margin-top:14px;font-size:.72rem;opacity:.6">v16.1 • Firebase</div>
+    <div style="margin-top:14px;font-size:.72rem;opacity:.6">v16.2 • Firebase + Live Search</div>
   </div>
 </footer>
 
@@ -483,26 +486,40 @@ const LOCK_DURATION = 24 * 60 * 60 * 1000;
 
 const DEFAULT_CROPS = [
   { id:'wheat', emoji:'🌾', cat:'cereal', unit:'kg', price:24.50, prev:24.20, base:24.50, lockedUntil:0,
+    searchKeys:['g','ge','geh','gehu','gehun','gehoon','wheat','गेहूं','गेहू','gahu','gahoon','kanak','whe','gehuu'],
     names:{hi:'गेहूं',en:'Wheat',mr:'गहू',pa:'ਕਣਕ',gu:'ઘઉં',bn:'গম',ta:'கோதுமை',te:'గోధుమ'} },
   { id:'paddy', emoji:'🌾', cat:'cereal', unit:'kg', price:23.00, prev:23.10, base:23.00, lockedUntil:0,
+    searchKeys:['d','dh','dha','dhan','dhaan','paddy','rice','chawal','chaval','धान','चावल','dhaanya'],
     names:{hi:'धान (मोटा)',en:'Paddy',mr:'भात',pa:'ਝੋਨਾ',gu:'ડાંગર',bn:'ধান',ta:'நெல்',te:'వరి'} },
   { id:'maize', emoji:'🌽', cat:'cereal', unit:'kg', price:21.20, prev:21.20, base:21.20, lockedUntil:0,
+    searchKeys:['m','ma','mak','makka','makai','makki','maize','corn','मक्का','मक्की'],
     names:{hi:'मक्का',en:'Maize',mr:'मका',pa:'ਮੱਕੀ',gu:'મકાઈ',bn:'ভুট্টা',ta:'மக்காச்சோளம்',te:'మొక్కజొన్న'} },
   { id:'bajra', emoji:'🌾', cat:'millet', unit:'kg', price:25.00, prev:24.60, base:25.00, lockedUntil:0,
+    searchKeys:['b','ba','baj','bajra','bajri','bajara','pearl millet','बाजरा','बाजरी'],
     names:{hi:'बाजरा',en:'Pearl Millet (Bajra)',mr:'बाजरी',pa:'ਬਾਜਰਾ',gu:'બાજરી',bn:'বাজরা',ta:'கம்பு',te:'సజ్జలు'} },
   { id:'jowar', emoji:'🌾', cat:'millet', unit:'kg', price:29.00, prev:29.00, base:29.00, lockedUntil:0,
+    searchKeys:['j','jo','jow','jowar','jawar','jwar','sorghum','ज्वार','जवार','jwari'],
     names:{hi:'ज्वार',en:'Sorghum (Jowar)',mr:'ज्वारी',pa:'ਜਵਾਰ',gu:'જુવાર',bn:'জোয়ার',ta:'சோளம்',te:'జొన్నలు'} },
   { id:'ragi', emoji:'🌾', cat:'millet', unit:'kg', price:32.00, prev:31.40, base:32.00, lockedUntil:0,
+    searchKeys:['r','ra','rag','ragi','mandua','manduva','nachni','finger millet','रागी','मंडुआ'],
     names:{hi:'रागी (मंडुआ)',en:'Finger Millet (Ragi)',mr:'नाचणी',pa:'ਰਾਗੀ',gu:'રાગી',bn:'রাগি',ta:'ராகி',te:'రాగి'} },
+  { id:'kangni', emoji:'🌾', cat:'millet', unit:'kg', price:35.00, prev:35.00, base:35.00, lockedUntil:0,
+    searchKeys:['k','ka','kan','kangni','kakun','kangani','foxtail millet','कंगनी','काकुन'],
+    names:{hi:'कंगनी (काकुन)',en:'Foxtail Millet',mr:'कांग',pa:'ਕੰਗਣੀ',gu:'કાંગ',bn:'কাঙ্গনি',ta:'தினை',te:'కొర్రలు'} },
   { id:'chana', emoji:'🫘', cat:'pulse', unit:'kg', price:54.00, prev:53.50, base:54.00, lockedUntil:0,
+    searchKeys:['c','ch','cha','chan','chana','channa','chane','gram','chickpea','चना','छोला','kabuli'],
     names:{hi:'चना',en:'Chickpea (Chana)',mr:'हरभरा',pa:'ਛੋਲੇ',gu:'ચણા',bn:'ছোলা',ta:'கொண்டைக்கடலை',te:'శనగ'} },
   { id:'tur', emoji:'🫘', cat:'pulse', unit:'kg', price:70.00, prev:71.50, base:70.00, lockedUntil:0,
+    searchKeys:['t','tu','tur','toor','arhar','arhal','pigeon pea','तूर','अरहर','तुअर','toor dal'],
     names:{hi:'अरहर (तूर)',en:'Pigeon Pea (Tur)',mr:'तूर',pa:'ਅਰਹਰ',gu:'તુવેર',bn:'অড়হর',ta:'துவரை',te:'కంది'} },
   { id:'moong', emoji:'🫘', cat:'pulse', unit:'kg', price:75.00, prev:75.00, base:75.00, lockedUntil:0,
+    searchKeys:['m','mo','moo','moon','moong','mung','mug','green gram','मूंग','मूंग दाल'],
     names:{hi:'मूंग',en:'Green Gram (Moong)',mr:'मूग',pa:'ਮੂੰਗ',gu:'મગ',bn:'মুগ',ta:'பாசிப்பயறு',te:'పెసర'} },
   { id:'urad', emoji:'🫘', cat:'pulse', unit:'kg', price:72.00, prev:70.50, base:72.00, lockedUntil:0,
+    searchKeys:['u','ur','ura','urad','udad','black gram','उड़द','उड़द दाल','urid'],
     names:{hi:'उड़द',en:'Black Gram (Urad)',mr:'उडीद',pa:'ਮਾਸ਼',gu:'અડદ',bn:'মাসকলাই',ta:'உளுந்து',te:'మినుము'} },
   { id:'masoor', emoji:'🫘', cat:'pulse', unit:'kg', price:60.00, prev:60.00, base:60.00, lockedUntil:0,
+    searchKeys:['m','ma','mas','maso','masoor','masur','masar','lentil','मसूर','मसूर दाल'],
     names:{hi:'मसूर',en:'Lentil (Masoor)',mr:'मसूर',pa:'ਮਸਰ',gu:'મસૂર',bn:'মসুর',ta:'மைசூர்ப் பருப்பு',te:'మసూర్'} }
 ];
 
@@ -556,6 +573,62 @@ async function hashString(str){ const buf = await crypto.subtle.digest('SHA-256'
 function isCropLocked(c){ return !!(c.lockedUntil && c.lockedUntil > Date.now()); }
 function getLockRemaining(c){ if(!isCropLocked(c)) return null; const ms = c.lockedUntil - Date.now(); const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000); return {text:h+'h '+m+'m'}; }
 
+/* ⚡ LIVE SEARCH with scoring */
+function normalizeSearch(str){
+  return String(str||'').toLowerCase().replace(/[^a-z0-9\u0900-\u097F]/g, '').trim();
+}
+
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  if(m === 0) return n;
+  if(n === 0) return m;
+  const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));
+  for(let i = 0; i <= m; i++) dp[i][0] = i;
+  for(let j = 0; j <= n; j++) dp[0][j] = j;
+  for(let i = 1; i <= m; i++){
+    for(let j = 1; j <= n; j++){
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function getMatchScore(crop, q){
+  const words = [
+    ...Object.values(crop.names || {}),
+    crop.id,
+    ...(crop.searchKeys || [])
+  ].map(w => normalizeSearch(w)).filter(Boolean);
+  let bestScore = 0;
+  words.forEach(word => {
+    let score = 0;
+    if(word === q) score = 100;
+    else if(word.startsWith(q)) score = 80 - (q.length * 2);
+    else if(word.includes(q)) score = 60 - q.length;
+    else if(q.length >= 2){
+      const dist = levenshtein(word.slice(0, Math.max(q.length + 2, 4)), q);
+      if(dist <= 2) score = 40 - (dist * 5);
+    }
+    if(score > bestScore) bestScore = score;
+  });
+  return bestScore;
+}
+
+function visibleCrops(){
+  if(!currentShop || !Array.isArray(currentShop.crops)) return [];
+  const rawQ = searchQuery.trim().toLowerCase();
+  if(!rawQ) return currentShop.crops.filter(c => filterCat === 'all' || c.cat === filterCat);
+  const q = normalizeSearch(rawQ);
+  if(!q) return currentShop.crops.filter(c => filterCat === 'all' || c.cat === filterCat);
+  const scored = currentShop.crops
+    .filter(c => filterCat === 'all' || c.cat === filterCat)
+    .map(c => ({ crop: c, score: getMatchScore(c, q) }))
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+  return scored.map(item => item.crop);
+}
+
+/* Firebase */
 async function loadShopFromFirebase(slug){ try{ const doc = await db.collection('shops').doc(slug).get(); return doc.exists ? doc.data() : null; }catch(e){ console.warn(e); return null; } }
 async function saveShopToFirebase(slug, data){ try{ data.updatedAt = Date.now(); await db.collection('shops').doc(slug).set(data, { merge: true }); return true; }catch(e){ console.warn(e); return false; } }
 async function listAllShops(){ try{ const snap = await db.collection('shops').limit(100).get(); const list=[]; snap.forEach(d=>list.push({slug:d.id, ...d.data()})); return list; }catch(e){ console.warn(e); return []; } }
@@ -565,23 +638,19 @@ async function initShop(){
   const params = new URLSearchParams(location.search);
   let slug = params.get('shop') || localStorage.getItem(LS_SHOP) || DEFAULT_SHOP_SLUG;
   let shop = await loadShopFromFirebase(slug);
-
   if(!shop && slug === DEFAULT_SHOP_SLUG){
     shop = { slug, name:'नवीन मंडी खागा फतेहपुर', owner:'dinesh kesharwani', phone:'7380849700', whatsapp:'7380849700', address:'नवीन मंडी, खागा, फतेहपुर (उत्तर प्रदेश)', pinHash: await hashString('2008'), crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)), createdAt: Date.now(), updatedAt: Date.now() };
     await saveShopToFirebase(slug, shop);
   }
-
   if(!shop){
     $('loadingScreen').innerHTML = '<div style="text-align:center;padding:30px"><div style="font-size:3rem">😕</div><h2 style="margin-top:14px">दुकान नहीं मिली</h2><p style="margin-top:10px;opacity:.85">यह लिंक गलत है।</p></div>';
     return;
   }
-
   currentShop = shop;
   currentShopId = slug;
   localStorage.setItem(LS_SHOP, slug);
   $('loadingScreen').classList.add('hidden');
   renderAll();
-
   listenToShop(slug, data => {
     if(!currentShop) return;
     if(Date.now() - (window._lastLocalSave || 0) < 5000) return;
@@ -589,7 +658,6 @@ async function initShop(){
     renderCrops(); renderShopInfo();
     if(isOwner) renderEditList();
   });
-
   document.title = shop.name + ' | किसान मंडी भाव';
 }
 
@@ -627,21 +695,25 @@ function renderChips(){
   $('categoryChips').innerHTML = chips.map(c => '<button class="chip ' + (filterCat===c.k?'active':'') + '" data-cat="'+c.k+'">' + esc(c.label) + '</button>').join('');
 }
 
-function visibleCrops(){
-  if(!currentShop || !Array.isArray(currentShop.crops)) return [];
-  const q = searchQuery.trim().toLowerCase();
-  return currentShop.crops.filter(c => {
-    if(filterCat !== 'all' && c.cat !== filterCat) return false;
-    if(!q) return true;
-    const hay = Object.values(c.names||{}).join(' ').toLowerCase() + ' ' + c.id;
-    return hay.includes(q);
-  });
-}
-
 function renderCrops(){
   const list = visibleCrops();
   const grid = $('ratesGrid');
-  if(!list.length){ grid.innerHTML = '<div class="empty"><span class="big">🌱</span>कोई फसल नहीं मिली</div>'; return; }
+  if(!list.length){
+    const q = searchQuery.trim();
+    grid.innerHTML = `
+      <div class="empty">
+        <span class="big">🌱</span>
+        <div><b>"${esc(q)}"</b> नहीं मिला</div>
+        <div style="margin-top:14px;font-size:.85rem;color:var(--muted)">शायद आप ये खोज रहे हैं:</div>
+        <div class="sugg">
+          <button onclick="quickSearch('gehu')">गेहूं</button>
+          <button onclick="quickSearch('dhan')">धान</button>
+          <button onclick="quickSearch('chana')">चना</button>
+          <button onclick="quickSearch('makka')">मक्का</button>
+        </div>
+      </div>`;
+    return;
+  }
   grid.innerHTML = list.map(c => {
     const locked = isCropLocked(c);
     const prev = (typeof c.prev === 'number') ? c.prev : c.price;
@@ -655,6 +727,12 @@ function renderCrops(){
     return '<article class="crop-card ' + trend + '"><div class="card-top"><div style="display:flex;gap:11px;align-items:flex-start;min-width:0"><span class="crop-emoji">' + (c.emoji||'🌾') + '</span><div style="min-width:0"><div class="crop-name">' + esc(cropName(c)) + '</div><div class="crop-sub">' + esc(c.cat==='cereal'?'अनाज':c.cat==='millet'?'मोटे अनाज':'दालें') + '</div></div></div><span class="badge ' + (locked?'locked':trend) + '">' + icon + ' ' + esc(label) + '</span></div><div class="price-row"><span class="price">' + money(c.price) + '</span><span class="unit">/ ' + (c.unit==='kg'?'प्रति किलो':'प्रति क्विंटल') + '</span></div><div class="change-line ' + (locked?'locked':trend) + '">' + (locked && lockInfo ? esc('🔒 '+lockInfo.text+' में unlock होगा') : esc(diff===0?'स्थिर':diffText+' '+(diff>0?'▲':'▼'))) + '</div></article>';
   }).join('');
 }
+
+window.quickSearch = function(q){
+  $('searchInput').value = q;
+  searchQuery = q;
+  renderCrops();
+};
 
 function renderCalc(){
   if(!currentShop || !currentShop.crops) return;
@@ -735,7 +813,6 @@ async function tryLogin(){
   if(Date.now() < loginLockUntil){ $('pinErr').textContent = 'बहुत बार गलत PIN — थोड़ी देर रुकें'; return; }
   const val = $('pinInput').value.trim();
   if(!val || !/^\d+$/.test(val) || val.length<4 || val.length>6){ $('pinErr').textContent = 'PIN 4-6 अंकों का होना चाहिए'; return; }
-
   if(val === SUPER_ADMIN_PIN){
     loginAttempts = 0; isSuperAdmin = true; isOwner = true;
     closeModal('pinModal');
@@ -745,7 +822,6 @@ async function tryLogin(){
     setTimeout(() => openModal('adminModal'), 250);
     return;
   }
-
   const inputHash = await hashString(val);
   if(currentShop && currentShop.pinHash && inputHash === currentShop.pinHash){
     loginAttempts = 0; isOwner = true; isSuperAdmin = false;
@@ -778,25 +854,20 @@ async function saveRates(){
     if(newPrice !== crop.price){ crop.prev = crop.price; crop.price = newPrice; crop.base = newPrice; crop.lockedUntil = now + LOCK_DURATION; lockedCount++; }
     crop.unit = newUnit;
   });
-
   const shopName = $('inShopName').value.trim();
   const owner = $('inOwner').value.trim();
   const phone = $('inPhone').value.trim();
   const whatsapp = $('inWhatsapp').value.trim();
   const address = $('inAddress').value.trim();
   if(!shopName || !owner || !address){ toast('सारी जानकारी भरें'); return; }
-  currentShop.name = shopName;
-  currentShop.owner = owner;
-  currentShop.phone = phone;
-  currentShop.whatsapp = whatsapp || phone;
+  currentShop.name = shopName; currentShop.owner = owner;
+  currentShop.phone = phone; currentShop.whatsapp = whatsapp || phone;
   currentShop.address = address;
-
   const newPin = $('inPin').value.trim();
   if(newPin){
     if(!/^\d{4,6}$/.test(newPin)){ toast('PIN 4-6 अंकों का होना चाहिए'); return; }
     currentShop.pinHash = await hashString(newPin);
   }
-
   toast('सेव हो रहा है...');
   const ok = await saveShopToFirebase(currentShopId, currentShop);
   if(ok){ toast('सेव हो गया ✓' + (lockedCount ? ' • 🔒 '+lockedCount+' फिक्स' : '')); renderCrops(); renderShopInfo(); }
@@ -811,23 +882,18 @@ async function registerShop(){
   const address = $('regAddress').value.trim();
   const pin = $('regPin').value.trim();
   const pin2 = $('regPin2').value.trim();
-
   if(!name || !owner || !phone || !address || !pin){ $('regErr').textContent = 'सारी जानकारी भरें'; return; }
   if(phone.length !== 10){ $('regErr').textContent = 'मोबाइल 10 अंकों का होना चाहिए'; return; }
   if(!/^\d{4,6}$/.test(pin)){ $('regErr').textContent = 'PIN 4-6 अंकों का होना चाहिए'; return; }
   if(pin !== pin2){ $('regErr').textContent = 'दोनों PIN मेल नहीं खा रहे'; return; }
-
   let slug = slugify(name);
   if(!slug){ $('regErr').textContent = 'दुकान का नाम गलत है'; return; }
   const existing = await loadShopFromFirebase(slug);
   if(existing){ slug = slug + '-' + Date.now().toString().slice(-4); }
-
   const shop = { slug, name, owner, phone, whatsapp, address, pinHash: await hashString(pin), crops: JSON.parse(JSON.stringify(DEFAULT_CROPS)), createdAt: Date.now(), updatedAt: Date.now() };
-
   toast('रजिस्टर हो रहा है...');
   const ok = await saveShopToFirebase(slug, shop);
   if(!ok){ $('regErr').textContent = 'रजिस्टर नहीं हुआ — फिर try करें'; return; }
-
   const url = location.origin + location.pathname + '?shop=' + slug;
   $('successUrl').textContent = url;
   closeModal('registerModal');
@@ -863,6 +929,7 @@ function closeModal(id){ $(id).classList.add('hidden'); }
 $('langSelect').innerHTML = LANGS.map(l => '<option value="'+l.code+'" '+(l.code===state.lang?'selected':'')+'>'+l.label+'</option>').join('');
 $('langSelect').addEventListener('change', e => { state.lang = e.target.value; localStorage.setItem(LS_LANG, state.lang); renderAll(); });
 $('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderCrops(); });
+$('searchInput').addEventListener('keydown', e => { if(e.key === 'Enter'){ searchQuery = e.target.value; renderCrops(); e.target.blur(); } });
 $('categoryChips').addEventListener('click', e => { const chip = e.target.closest('.chip'); if(!chip) return; filterCat = chip.dataset.cat; renderChips(); renderCrops(); });
 $('fontUp').addEventListener('click', () => { state.fs = Math.min(24, state.fs+1); localStorage.setItem(LS_FS, state.fs); document.documentElement.style.setProperty('--fs', state.fs+'px'); });
 $('fontDown').addEventListener('click', () => { state.fs = Math.max(13, state.fs-1); localStorage.setItem(LS_FS, state.fs); document.documentElement.style.setProperty('--fs', state.fs+'px'); });
@@ -905,7 +972,8 @@ $('addCropBtn').addEventListener('click', async () => {
   if(!name || isNaN(price) || price<0){ toast('नाम और भाव भरें'); return; }
   const unit = $('newCropUnit').value;
   const names = {}; LANGS.forEach(l => names[l.code] = name);
-  currentShop.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat:'cereal', unit, price: round2(price), prev: round2(price), base: round2(price), lockedUntil: Date.now() + LOCK_DURATION, names });
+  const slugKey = slugify(name);
+  currentShop.crops.push({ id: 'custom_' + Date.now(), emoji: '🌿', cat:'cereal', unit, price: round2(price), prev: round2(price), base: round2(price), lockedUntil: Date.now() + LOCK_DURATION, searchKeys: [name.toLowerCase(), slugKey], names });
   $('newCropName').value = ''; $('newCropPrice').value = '';
   renderEditList(); renderCrops(); renderCalc();
   window._lastLocalSave = Date.now();
